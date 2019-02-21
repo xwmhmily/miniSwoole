@@ -24,9 +24,10 @@ $config = [
 		'package_length_type'      => 'N',
 		'package_length_offset'    => 8,
   		'package_body_offset'      => 16,
-		'pid_file'  => __DIR__.'/../pid/swoole.pid',
-		'log_level' => 3,
-		'log_file'  => '/var/log/app/mini_swoole_'.date('Y-m-d').'.log',
+		'pid_file'   => __DIR__.'/../pid/swoole.pid',
+		'log_level'  => 3,
+		'log_file'   => '/var/log/app/mini_swoole_'.date('Y-m-d').'.log',
+		'error_file' => '/var/log/app/mini_swoole_error_'.date('Y-m-d').'.log',
 	],
 
 	'tcp' => [

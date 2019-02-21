@@ -74,7 +74,8 @@ class MiniSwoole {
 
 		// Error log
 		$config = Config::getConfig();
-		define('LOG_FILE', $config['common']['log_file']);
+		define('LOG_FILE',   $config['common']['log_file']);
+		define('ERROR_FILE', $config['common']['error_file']);
 
 		ini_set('log_errors', 'on');
         ini_set('error_log', LOG_FILE);
