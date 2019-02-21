@@ -50,7 +50,7 @@
 > Worker.php 的 afterStart(), afterOpen(), afterClose(), afterConnect(), afterStop() 可在 worker start, onOpen, onClose, onConnect, work stop 后处理自定义业务
 
 #### TCP 服务
-> 将 tcp 段的enable 设置为 true <br />
+> 将 tcp 段的enable 设置为 true, 其他服务设置为 false <br />
 > sh shell/socket.sh restart 重启服务 <br />
 > ps -ef | grep Mini 将看到 <br />
 >> Mini_Swoole_tcp_master: 为 master 进程  <br />
@@ -59,7 +59,7 @@
 >> Mini_Swoole_worker: M 个 worker 进程 <br />
 
 #### UDP 服务
-> 将 udp 段的enable 设置为 true <br />
+> 将 udp 段的enable 设置为 true, 其他服务设置为 false <br />
 > sh shell/socket.sh restart 重启服务 <br />
 > ps -ef | grep Mini 将看到 <br />
 >> Mini_Swoole_udp_master: 为 master 进程  <br />
@@ -68,7 +68,7 @@
 >> Mini_Swoole_worker: M 个 worker 进程 <br />
 
 #### HTTP 服务
-> 将 http 段的enable 设置为 true <br />
+> 将 http 段的enable 设置为 true, 其他服务设置为 false <br />
 > sh shell/socket.sh restart 重启服务 <br />
 > ps -ef | grep Mini 将看到 <br />
 >> Mini_Swoole_http_master: 为 master 进程  <br />
@@ -77,7 +77,7 @@
 >> Mini_Swoole_worker: M 个 worker 进程 <br />
 
 #### Websocket 服务
-> 将 websocket 段的enable 设置为 true <br />
+> 将 websocket 段的enable 设置为 true, 其他服务设置为 false <br />
 > sh shell/socket.sh restart 重启服务 <br />
 > ps -ef | grep Mini 将看到 <br />
 >> Mini_Swoole_websocket_master: 为 master 进程  <br />
@@ -217,6 +217,7 @@
     $retval = HttpClient::post($url, $postData);
     print_r($retval);
 ```
+> C: 可自行在library 目录的 Worker::beforeRequest() 中处理在 http request 前的业务<br />
 
 > 1: 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
 > 2: 如果 action 不存在, 客户端收到: Method $action not found<br />
