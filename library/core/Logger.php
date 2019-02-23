@@ -7,7 +7,7 @@
 abstract class Logger {
 
     public static function error($msg) {
-        $error = date('Y-m-d H:i:s').' | '.$msg.PHP_EOL;
+        $error = date('Y-m-d H:i:s').' | '.self::getMicrotime().' | ';
         file_put_contents(ERROR_FILE, $error, FILE_APPEND);        
 	}
 
