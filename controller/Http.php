@@ -161,17 +161,16 @@ class C_Http extends Controller {
         $this->httpHeader();
         try{
             $key = $this->getParam('key');
-            $this->response->write('Key is '.$key);
             
             if($key){
+                $this->response->write('Key is '.$key);
                 while(1){
                     $val = Cache::get($key);
                     $this->response->write(date('Y-m-d H:i:s'). ' => '.$val);
                     sleep(1);
                 }
             }else{
-                $this->response->write('Key is required !');
-                $this->response->end();
+                $this->response->end('Key is required !');
             }
         }catch (Throwable $e){
 			$this->error($e->getMessage());
