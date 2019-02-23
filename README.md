@@ -349,6 +349,7 @@ class M_User extends Model {
 ### 分库
 > 为了减轻MySQL 主库压力, 有些时候有必要做读写分离，如何支持和切换主从呢? (注: 仅支持 Select 语句读从库) <br />
 > 1: config_ENV 中像 mysql 节点一样设置一个 mysql_slave <br />
+
 ```
 	'mysql_slave' => [
 		'db'   => 'slave',
@@ -358,6 +359,7 @@ class M_User extends Model {
 		'pwd'  => '123456',
 	],
 ```
+
 > 2: 代码中调用 SetDB('SLAVE') 后再 Select() <br />
 ```
     $user = $this->load('User')->SetDB('SLAVE')->SelectOne();
