@@ -1,5 +1,6 @@
 #!/bin/bash -x
-# Mini_Swoole_tcp_master heartbeat
+# miniSwoole heartbeat
+# Usage: sh heartbeart.sh
 
 RES='\E[0m'
 GREEN_COLOR='\E[1;32m' #绿
