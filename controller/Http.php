@@ -121,7 +121,10 @@ class C_Http extends Controller {
     // Test process
     public function process(){
         $process = new swoole_process(function (swoole_process $process) {
-            $process->name("Mini_Swoole_process") && $process->daemon(1);
+            $process->name("Tiny_Swoole_process") && $process->daemon(1);
+
+            // 创建Process自身的连接池
+            Pool::createMySQLConnectionPool('My Process');
 
             $i = 1;
             $max = 100;
@@ -131,7 +134,14 @@ class C_Http extends Controller {
             }
         }, 0);
 
+        // Process 里要使用 MySQL 连接池并且共用 Model 的使用方式, 则在 start 前干掉当前的 MySQL 连接, 否则 Process 将继承这些连接, 导致 Worker 中调用报: MySQL has gone away
+        Pool::destroy(Pool::TYPE_MYSQL);
+
         $process->start();
+
+        // Process 里则调用Pool::createMySQLConnectionPool()创建 Process 自身的连接池, Worker也是调用该方便再重新创建即可
+        Pool::createMySQLConnectionPool('Worker');
+
         $this->response->end('Process is running ......');
     }
 
