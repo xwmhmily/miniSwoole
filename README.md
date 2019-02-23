@@ -426,6 +426,7 @@ tick 方法则这样接收, 然后使用Timer::clear($timerID);来清除定时�
 	public function tick(int $timerID, $args){
 		$this->response('Time in tick '.date("Y-m-d H:i:s\n"));
 		$this->response('Args in tick '.JSON($args));
+
 		// Clear timer
 		Timer::clear($timerID);
 	}
@@ -435,12 +436,14 @@ tick 方法则这样接收, 然后使用Timer::clear($timerID);来清除定时�
 ```
     Timer::after(5000, [$this, 'after']);
 ```
+
 after 方法
+
 ```
-    // 注: after定时器不接收任何参数
+	// 注: after定时器不接收任何参数
 	public function after(){
-        $this->response('Execute '.__METHOD__.' in after timer');
-    }
+		$this->response('Execute '.__METHOD__.' in after timer');
+	}
 ```
 
 #### 任务投递 Task
@@ -455,11 +458,12 @@ after 方法
     Task::add($args);
 ```
 2: myTask 方法则这样接收参数, $args 仅包括 $args['data'] 中的数据, 不包括 controller 与 action, 因为并不需要包括了
+
 ```
 	public function myTask($args){
-        Logger::log(__METHOD__);
-        Logger::log(JSON($args));
-    }
+		Logger::log(__METHOD__);
+		Logger::log(JSON($args));
+	}
 ```
 3：当任务完成后, onFinish回调函数就派上用场了。任务完成时，task进程会将结果发送给onFinish函数，在由onFinish函数返回给worker
 ```
