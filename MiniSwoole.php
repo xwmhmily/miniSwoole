@@ -97,7 +97,7 @@ class MiniSwoole {
 			if(file_exists($file)){
 				require_once($file);
 			}else{
-				$error = 'No such file => '.$file;
+				$error = 'Error in autoload: No such file => '.$file;
 				Helper::raiseError(debug_backtrace(), $error);
 			}
 		});
