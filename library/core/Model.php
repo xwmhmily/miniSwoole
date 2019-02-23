@@ -750,7 +750,7 @@ abstract class Model {
 
 	// 重新连接
     private function reconnect(){
-		Logger::log('Info: reconnecting to '.$this->db.' MySQL '.(self::$retries + 1).' time');
+		Logger::log('Info: reconnect to '.$this->db.' MySQL '.(self::$retries + 1).' time');
 
 		if($this->db == 'MASTER'){
 			$this->Close();
