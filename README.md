@@ -223,7 +223,7 @@
 > 2: 如果 action 不存在, 客户端收到: Method $action not found<br />
 > 3: 暂时只支持 GET / POST 方法<br />
 > 4: 控制器的方法中调用 $this->response->write($rep) 将数据发送至客户端, write()可以调用多次, 最后使用 $this->response->end() 来结束这个请求 <br />
-> 5: 使用write分段发送数据后，end方法将不接受任何参数
+> 5: 使用write分段发送数据后，end方法将不接受任何参数<br />
 > 6: 控制器的示例为 controller下的 Index.php 与 Http.php<br />
 > 7: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
