@@ -125,14 +125,14 @@
 
 ```
     // 测试onError事件
-	public function onError(){
-		try{
-			$result = $this->m_player->SelectOne();
-			$this->response('Result is => '.$result);
-		}catch (Throwable $e){
-			$this->error($e->getMessage());
-		}
-	}
+    public function onError(){
+        try{
+            $result = $this->m_player->SelectOne();
+            $this->response('Result is => '.$result);
+        }catch (Throwable $e){
+            $this->error($e->getMessage());
+        }
+    }
 ```
 
 #### UDP 服务之控制器
