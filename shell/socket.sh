@@ -25,7 +25,7 @@ start() {
         echo 'Server is running ......' && exit 0
     else
         echo 'Starting ......'
-        touch $LOG_FILE && chown www.www $LOG_FILE
+        touch $LOG_FILE && chown www.www $LOG_FILE && chmod 777 $LOG_FILE
         $PHP $SOCKET_FILE &
         sleep 1
         NEW_SWOOLE_MASTER_PID=`cat $PID_FILE`
