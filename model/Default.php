@@ -1,4 +1,7 @@
 <?php
+/**
+ * 这是默认模型文件, DO NOT DELETE !!!
+ */
 
 class M_Default extends Model {
 
