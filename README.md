@@ -269,15 +269,14 @@
 > 8: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
-	// 测试onError事件
-	public function error(){
-		try{
-			$result = $this->m_player->SelectOne();
-			$this->response('Result is => '.$result);
-		}catch (Throwable $e){
-			$this->error($e->getMessage());
-		}
-	}
+    public function onError(){
+        try{
+            $result = $this->m_player->SelectOne();
+            $this->response('Result is => '.$result);
+        }catch (Throwable $e){
+            $this->error($e->getMessage());
+        }
+    }
 ```
 
 #### MySQL
@@ -308,6 +307,7 @@ class M_User extends Model {
     }
 }
 ```
+
 ``` 
 	// 控制器中调用通用的方法
 	$this->m_user = $this->load('User');
@@ -317,6 +317,7 @@ class M_User extends Model {
 	$users = $this->m_user->Field($field)->Where($where)->Order($order)->Select();
 	$this->response(JSON($users));
 ```
+
 ``` 
     // 调用可复用的 SelectAll();
     $users = $this->m_user->SelectAll();
