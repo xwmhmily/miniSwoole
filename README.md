@@ -421,13 +421,14 @@ class M_User extends Model {
 	Timer::add(2000, [$this, 'tick'], 'xyz');
 ```
 tick 方法则这样接收, 然后使用Timer::clear($timerID);来清除定时器
+
 ```
 	public function tick(int $timerID, $args){
-        $this->response('Time in tick '.date("Y-m-d H:i:s\n"));
-        $this->response('Args in tick '.JSON($args));
-        // Clear timer
-        Timer::clear($timerID);
-    }
+		$this->response('Time in tick '.date("Y-m-d H:i:s\n"));
+		$this->response('Args in tick '.JSON($args));
+		// Clear timer
+		Timer::clear($timerID);
+	}
 ```
 
 > 2: 控制器中想5秒后执行当前类的 after() 方法, 则这样做。
