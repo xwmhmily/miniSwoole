@@ -394,8 +394,12 @@ class M_User extends Model {
 ```
     // Autoload 自动加载 RabbitMQ
     public function rabbit(){
-        $rabbit = new RabbitMQ();
-        $this->response('A Rabbit runs happily');
+        try{
+            $rabbit = new RabbitMQ();
+            $this->response('A Rabbit is running happily now');
+        }catch (Throwable $e){
+			$this->error($e->getMessage());
+		}
     }
 ```
 
