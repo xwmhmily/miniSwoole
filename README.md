@@ -183,7 +183,6 @@
 > 8: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
-	// 测试onError事件
 	public function onError(){
 		try{
 			$result = $this->m_player->SelectOne();
