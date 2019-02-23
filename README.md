@@ -93,9 +93,9 @@
 ```
 	$data = [];
 	$data['controller'] = 'tcp';
-    $data['action']     = 'login';
+	$data['action']     = 'login';
 	$data['username']   = 'dym';
-    $data['password']   = md5(123456);
+	$data['password']   = md5(123456);
 	$cli->send(json_encode($data)."\r\n");
 ```
 > 1: 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
@@ -183,7 +183,7 @@
 > 8: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
-    // 测试onError事件
+	// 测试onError事件
 	public function onError(){
 		try{
 			$result = $this->m_player->SelectOne();
@@ -228,17 +228,17 @@
 > 7: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
-    // Get all users
-    public function users(){
-        $this->httpHeader();
+	// Get all users
+	public function users(){
+		$this->httpHeader();
 
-        try{
-            $users = $this->m_user->SelectAll();
-            $this->response->end(JSON($users));
-        }catch (Throwable $e){
+		try{
+			$users = $this->m_user->SelectAll();
+			$this->response->end(JSON($users));
+		}catch (Throwable $e){
 			$this->error($e->getMessage());
 		}
-    }
+	}
 ```
 > 8: 更多 http server 信息请参考 https://wiki.swoole.com/wiki/page/326.html
 
@@ -273,7 +273,7 @@
 > 8: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
-    // 测试onError事件
+	// 测试onError事件
 	public function error(){
 		try{
 			$result = $this->m_player->SelectOne();
@@ -313,13 +313,13 @@ class M_User extends Model {
 }
 ```
 ``` 
-    // 控制器中调用通用的方法
-    $this->m_user = $this->load('User');
+	// 控制器中调用通用的方法
+	$this->m_user = $this->load('User');
 	$field = ['id', 'username'];
-    $where = ['status' => 1];
-    $order = ['id' => 'DESC'];
-    $users = $this->m_user->Field($field)->Where($where)->Order($order)->Select();
-    $this->response(JSON($users));
+	$where = ['status' => 1];
+	$order = ['id' => 'DESC'];
+	$users = $this->m_user->Field($field)->Where($where)->Order($order)->Select();
+	$this->response(JSON($users));
 ```
 ``` 
     // 调用可复用的 SelectAll();
@@ -353,7 +353,7 @@ class M_User extends Model {
 > 为了减轻MySQL 主库压力, 有些时候有必要做读写分离，如何支持和切换主从呢? (注: 仅支持 Select 语句读从库) <br />
 > 1: config_ENV 中像 mysql 节点一样设置一个 mysql_slave <br />
 ```
-    'mysql_slave' => [
+	'mysql_slave' => [
 		'db'   => 'slave',
 		'host' => '192.168.1.34',
 		'port' => 3306,
@@ -392,15 +392,15 @@ class M_User extends Model {
 > 1: 框架设置了 autoload 的目录是 library, 因此只要将类位于此目录下, 就能实现自动加载<br />
 > 2: 例如控制器中要实例化 RabbitMQ, 文件名是 /library/RabbitMQ.php
 ```
-    // Autoload 自动加载 RabbitMQ
-    public function rabbit(){
-        try{
-            $rabbit = new RabbitMQ();
-            $this->response('A Rabbit is running happily now');
-        }catch (Throwable $e){
+	// Autoload 自动加载 RabbitMQ
+	public function rabbit(){
+		try{
+			$rabbit = new RabbitMQ();
+			$this->response('A Rabbit is running happily now');
+		}catch (Throwable $e){
 			$this->error($e->getMessage());
 		}
-    }
+	}
 ```
 
 ### 日志
