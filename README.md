@@ -124,7 +124,6 @@
 > 8: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
-    // 测试onError事件
     public function onError(){
         try{
             $result = $this->m_player->SelectOne();
@@ -183,7 +182,6 @@
 > 8: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
-    // 测试onError事件
     public function onError(){
         try{
             $result = $this->m_player->SelectOne();
@@ -228,18 +226,16 @@
 > 7: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
-	// Get all users
-	public function users(){
-		$this->httpHeader();
-
-		try{
-			$users = $this->m_user->SelectAll();
-			$this->response->end(JSON($users));
-		}catch (Throwable $e){
-			$this->error($e->getMessage());
-		}
-	}
+    public function onError(){
+        try{
+            $result = $this->m_player->SelectOne();
+            $this->response('Result is => '.$result);
+        }catch (Throwable $e){
+            $this->error($e->getMessage());
+        }
+    }
 ```
+
 > 8: 更多 http server 信息请参考 https://wiki.swoole.com/wiki/page/326.html
 
 #### Websocket 服务之控制器
