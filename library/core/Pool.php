@@ -10,15 +10,12 @@ abstract class Pool {
 	const TYPE_MYSQL = 'MYSQL';
 	const TYPE_REDIS = 'REDIS';
 
-	public static function createMySQLConnectionPool($prefix = NULL){
+	public static function createMySQLConnectionPool(){
 		$config = Config::getConfig(Pool::TYPE_MYSQL);
 		$config['max'] = $config['max'] ?? 1;
 			
 		for($i = 1; $i <= $config['max']; $i++){
-            $retval = Pool::getInstance(Pool::TYPE_MYSQL);
-            if($retval === FALSE){
-                Logger::log('Error: '.$prefix.' fail to connect MySQL !');
-			}
+            Pool::getInstance(Pool::TYPE_MYSQL);
         }
 	}
 

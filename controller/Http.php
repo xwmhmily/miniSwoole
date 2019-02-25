@@ -124,7 +124,7 @@ class C_Http extends Controller {
             $process->name("Tiny_Swoole_process") && $process->daemon(1);
 
             // 创建Process自身的连接池
-            Pool::createMySQLConnectionPool('My Process');
+            Pool::createMySQLConnectionPool();
 
             $i = 1;
             $max = 100;
@@ -140,7 +140,7 @@ class C_Http extends Controller {
         $process->start();
 
         // Process 里则调用Pool::createMySQLConnectionPool()创建 Process 自身的连接池, Worker也是调用该方便再重新创建即可
-        Pool::createMySQLConnectionPool('Worker');
+        Pool::createMySQLConnectionPool();
 
         $this->response->end('Process is running ......');
     }
