@@ -44,8 +44,12 @@ $config = [
 
 	'http' => [
 		'enable' => FALSE,
+		// 正常监听的端口
 		'ip'     => '192.168.1.31',
 		'port'   => 9502,
+		// 额外监听的端口
+		'listen_ip'   => '127.0.0.1',
+		'listen_port' => 9908,
 	],
 
 	'websocket' => [

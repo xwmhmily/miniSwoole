@@ -27,6 +27,11 @@ class WebSocket {
         $this->server->on('WorkerError',   ['Hooker', 'onWorkerError']);
         $this->server->on('WorkerStart',   ['Hooker', 'onWorkerStart']);
         $this->server->on('ManagerStart',  ['Hooker', 'onManagerStart']);
+
+        // 是否需要监听额外的端口
+        if($config['websocket']['listen_ip']){
+            $this->server->addlistener($config['websocket']['listen_ip'], $config['websocket']['listen_port'], SWOOLE_SOCK_TCP);
+        }
     }
 
     public function start() {
