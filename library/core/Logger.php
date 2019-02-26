@@ -7,12 +7,12 @@
 abstract class Logger {
 
     public static function error($msg) {
-        $error = date('Y-m-d H:i:s').' | '.posix_getpid().' | '.self::getMicrotime().' | ';
-        file_put_contents(ERROR_FILE, $error, FILE_APPEND);        
+        $error = date('Y-m-d H:i:s').' | '.self::getMicrotime().' | '.posix_getpid().' | '.$msg.PHP_EOL;
+        file_put_contents(ERROR_FILE, $error, FILE_APPEND);      
 	}
 
 	public static function log($msg) {
-        $error = date('Y-m-d H:i:s').' | '.posix_getpid().' | '.self::getMicrotime().' | ';
+        $error = date('Y-m-d H:i:s').' | '.self::getMicrotime().' | '.posix_getpid().' | ';
 
         if(Server::$clientFD){
             $client = Server::$instance->getClientInfo(Server::$clientFD);
