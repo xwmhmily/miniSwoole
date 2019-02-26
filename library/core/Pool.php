@@ -11,11 +11,11 @@ abstract class Pool {
 	const TYPE_REDIS = 'REDIS';
 
 	public static function createMySQLConnectionPool(){
-		$config = Config::getConfig(Pool::TYPE_MYSQL);
+		$config = Config::getConfig(self::TYPE_MYSQL);
 		$config['max'] = $config['max'] ?? 1;
 			
 		for($i = 1; $i <= $config['max']; $i++){
-            self::getInstance(Pool::TYPE_MYSQL);
+            self::getInstance(self::TYPE_MYSQL);
         }
 	}
 
