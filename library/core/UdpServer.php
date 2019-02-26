@@ -26,6 +26,11 @@ class UdpServer {
         $this->server->on('WorkerError',  ['Hooker', 'onWorkerError']);
         $this->server->on('WorkerStart',  ['Hooker', 'onWorkerStart']);
         $this->server->on('ManagerStart', ['Hooker', 'onManagerStart']);
+
+        // 是否需要监听额外的端口
+        if($config['udp']['listen_ip']){
+            $this->server->addlistener($config['udp']['listen_ip'], $config['udp']['listen_port'], SWOOLE_SOCK_TCP);
+        }
     }
 
     public function start() {
