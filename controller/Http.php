@@ -139,7 +139,7 @@ class C_Http extends Controller {
 
         $process->start();
 
-        // Process 里则调用Pool::createMySQLConnectionPool()创建 Process 自身的连接池, Worker也是调用该方便再重新创建即可
+        // Process 里则调用Pool::createMySQLConnectionPool()创建 Process 自身的连接池, Worker也是调用该方法再重新创建即可
         Pool::createMySQLConnectionPool();
 
         $this->response->end('Process is running ......');

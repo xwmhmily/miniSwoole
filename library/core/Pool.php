@@ -15,7 +15,7 @@ abstract class Pool {
 		$config['max'] = $config['max'] ?? 1;
 			
 		for($i = 1; $i <= $config['max']; $i++){
-            Pool::getInstance(Pool::TYPE_MYSQL);
+            self::getInstance(Pool::TYPE_MYSQL);
         }
 	}
 
