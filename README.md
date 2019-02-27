@@ -288,7 +288,7 @@
 > 6: 执行复杂的 SQL: Query($sql), QueryOne($sql)<br />
 > 7: BeginTransaction(), Commit(), Rollback() 操作事务<br />
 > 8: 断线自动重连3次<br />
-> 9: 通用模型(Default)减少复习性方法很少的模型文件<br />
+> 9: 通用模型(Default)减少复用性方法很少的模型文件<br />
 > 10: 示例为 model 下的 User.php 和 Default.php, 其中 Default 为默认通用模型文件
 
 ```
