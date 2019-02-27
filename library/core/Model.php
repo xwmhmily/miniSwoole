@@ -486,7 +486,9 @@ abstract class Model {
 	 */
 	public function getInsertID() {
 		$lastInsertID = self::$conn->lastInsertId();
-		$this->unshift();
+		if(!$this->inTransaction()){
+			$this->unshift();
+		}
 		$this->insert = FALSE;
 		return $lastInsertID;
 	}
