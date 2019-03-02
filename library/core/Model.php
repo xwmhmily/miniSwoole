@@ -283,7 +283,11 @@ abstract class Model {
 		$result = $this->success ? $this->Fetch() : NULL;
 
 		if($this->selectOne == TRUE){
-			$data = $result[0];
+			if($result){
+				$data = $result[0];
+			}else{
+				$data = NULL;
+			}
 		}else{
 			$data = $result;
 		}
