@@ -404,7 +404,8 @@ class M_User extends Model {
 
 ### 日志
 > 1: PHP 的错误文件由 $config['common']['log_file'] 指定, 任意地方调用 Logger::log($msg) 即可写入日志<br />
-> 2: SQL 的错误文件由 $config['common']['mysql_log_file'] 指定, 当执行SQL发生错误时，自动写入<br />
+> 2: $config['common']['error_file'] 指定了可自定义的错误日志, 任意地方调用 Logger::error($msg) 即可写入日志, 这样可避免过多的日志数据定入 log_file, 更易于 Debug <br />
+> 3: SQL 的错误文件由 $config['common']['mysql_log_file'] 指定, 当执行SQL发生错误时，自动写入<br />
 
 ### 安全与过滤
 > 1: 控制器中使用 $this->getParam($key) 来获取请求的参数，比如 $username = $this->getParam('username'), 默认会对数据进行过滤，若不过滤，将第二个参数设置为 FALSE: $username = $this->getParam('username', FALSE) <br />
