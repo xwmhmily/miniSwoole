@@ -1,6 +1,6 @@
 # Mini_Swoole
 
-#### 迷你Swoole
+#### Write Less and Do More
 > 支持 TCP, UDP, HTTP, Websocket <br />
 > Master-Worker 模式<br />
 > Controller-Model 分层 <br />
