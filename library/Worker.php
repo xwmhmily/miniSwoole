@@ -20,7 +20,7 @@ class Worker {
 
 	// Do anything you want before http request
 	public static function beforeRequest($method, swoole_http_request $request, swoole_http_response $response){
-		Logger::log(__FUNCTION__);
+		$response->header('Content-Type', 'text/html; charset=utf-8');
 	}
 
 	// Do anything you want before websocket message

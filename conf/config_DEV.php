@@ -33,7 +33,7 @@ $config = [
 	],
 
 	'tcp' => [
-		'enable' => TRUE,
+		'enable' => FALSE,
 		'ip'     => '127.0.0.1',
 		'port'   => 9501,
 	],
@@ -45,7 +45,7 @@ $config = [
 	],
 
 	'http' => [
-		'enable' => FALSE,
+		'enable' => TRUE,
 		// 正常监听的端口
 		'ip'     => '127.0.0.1',
 		'port'   => 9100,

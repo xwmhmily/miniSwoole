@@ -11,71 +11,24 @@ class C_Http extends Controller {
     }
 
     // 测试onError事件
+    // 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题
+    // 使用 try...catch(Throwable) 来处理
 	public function onError(){
-        // 使用 try... catch(Throwable) 来避免 worker 退出
 		try{
 			$result = $this->m_player->SelectOne();
 			$this->response->end('Result is => '.$result);
 		}catch (Throwable $e){
 			$this->error($e);
 		}
-    }
-    
-    // Insert && Update
-    public function demo(){
-        $this->httpHeader();
+	}
 
-        try{
-            // Insert new user
-            $i = [];
-            $i['username'] = 'Carryf';
-            $i['password'] = md5('Carryf');
-            $userID = $this->m_user->Insert($i);
-
-            $this->response->write('userID => '.$userID.'<br />');
-
-            // Update
-            $u = [];
-            $u['username'] = 'IAMCARRY';
-            $retval = $this->m_user->UpdateByID($u, $userID);
-
-            // Select
-            $user = $this->m_user->SelectByID('', $userID);
-            $this->response->write('user => '.JSON($user).'<br />');
-
-            $this->response->end();
-        }catch (Throwable $e){
-			$this->error($e);
-		}
+    // Pong
+    public function ping(){
+        $this->response->end('PONG');
     }
 
-    public function index(){
-        try{
-            $this->response->write(date('Y-m-d H:i:s'));
-
-            // Task
-            $args = [];
-            $args['controller']   = 'http';
-            $args['action']       = 'myTask';
-            $args['data']['line'] = __LINE__;
-            Task::add($args);
-
-            $this->response->write('Task is running');
-            $this->response->end();
-        }catch (Throwable $e){
-			$this->error($e);
-		}
-    }
-
-    public function myTask($args){
-        $url = 'http://www.baidu.com';
-        $content = file_get_contents($url);
-        Logger::log($content);
-    }
-
-    // Get all news
+    // Get all users
     public function users(){
-        $this->httpHeader();
         try{
             $users = $this->m_user->SelectAll();
             $this->response->end(JSON($users));
@@ -84,15 +37,8 @@ class C_Http extends Controller {
 		}
     }
 
-    // Post
-    public function post(){
-        $key = $this->getParam('key');
-        $this->response->end('Your key is '.$key);
-    }
-
     // Get all news
     public function news(){
-        $this->httpHeader();
         try{
             $news = $this->m_news->Select();
             $this->response->end(JSON($news));
@@ -101,59 +47,264 @@ class C_Http extends Controller {
 		}
     }
 
-    // login 及参数过滤
-    public function login(){
+    // MySQL 压力测试
+    public function stress(){
+        $max = 100000;
+        $start_time = Logger::getMicrotime();
+        for($i = 1; $i <= $max; $i++){
+            $news = $this->m_news->Select();
+        }
+        $end_time = Logger::getMicrotime();
+        $cost = $end_time - $start_time;
+        $this->response->end('Time => '.$cost.', TPS => '.$max/$cost);
+    }
+
+    // tcp SelectAll
+    public function all(){
         try{
-            $username = $this->getParam('username');
-            $password = $this->getParam('password');
+            $users = $this->m_user->SelectAll();
+            $this->response->write(JSON($users));
 
-            $this->response->write('Username => '.$username.', password => '.$password);
+            $news = $this->m_news->Select();
+            $this->response->write(JSON($news));
 
-            $username = $this->getParam('username', FALSE);
-            $this->response->write('<br />Username => '.$username.', password => '.$password);
-
-            $this->response->end('__DONE__');
+            $one_news = $this->m_news->SelectOne();
+            $this->response->write(JSON($one_news));
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
     }
 
-    // Test process
-    public function process(){
-        $process = new swoole_process(function (swoole_process $process) {
-            $process->name("Tiny_Swoole_process") && $process->daemon(1);
+    // Mix common sql and transaction test
+    public function mix(){
+        try{
+            $users = $this->m_user->SelectAll();
+            $this->response->write(JSON($users));
 
-            // 创建Process自身的连接池
-            Pool::createMySQLConnectionPool();
+            $news = $this->m_news->Select();
+            $this->response->write(JSON($news));
 
+            $one_news = $this->m_news->SelectOne();
+            $this->response->write(JSON($one_news));
+
+            $this->response->write(PHP_EOL.'=============HERE IS TRANSACTION============='.PHP_EOL);
+
+            $this->m_user->BeginTransaction();
+            $users = $this->m_user->SelectAll();
+            $news = $this->m_news->Select();
+
+            if($users && $news){
+                $this->m_news->Commit();
+                $this->response->write(JSON($users));
+                $this->response->write(JSON($news));
+            }else{
+                $this->m_news->Rollback();
+                $this->response->write('ERRORRRRRRRRR');
+            }
+
+            $this->response->end();
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
+
+    // Transaction
+    public function transaction(){
+        try{
+            $this->m_user->BeginTransaction();
+            $user = $this->m_user->SetDB('MASTER')->SelectOne();
+            $news = $this->m_news->Select();
+
+            if($user && $news){
+                $this->m_news->Commit();
+                $this->response->write('Master => '.JSON($user));
+                $this->response->write('Master => '.JSON($news));
+            }else{
+                $this->m_news->Rollback();
+                $this->response->write('ERRORRRRRRRRR');
+            }
+
+            $field = ['id', 'username', 'password', 'addTime'];
+            $where = ['id' => 2];
+            $user = $this->m_user->SetDB('SLAVE')->Field($field)->Where($where)->SelectOne();
+            $this->response->write('Slave => '.JSON($user));
+
+            $where = ['status' => 1];
+            $order = ['id' => 'DESC'];
+            $user = $this->m_user->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
+            $this->response->write('Slave with suffix => '.JSON($user));
+            $this->response->end();
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
+
+    // Security
+    public function security(){
+        $this->response->end(JSON($this->data));
+    }
+
+    // Autoload
+    public function rabbit(){
+        try{
+            $rabbit = new RabbitMQ();
+            $this->response->end('A Rabbit is running happily now');
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
+    
+    // 测试 MySQL 自动断线重连及压测
+    public function reconnect(){
+        try{
             $i = 1;
-            $max = 100;
+            $max = 1000;
             while($i <= $max){
-                Logger::log($i.' Process is running .....');
+                $news = $this->m_news->SelectOne();
+                if(!$news){
+                    $news = 'Stop reconnecting';
+                    Logger::log($news);
+                    $retval = $this->response->write($news);
+                    break;
+                }else{
+                    $news = JSON($news);
+                }
+
+                $retval = $this->response->write($i.' => '.$news.PHP_EOL);
+                if(!$retval){
+                    break;
+                }
+
+                $where  = ['id' => 2];
+                $news   = $this->m_news->Where($where)->SelectOne();
+                $retval = $this->response->write('Another '.JSON($news).PHP_EOL);
+
+                $u = [];
+                $u['remark'] = $i;
+                $news = $this->m_news->Where($where)->UpdateOne($u);
+
                 $i++; sleep(1);
             }
-        }, 0);
 
-        // Process 里要使用 MySQL 连接池并且共用 Model 的使用方式, 则在 start 前干掉当前的 MySQL 连接, 否则 Process 将继承这些连接, 导致 Worker 中调用报: MySQL has gone away
-        Pool::destroy(Pool::TYPE_MYSQL);
+            $this->response->end();
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
 
-        $process->start();
+    // MySQL slave
+    public function slave(){
+        try{
+            $m_user = $this->load('User');
 
-        // Process 里则调用Pool::createMySQLConnectionPool()创建 Process 自身的连接池, Worker也是调用该方法再重新创建即可
-        Pool::createMySQLConnectionPool();
+            $i = 1;
+            while($i <= 100){
+                $user = $m_user->SetDB('SLAVE')->SelectOne();
+                $this->response->write('Slave first => '.JSON($user));
 
-        $this->response->end('Process is running ......');
+                // TO-DO: Call to a member function query() on null
+                $user = $m_user->SetDB('MASTER')->SelectOne();
+                $this->response->write('Master => '.JSON($user));
+
+                $field = ['id', 'username'];
+                $where = ['id' => 2];
+                $user = $m_user->SetDB('SLAVE')->Field($field)->Where($where)->SelectOne();
+                $this->response->write('Slave again => '.JSON($user));
+
+                $field = ['id', 'username'];
+                $user = $m_user->SetDB('SLAVE')->SelectByID($field, 2);
+                $this->response->write('Slave by ID => '.JSON($user));
+
+                $field = ['id', 'username', 'password'];
+                $user = $this->load('User')->SetDB('SLAVE')->Field($field)->Suffix(38)->SelectOne();
+                $this->response->write('Slave with suffix => '.JSON($user));
+
+                $i++; sleep(1);
+            }
+
+            $this->response->end();
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
+
+    // 测试SQL 报错
+    public function user(){
+        try{
+            $field = ['id', 'usernamex'];
+            $order = ['id' => 'DESC'];
+            $users = $this->m_user->Field($field)->Order($order)->Select();
+            if(!$users){
+                $this->response->write('NO USERS FOUND');
+            }else{
+                $this->response->write(JSON($users));
+            }
+
+            $users = $this->m_user->SelectAll();
+            $this->response->write(JSON($users));
+
+            $user = $this->m_user->SelectByID('', 1);
+            $this->response->write(JSON($user));
+            $this->response->end();
+        }catch (Throwable $e){
+			$this->error($e);
+		}
     }
 
     // Suffix
     public function suffix(){
-        $this->httpHeader();
         try{
             $user = $this->load('User')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
-            $this->response->write(' Suffix with one user => '.JSON($user).'<br />');
+            $this->response->end(' Suffix user => '.JSON($user));
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
 
-            $users = $this->load('User')->Suffix(38)->ClearSuffix()->Suffix(52)->Select();
-            $this->response->write(' Suffix with all users => '.JSON($users));
+    // Redis and MySQL with Master / slave
+    public function connector(){
+        try{
+            for($i = 1; $i <= 100; $i++){
+                $this->response->write('=============='.$i.'==================='.PHP_EOL);
+
+                // Master
+                $news = $this->m_news->Select();
+                $this->response->write(' Master => '.JSON($news));
+
+                $users = $this->m_user->SetDB('MASTER')->SelectAll();
+                $this->response->write(' Master => '.JSON($users));
+
+                // Master
+                $user = $this->m_user->SelectByID('', 2);
+                $this->response->write(' Master => '.JSON($user));
+
+                $key = $this->getParam('key');
+                $val = Cache::get($key);
+                $this->response->write(' Redis => '.$val);
+
+                // Suffix
+                // TO-DO: Call to a member function query() on null
+                $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->SelectOne();
+                $this->response->write(' Suffix user => '.JSON($user));
+
+                // What if errors occur
+                $user = $this->load('User')->SetDB('SLAVE')->Suffix(52)->SelectOne();
+                $this->response->write(' Suffix user => '.JSON($user));
+
+                // Master
+                $user = $this->m_user->SelectByID('', 1);
+                $this->response->write(' Master => '.JSON($user));
+
+                // Change Master to Slave, just call the SetDB()
+                $user = $this->m_user->SetDB('SLAVE')->SelectByID('', 1);
+                $this->response->write(' Slave => '.JSON($user));
+
+                $this->response->write(PHP_EOL.'==============='.$i.'============'.PHP_EOL);
+
+                sleep(1);
+            }
+
             $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
@@ -162,45 +313,20 @@ class C_Http extends Controller {
 
     // Redis
     public function redis(){
-        $this->httpHeader();
         try{
             $key = $this->getParam('key');
+            $this->response->write($key);
             
             if($key){
-                $this->response->write('Key is '.$key);
                 while(1){
                     $val = Cache::get($key);
                     $this->response->write(date('Y-m-d H:i:s'). ' => '.$val);
                     sleep(1);
                 }
             }else{
-                $this->response->end('Key is required !');
-            }
-        }catch (Throwable $e){
-			$this->error($e);
-		}
-    }
-
-    // 测试SQL 报错
-    public function sql(){
-        $this->httpHeader();
-        try{
-            $field = ['id', 'usernamex'];
-            $order = ['id' => 'DESC'];
-            $users = $this->m_user->Field($field)->Order($order)->Select();
-            if(!$users){
-                $this->response->write('NO USERS FOUND <br />');
-            }else{
-                $this->write(JSON($users).'<br />');
+                $this->response->write('Key is required !');
             }
 
-            $this->response->write('All users <br />');
-            $users = $this->m_user->SelectAll();
-            $this->response->write(JSON($users).'<br />');
-
-            $this->response->write('One user <br />');
-            $user = $this->m_user->SelectByID('', 1);
-            $this->response->write(JSON($user));
             $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
