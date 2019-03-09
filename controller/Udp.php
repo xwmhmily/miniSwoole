@@ -17,7 +17,7 @@ class C_Udp extends Controller {
 			$result = $this->m_player->SelectOne();
 			$this->response('Result is => '.$result);
 		}catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
 	}
 
@@ -37,7 +37,7 @@ class C_Udp extends Controller {
             $one_news = $this->m_news->SelectOne();
             $this->response(JSON($one_news));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -68,7 +68,7 @@ class C_Udp extends Controller {
                 $this->response('ERRORRRRRRRRR');
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -98,7 +98,7 @@ class C_Udp extends Controller {
             $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
             $this->response('Slave with suffix => '.JSON($user));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -135,7 +135,7 @@ class C_Udp extends Controller {
             $rabbit = new RabbitMQ();
             $this->response('A Rabbit is running happily now');
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
     
@@ -231,7 +231,7 @@ class C_Udp extends Controller {
                 $i++; sleep(1);
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -264,7 +264,7 @@ class C_Udp extends Controller {
                 sleep(1);
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -286,7 +286,7 @@ class C_Udp extends Controller {
             $user = $this->m_user->SelectByID('', 1);
             $this->response(JSON($user));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -296,7 +296,7 @@ class C_Udp extends Controller {
             $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
             $this->response('Suffix user => '.JSON($user));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -354,7 +354,7 @@ class C_Udp extends Controller {
                 sleep(1);
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -374,7 +374,7 @@ class C_Udp extends Controller {
                 $this->response('Key is required !');
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 }

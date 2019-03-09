@@ -38,7 +38,8 @@ abstract class Controller {
 	protected function error($error, $errorCode = 500){
 		$rep['code'] = $errorCode;
 		if(ENV == 'DEV'){
-			$rep['error'] = $error;
+			$rep['error'] = $error->getMessage();
+			$rep['trace'] = $error->getTraceAsString();
 		}else{
 			$rep['error'] = 'Internal Server Error';
 		}

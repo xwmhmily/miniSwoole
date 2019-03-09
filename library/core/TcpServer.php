@@ -31,7 +31,7 @@ class TcpServer {
         $this->server->on('ManagerStart', ['Hooker', 'onManagerStart']);
 
         // 是否需要监听额外的端口
-        if($config['tcp']['listen_ip']){
+        if(isset($config['tcp']['listen_ip'])){
             $this->server->addlistener($config['tcp']['listen_ip'], $config['tcp']['listen_port'], SWOOLE_SOCK_TCP);
         }
     }

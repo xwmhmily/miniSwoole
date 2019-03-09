@@ -265,6 +265,7 @@ abstract class Model {
 		self::$retries = 0;
 		unset($this->options);
 
+		// TO-DO: A bug when DB is SLAVE
 		if(!$this->inTransaction()){
 			if(!$this->insert){
 				$this->unshift();
@@ -794,7 +795,11 @@ abstract class Model {
 	 * @return TRUE on yes or FALSE on no
 	 */
 	public function inTransaction() {
-		return self::$conn->inTransaction();
+		if(self::$conn){
+			return self::$conn->inTransaction();
+		}else{
+			return FALSE;
+		}
 	}
 
 	/**

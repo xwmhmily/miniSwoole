@@ -17,7 +17,7 @@ class C_Websocket extends Controller {
 			$result = $this->m_player->SelectOne();
 			$this->response('Result is => '.$result);
 		}catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
 	}
 
@@ -32,7 +32,7 @@ class C_Websocket extends Controller {
             $users = $this->m_user->SelectAll();
             $this->response(JSON($users));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -42,7 +42,7 @@ class C_Websocket extends Controller {
             $news = $this->m_news->Select();
             $this->response(JSON($news));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -57,7 +57,7 @@ class C_Websocket extends Controller {
             $password = $this->getParam('password', FALSE);
             $this->response('Username => '.$username.', password => '.$password);
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -72,7 +72,7 @@ class C_Websocket extends Controller {
             $one_news = $this->m_news->SelectOne();
             $this->response(JSON($one_news));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -103,7 +103,7 @@ class C_Websocket extends Controller {
                 $this->response('ERRORRRRRRRRR');
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -134,7 +134,7 @@ class C_Websocket extends Controller {
             $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
             $this->response('Slave with suffix => '.JSON($user));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -171,7 +171,7 @@ class C_Websocket extends Controller {
             $rabbit = new RabbitMQ();
             $this->response('A Rabbit is running happily now');
         }catch (Throwable $e){
-            $this->error($e->getMessage());
+            $this->error($e);
         }
     }
     
@@ -207,7 +207,7 @@ class C_Websocket extends Controller {
                 $i++; sleep(1);
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -239,7 +239,7 @@ class C_Websocket extends Controller {
                 $i++; sleep(1);
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -261,7 +261,7 @@ class C_Websocket extends Controller {
             $user = $this->m_user->SelectByID('', 1);
             $this->response(JSON($user));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -271,7 +271,7 @@ class C_Websocket extends Controller {
             $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
             $this->response(' Suffix user => '.JSON($user));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -329,7 +329,7 @@ class C_Websocket extends Controller {
                 sleep(1);
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -349,7 +349,7 @@ class C_Websocket extends Controller {
                 $this->response('Key is required !');
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 }

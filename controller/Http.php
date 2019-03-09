@@ -17,7 +17,7 @@ class C_Http extends Controller {
 			$result = $this->m_player->SelectOne();
 			$this->response->end('Result is => '.$result);
 		}catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
     
@@ -45,7 +45,7 @@ class C_Http extends Controller {
 
             $this->response->end();
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -63,7 +63,7 @@ class C_Http extends Controller {
             $this->response->write('Task is running');
             $this->response->end();
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -80,7 +80,7 @@ class C_Http extends Controller {
             $users = $this->m_user->SelectAll();
             $this->response->end(JSON($users));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -97,7 +97,7 @@ class C_Http extends Controller {
             $news = $this->m_news->Select();
             $this->response->end(JSON($news));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -114,7 +114,7 @@ class C_Http extends Controller {
 
             $this->response->end('__DONE__');
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -149,10 +149,14 @@ class C_Http extends Controller {
     public function suffix(){
         $this->httpHeader();
         try{
-            $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
-            $this->response->end(' Suffix user => '.JSON($user));
+            $user = $this->load('User')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
+            $this->response->write(' Suffix with one user => '.JSON($user).'<br />');
+
+            $users = $this->load('User')->Suffix(38)->ClearSuffix()->Suffix(52)->Select();
+            $this->response->write(' Suffix with all users => '.JSON($users));
+            $this->response->end();
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -173,7 +177,33 @@ class C_Http extends Controller {
                 $this->response->end('Key is required !');
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
+		}
+    }
+
+    // 测试SQL 报错
+    public function sql(){
+        $this->httpHeader();
+        try{
+            $field = ['id', 'usernamex'];
+            $order = ['id' => 'DESC'];
+            $users = $this->m_user->Field($field)->Order($order)->Select();
+            if(!$users){
+                $this->response->write('NO USERS FOUND <br />');
+            }else{
+                $this->write(JSON($users).'<br />');
+            }
+
+            $this->response->write('All users <br />');
+            $users = $this->m_user->SelectAll();
+            $this->response->write(JSON($users).'<br />');
+
+            $this->response->write('One user <br />');
+            $user = $this->m_user->SelectByID('', 1);
+            $this->response->write(JSON($user));
+            $this->response->end();
+        }catch (Throwable $e){
+			$this->error($e);
 		}
     }
 }

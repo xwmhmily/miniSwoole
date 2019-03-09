@@ -33,19 +33,19 @@ $config = [
 	],
 
 	'tcp' => [
-		'enable' => FALSE,
-		'ip'     => '192.168.1.31',
+		'enable' => TRUE,
+		'ip'     => '127.0.0.1',
 		'port'   => 9501,
 	],
 
 	'udp' => [
 		'enable' => FALSE,
-		'ip'     => '192.168.1.31',
+		'ip'     => '127.0.0.1',
 		'port'   => 9510,
 	],
 
 	'http' => [
-		'enable' => TRUE,
+		'enable' => FALSE,
 		// 正常监听的端口
 		'ip'     => '127.0.0.1',
 		'port'   => 9100,
@@ -56,7 +56,7 @@ $config = [
 
 	'websocket' => [
 		'enable' => FALSE,
-		'ip'     => '192.168.1.31',
+		'ip'     => '127.0.0.1',
 		'port'   => 9509,
 	],
 

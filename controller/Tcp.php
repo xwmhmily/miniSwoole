@@ -18,11 +18,11 @@ class C_Tcp extends Controller {
 			$result = $this->m_player->SelectOne();
 			$this->response('Result is => '.$result);
 		}catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
 	}
 
-    // 使用 timer 定时 ping mysql
+    // Pong
     public function ping(){
         $this->response('PONG');
     }
@@ -33,7 +33,7 @@ class C_Tcp extends Controller {
             $users = $this->m_user->SelectAll();
             $this->response(JSON($users));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -43,18 +43,20 @@ class C_Tcp extends Controller {
             $news = $this->m_news->Select();
             $this->response(JSON($news));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
     // MySQL 压力测试
     public function stress(){
+        $max = 100000;
         $start_time = Logger::getMicrotime();
-        for($i = 1; $i <= 100000; $i++){
+        for($i = 1; $i <= $max; $i++){
             $news = $this->m_news->Select();
         }
         $end_time = Logger::getMicrotime();
-        $this->response('Time => '.($end_time - $start_time));
+        $cost = $end_time - $start_time;
+        $this->response('Time => '.$cost.', TPS => '.$max/$cost);
     }
 
     // tcp SelectAll
@@ -69,7 +71,7 @@ class C_Tcp extends Controller {
             $one_news = $this->m_news->SelectOne();
             $this->response(JSON($one_news));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -100,7 +102,7 @@ class C_Tcp extends Controller {
                 $this->response('ERRORRRRRRRRR');
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -120,18 +122,17 @@ class C_Tcp extends Controller {
                 $this->response('ERRORRRRRRRRR');
             }
 
-            $field = ['id', 'username', 'platform', 'device', 'addTime'];
+            $field = ['id', 'username', 'password', 'addTime'];
             $where = ['id' => 2];
             $user = $this->m_user->SetDB('SLAVE')->Field($field)->Where($where)->SelectOne();
             $this->response('Slave => '.JSON($user));
 
-            $field = ['id', 'mobile', 'summary', 'address'];
-            $where = ['companyID' => 38];
+            $where = ['status' => 1];
             $order = ['id' => 'DESC'];
-            $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
+            $user = $this->m_user->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
             $this->response('Slave with suffix => '.JSON($user));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -146,7 +147,7 @@ class C_Tcp extends Controller {
             $rabbit = new RabbitMQ();
             $this->response('A Rabbit is running happily now');
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
     
@@ -182,7 +183,7 @@ class C_Tcp extends Controller {
                 $i++; sleep(1);
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -215,7 +216,7 @@ class C_Tcp extends Controller {
                 $i++; sleep(1);
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -237,17 +238,17 @@ class C_Tcp extends Controller {
             $user = $this->m_user->SelectByID('', 1);
             $this->response(JSON($user));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
     // Suffix
     public function suffix(){
         try{
-            $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
+            $user = $this->load('User')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
             $this->response(' Suffix user => '.JSON($user));
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -264,21 +265,9 @@ class C_Tcp extends Controller {
                 $users = $this->m_user->SetDB('MASTER')->SelectAll();
                 $this->response(' Master => '.JSON($users));
 
-                // Slave
-                $admins = $this->load('Admin')->SetDB('SLAVE')->Select();
-                $this->response(' Slave => '.JSON($admins));
-
-                // Slave
-                $city = $this->load('City')->SetDB('SLAVE')->SelectOne();
-                $this->response(' Slave => '.JSON($city));
-
                 // Master
                 $user = $this->m_user->SelectByID('', 2);
                 $this->response(' Master => '.JSON($user));
-
-                // Slave
-                $company = $this->load('Company')->SetDB('SLAVE')->SelectOne();
-                $this->response(' Slave => '.JSON($company));
 
                 $key = $this->getParam('key');
                 $val = Cache::get($key);
@@ -305,7 +294,7 @@ class C_Tcp extends Controller {
                 sleep(1);
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 
@@ -325,7 +314,7 @@ class C_Tcp extends Controller {
                 $this->response('Key is required !');
             }
         }catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
     }
 }
