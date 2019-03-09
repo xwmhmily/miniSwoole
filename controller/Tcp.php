@@ -195,7 +195,7 @@ class C_Tcp extends Controller {
             $i = 1;
             while($i <= 100){
                 $user = $m_user->SetDB('SLAVE')->SelectOne();
-                $this->response('Slave => '.JSON($user));
+                $this->response('Slave first => '.JSON($user));
 
                 $user = $m_user->SetDB('MASTER')->SelectOne();
                 $this->response('Master => '.JSON($user));
