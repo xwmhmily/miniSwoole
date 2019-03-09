@@ -5,13 +5,13 @@ $config = [
 		'app_name'                 => 'Mini_Swoole',
 		'tb_prefix'                => 'sl_',
 		'tb_suffix_sf'             => '_',
-		'user'                     => 'www',
-		'group'                    => 'www',
+		//'user'                     => 'www',
+		//'group'                    => 'www',
 		'backlog'                  => 128,
 		'daemonize'                => 1,
-		'worker_num'               => 4,
+		'worker_num'               => 2,
 		'task_ipc_mode'            => 1,
-		'task_worker_num'          => 1,
+		'task_worker_num'          => 0,
 		'open_tcp_nodelay'         => 0,
 		'open_mqtt_protocol'       => 0,
 		'open_cpu_affinity'        => 1,
@@ -47,8 +47,8 @@ $config = [
 	'http' => [
 		'enable' => TRUE,
 		// 正常监听的端口
-		'ip'     => '192.168.1.31',
-		'port'   => 9703,
+		'ip'     => '127.0.0.1',
+		'port'   => 9100,
 		// 额外监听的端口
 		'listen_ip'   => '127.0.0.1',
 		'listen_port' => 9908,
@@ -61,25 +61,25 @@ $config = [
 	],
 
 	'mysql' => [
-		'db'   => 'test',
-		'host' => '192.168.1.34',
+		'db'   => 'tongshang',
+		'host' => '127.0.0.1',
 		'port' => 3306,
 		'user' => 'root',
-		'pwd'  => '123456',
+		'pwd'  => '123455',
 		'max'  => 2,
 	],
 
 	'mysql_slave' => [
-		'db'   => 'sound-link',
-		'host' => '192.168.1.34',
+		'db'   => 'tongshang',
+		'host' => '127.0.0.1',
 		'port' => 3306,
 		'user' => 'root',
-		'pwd'  => '123456',
+		'pwd'  => '123455',
 	],
 	
 	'redis' => [
 		'db'   => '0',
-		'host' => '192.168.1.31',
+		'host' => '127.0.0.1',
 		'port' => 6379,
 		'pwd'  => '123456',
 	],

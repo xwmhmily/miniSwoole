@@ -149,8 +149,8 @@ class C_Http extends Controller {
     public function suffix(){
         $this->httpHeader();
         try{
-            $customer = $this->load('Customer')->SetDB('SLAVE')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
-            $this->response->end(' Suffix Customer => '.JSON($customer));
+            $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
+            $this->response->end(' Suffix user => '.JSON($user));
         }catch (Throwable $e){
 			$this->error($e->getMessage());
 		}

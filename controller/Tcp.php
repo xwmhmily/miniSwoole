@@ -128,8 +128,8 @@ class C_Tcp extends Controller {
             $field = ['id', 'mobile', 'summary', 'address'];
             $where = ['companyID' => 38];
             $order = ['id' => 'DESC'];
-            $customer = $this->load('Customer')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
-            $this->response('Slave with suffix => '.JSON($customer));
+            $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
+            $this->response('Slave with suffix => '.JSON($user));
         }catch (Throwable $e){
 			$this->error($e->getMessage());
 		}
@@ -199,18 +199,18 @@ class C_Tcp extends Controller {
                 $user = $m_user->SetDB('MASTER')->SelectOne();
                 $this->response('Master => '.JSON($user));
 
-                $field = ['id', 'username', 'sex', 'realname', 'companyName'];
+                $field = ['id', 'username'];
                 $where = ['id' => 2];
                 $user = $m_user->SetDB('SLAVE')->Field($field)->Where($where)->SelectOne();
                 $this->response('Slave again => '.JSON($user));
 
-                $field = ['id', 'username', 'sex', 'realname', 'companyName'];
+                $field = ['id', 'username'];
                 $user = $m_user->SetDB('SLAVE')->SelectByID($field, 2);
                 $this->response('Slave by ID => '.JSON($user));
 
-                $field = ['id', 'mobile', 'companyID', 'poolTime'];
-                $customer = $this->load('Customer')->SetDB('SLAVE')->Field($field)->Suffix(38)->SelectOne();
-                $this->response('Slave with suffix => '.JSON($customer));
+                $field = ['id', 'username', 'password'];
+                $user = $this->load('User')->SetDB('SLAVE')->Field($field)->Suffix(38)->SelectOne();
+                $this->response('Slave with suffix => '.JSON($user));
 
                 $i++; sleep(1);
             }
@@ -244,8 +244,8 @@ class C_Tcp extends Controller {
     // Suffix
     public function suffix(){
         try{
-            $customer = $this->load('Customer')->SetDB('SLAVE')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
-            $this->response(' Suffix Customer => '.JSON($customer));
+            $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
+            $this->response(' Suffix user => '.JSON($user));
         }catch (Throwable $e){
 			$this->error($e->getMessage());
 		}
@@ -285,12 +285,12 @@ class C_Tcp extends Controller {
                 $this->response(' Redis => '.$val);
 
                 // Suffix
-                $customer = $this->load('Customer')->SetDB('SLAVE')->Suffix(38)->SelectOne();
-                $this->response(' Suffix Customer => '.JSON($customer));
+                $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->SelectOne();
+                $this->response(' Suffix user => '.JSON($user));
 
                 // What if errors occur
-                $customer = $this->load('Customer')->SetDB('SLAVE')->Suffix(52)->SelectOne();
-                $this->response(' Suffix Customer => '.JSON($customer));
+                $user = $this->load('User')->SetDB('SLAVE')->Suffix(52)->SelectOne();
+                $this->response(' Suffix user => '.JSON($user));
 
                 // Master
                 $user = $this->m_user->SelectByID('', 1);

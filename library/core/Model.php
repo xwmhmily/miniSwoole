@@ -531,11 +531,9 @@ abstract class Model {
 	final private function Execute() {
 		while(self::$retries < $this->retryMax){
 			if($this->db == 'MASTER'){
-				Logger::log('Query with Master');
 				$this->connect();
 				$this->result = self::$conn->query($this->sql);
 			}else{
-				Logger::log('Query with Slave');
 				$this->connectSlave();
 				$this->result = self::$slave->query($this->sql);
 			}
@@ -713,6 +711,7 @@ abstract class Model {
 	 * @return NULL
 	 */
 	final private function checkResult(){
+		$retry = FALSE;
 		if($this->db == 'MASTER'){
 			if (self::$conn->errorCode() == $this->successCode) {
 				$this->success = TRUE;
@@ -723,8 +722,6 @@ abstract class Model {
 				if(strpos($error[2], 'MySQL server has gone away') !== FALSE){
 					$retry = TRUE;
 					$this->reconnect();
-				}else{
-					$retry = FALSE;
 				}
 			}
 		}else{
@@ -737,8 +734,6 @@ abstract class Model {
 				if(strpos($error[2], 'MySQL server has gone away') !== FALSE){
 					$retry = TRUE;
 					$this->reconnect();
-				}else{
-					$retry = FALSE;
 				}
 			}
 		}

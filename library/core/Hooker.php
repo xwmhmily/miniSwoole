@@ -45,12 +45,17 @@ class Hooker {
     public static function onRequest(swoole_http_request $request, swoole_http_response $response){
         $method = strtoupper($request->server['request_method']);
         $request_uri = explode('/', $request->server['request_uri']);
+
+        $controller = $action = '';
         if($method == 'GET'){
             if(isset($request->get['controller'])){
                 $action     = trim($request->get['action']);
                 $controller = trim($request->get['controller']);
             }else{
-                $action     = trim($request_uri[2]);
+                if(isset($request_uri[2])){
+                    $action = trim($request_uri[2]);
+                }
+
                 $controller = trim($request_uri[1]);
             }
         }else if($method == 'POST'){
@@ -79,7 +84,9 @@ class Hooker {
                 $instance->request  = $request;
                 $instance->response = $response;
 
-                !$action && $action = 'index';
+                if(!$action){
+                    $action = 'index';
+                }
                 $instance->$action();
             }else{
                 $response->status('404');
