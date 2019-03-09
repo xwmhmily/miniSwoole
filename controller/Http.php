@@ -113,7 +113,7 @@ class C_Http extends Controller {
     // TO-DO: Call to a member function beginTransaction() on null
     public function transaction(){
         try{
-            $this->m_user->SetDB('MASTER')->BeginTransaction();
+            $this->m_user->BeginTransaction();
             $user = $this->m_user->SelectOne();
             $news = $this->m_news->Select();
 
