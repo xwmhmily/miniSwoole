@@ -11,7 +11,8 @@ class C_Udp extends Controller {
     }
 
     // 测试onError事件
-    // 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
+    // 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题
+    // 使用 try...catch(Throwable) 来处理
 	public function onError(){
 		try{
 			$result = $this->m_player->SelectOne();
@@ -21,11 +22,44 @@ class C_Udp extends Controller {
 		}
 	}
 
-    // 使用 timer 定时 ping mysql
+    // Pong
     public function ping(){
         $this->response('PONG');
     }
 
+    // Get all users
+    public function users(){
+        try{
+            $users = $this->m_user->SelectAll();
+            $this->response(JSON($users));
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
+
+    // Get all news
+    public function news(){
+        try{
+            $news = $this->m_news->Select();
+            $this->response(JSON($news));
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
+
+    // MySQL 压力测试
+    public function stress(){
+        $max = 100000;
+        $start_time = Logger::getMicrotime();
+        for($i = 1; $i <= $max; $i++){
+            $news = $this->m_news->Select();
+        }
+        $end_time = Logger::getMicrotime();
+        $cost = $end_time - $start_time;
+        $this->response('Time => '.$cost.', TPS => '.$max/$cost);
+    }
+
+    // tcp SelectAll
     public function all(){
         try{
             $users = $this->m_user->SelectAll();
@@ -75,8 +109,8 @@ class C_Udp extends Controller {
     // Transaction
     public function transaction(){
         try{
-            $this->m_user->BeginTransaction();
-            $user = $this->m_user->SetDB('MASTER')->SelectOne();
+            $this->m_user->SetDB('MASTER')->BeginTransaction();
+            $user = $this->m_user->SelectOne();
             $news = $this->m_news->Select();
 
             if($user && $news){
@@ -88,40 +122,18 @@ class C_Udp extends Controller {
                 $this->response('ERRORRRRRRRRR');
             }
 
-            $field = ['id', 'username', 'addTime'];
+            $field = ['id', 'username', 'password'];
             $where = ['id' => 2];
             $user = $this->m_user->SetDB('SLAVE')->Field($field)->Where($where)->SelectOne();
             $this->response('Slave => '.JSON($user));
 
             $where = ['status' => 1];
             $order = ['id' => 'DESC'];
-            $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
+            $user = $this->m_user->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
             $this->response('Slave with suffix => '.JSON($user));
         }catch (Throwable $e){
 			$this->error($e);
 		}
-    }
-
-    // Test process
-    public function process(){
-        $process = new swoole_process(function (swoole_process $process) {
-            $process->name("Mini_Swoole_process") && $process->daemon(1);
-
-            $i = 1;
-            $max = 100;
-            while($i <= $max){
-                Logger::log($i.' Process is running .....');
-                $i++; sleep(1);
-            }
-        }, 0);
-
-        $process->start();
-        $this->response->end('Process is running ......');
-    }
-
-    // Client info
-    public function client(){
-        $this->response(JSON($this->server->getClientInfo($this->fd)));
     }
 
     // Security
@@ -139,51 +151,6 @@ class C_Udp extends Controller {
 		}
     }
     
-    // Task 
-    public function Task(){
-        // Task
-        $args = [];
-        $args['controller']   = 'user';
-        $args['action']       = 'myTask';
-        $args['data']['line'] = __LINE__;
-        Task::add($args);
-
-        // Timer for test
-        Timer::add(2000, [$this, 'tick'], [__LINE__, Server::$type]);
-
-        // After timer
-        Timer::after(3000, [$this, 'after'], __METHOD__);
-
-        $this->response('DONE');
-    }
-
-    public function myTask($args){
-        $url = 'http://www.baidu.com';
-        $content = file_get_contents($url);
-        Logger::log($content);
-
-        /*
-        while(1){
-            Logger::log(__METHOD__);
-            Logger::log(JSON($args));
-            $news = $this->m_news->SelectOne();
-            Logger::log(JSON($news));
-            sleep(3);
-        }
-        */
-    }
-
-    public function tick(int $timerID, $args){
-        $this->response('Args in tick '.JSON($args));
-    }
-
-    // Timer after for test
-    public function after(){
-        Logger::log('Execute '.__METHOD__.' in after timer');
-        $news = $this->m_news->SelectOne();
-        Logger::log(JSON($news));
-    }
-
     // 测试 MySQL 自动断线重连及压测
     public function reconnect(){
         try{
@@ -213,21 +180,6 @@ class C_Udp extends Controller {
                 $u['remark'] = $i;
                 $news = $this->m_news->Where($where)->UpdateOne($u);
 
-                /*
-                $this->m_user->BeginTransaction();
-                $users = $this->m_user->SelectAll();
-                $news = $this->m_news->Select();
-
-                if($users && $news){
-                    $this->m_news->Commit();
-                    $this->response('Transaction => '.JSON($users).PHP_EOL);
-                    $this->response('Transaction => '.JSON($news).PHP_EOL);
-                }else{
-                    $this->m_news->Rollback();
-                    $this->response('ERRORRRRRRRRR');
-                }
-                */
-
                 $i++; sleep(1);
             }
         }catch (Throwable $e){
@@ -243,25 +195,26 @@ class C_Udp extends Controller {
             $i = 1;
             while($i <= 100){
                 $user = $m_user->SetDB('SLAVE')->SelectOne();
-                $this->response('Slave => '.JSON($user));
+                $this->response('Slave first => '.JSON($user));
 
+                // TO-DO: Call to a member function query() on null
                 $user = $m_user->SetDB('MASTER')->SelectOne();
                 $this->response('Master => '.JSON($user));
 
-                $field = ['id', 'username', 'password'];
+                $field = ['id', 'username'];
                 $where = ['id' => 2];
                 $user = $m_user->SetDB('SLAVE')->Field($field)->Where($where)->SelectOne();
                 $this->response('Slave again => '.JSON($user));
 
+                $field = ['id', 'username'];
                 $user = $m_user->SetDB('SLAVE')->SelectByID($field, 2);
                 $this->response('Slave by ID => '.JSON($user));
 
-                $field = ['id', 'username', 'addTime'];
+                $field = ['id', 'username', 'password'];
                 $user = $this->load('User')->SetDB('SLAVE')->Field($field)->Suffix(38)->SelectOne();
                 $this->response('Slave with suffix => '.JSON($user));
 
-                $i++; 
-                sleep(1);
+                $i++; sleep(1);
             }
         }catch (Throwable $e){
 			$this->error($e);
@@ -293,8 +246,8 @@ class C_Udp extends Controller {
     // Suffix
     public function suffix(){
         try{
-            $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
-            $this->response('Suffix user => '.JSON($user));
+            $user = $this->load('User')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
+            $this->response(' Suffix user => '.JSON($user));
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -313,27 +266,16 @@ class C_Udp extends Controller {
                 $users = $this->m_user->SetDB('MASTER')->SelectAll();
                 $this->response(' Master => '.JSON($users));
 
-                // Slave
-                $admins = $this->load('Admin')->SetDB('SLAVE')->Select();
-                $this->response(' Slave => '.JSON($admins));
-
-                // Slave
-                $city = $this->load('City')->SetDB('SLAVE')->SelectOne();
-                $this->response(' Slave => '.JSON($city));
-
                 // Master
                 $user = $this->m_user->SelectByID('', 2);
                 $this->response(' Master => '.JSON($user));
-
-                // Slave
-                $company = $this->load('Company')->SetDB('SLAVE')->SelectOne();
-                $this->response(' Slave => '.JSON($company));
 
                 $key = $this->getParam('key');
                 $val = Cache::get($key);
                 $this->response(' Redis => '.$val);
 
                 // Suffix
+                // TO-DO: Call to a member function query() on null
                 $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->SelectOne();
                 $this->response(' Suffix user => '.JSON($user));
 

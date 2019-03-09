@@ -109,8 +109,8 @@ class C_Tcp extends Controller {
     // Transaction
     public function transaction(){
         try{
-            $this->m_user->BeginTransaction();
-            $user = $this->m_user->SetDB('MASTER')->SelectOne();
+            $this->m_user->SetDB('MASTER')->BeginTransaction();
+            $user = $this->m_user->SelectOne();
             $news = $this->m_news->Select();
 
             if($user && $news){
@@ -122,7 +122,7 @@ class C_Tcp extends Controller {
                 $this->response('ERRORRRRRRRRR');
             }
 
-            $field = ['id', 'username', 'password', 'addTime'];
+            $field = ['id', 'username', 'password'];
             $where = ['id' => 2];
             $user = $this->m_user->SetDB('SLAVE')->Field($field)->Where($where)->SelectOne();
             $this->response('Slave => '.JSON($user));

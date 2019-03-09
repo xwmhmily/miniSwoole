@@ -11,7 +11,8 @@ class C_Websocket extends Controller {
     }
 
     // 测试onError事件
-    // 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
+    // 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题
+    // 使用 try...catch(Throwable) 来处理
 	public function onError(){
 		try{
 			$result = $this->m_player->SelectOne();
@@ -21,7 +22,7 @@ class C_Websocket extends Controller {
 		}
 	}
 
-    // 使用 timer 定时 ping mysql
+    // Pong
     public function ping(){
         $this->response('PONG');
     }
@@ -46,21 +47,19 @@ class C_Websocket extends Controller {
 		}
     }
 
-    // login 及参数过滤
-    public function login(){
-        try{
-            $username = $this->getParam('username');
-            $password = $this->getParam('password');
-            $this->response('Username => '.$username.', password => '.$password);
-
-            $username = $this->getParam('username', FALSE);
-            $password = $this->getParam('password', FALSE);
-            $this->response('Username => '.$username.', password => '.$password);
-        }catch (Throwable $e){
-			$this->error($e);
-		}
+    // MySQL 压力测试
+    public function stress(){
+        $max = 100000;
+        $start_time = Logger::getMicrotime();
+        for($i = 1; $i <= $max; $i++){
+            $news = $this->m_news->Select();
+        }
+        $end_time = Logger::getMicrotime();
+        $cost = $end_time - $start_time;
+        $this->response('Time => '.$cost.', TPS => '.$max/$cost);
     }
 
+    // tcp SelectAll
     public function all(){
         try{
             $users = $this->m_user->SelectAll();
@@ -110,8 +109,8 @@ class C_Websocket extends Controller {
     // Transaction
     public function transaction(){
         try{
-            $this->m_user->BeginTransaction();
-            $user = $this->m_user->SetDB('MASTER')->SelectOne();
+            $this->m_user->SetDB('MASTER')->BeginTransaction();
+            $user = $this->m_user->SelectOne();
             $news = $this->m_news->Select();
 
             if($user && $news){
@@ -123,41 +122,18 @@ class C_Websocket extends Controller {
                 $this->response('ERRORRRRRRRRR');
             }
 
-            $field = ['id', 'username', 'platform', 'device', 'addTime'];
+            $field = ['id', 'username', 'password'];
             $where = ['id' => 2];
             $user = $this->m_user->SetDB('SLAVE')->Field($field)->Where($where)->SelectOne();
             $this->response('Slave => '.JSON($user));
 
-            $field = ['id', 'mobile', 'summary', 'address'];
-            $where = ['companyID' => 38];
+            $where = ['status' => 1];
             $order = ['id' => 'DESC'];
-            $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
+            $user = $this->m_user->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
             $this->response('Slave with suffix => '.JSON($user));
         }catch (Throwable $e){
 			$this->error($e);
 		}
-    }
-
-    // Test process
-    public function process(){
-        $process = new swoole_process(function (swoole_process $process) {
-            $process->name("Mini_Swoole_process") && $process->daemon(1);
-
-            $i = 1;
-            $max = 100;
-            while($i <= $max){
-                Logger::log($i.' Process is running .....');
-                $i++; sleep(1);
-            }
-        }, 0);
-
-        $process->start();
-        $this->response('Process is running ......');
-    }
-
-    // Client info
-    public function client(){
-        $this->response(JSON($this->server->getClientInfo($this->fd)));
     }
 
     // Security
@@ -171,8 +147,8 @@ class C_Websocket extends Controller {
             $rabbit = new RabbitMQ();
             $this->response('A Rabbit is running happily now');
         }catch (Throwable $e){
-            $this->error($e);
-        }
+			$this->error($e);
+		}
     }
     
     // 测试 MySQL 自动断线重连及压测
@@ -219,20 +195,22 @@ class C_Websocket extends Controller {
             $i = 1;
             while($i <= 100){
                 $user = $m_user->SetDB('SLAVE')->SelectOne();
-                $this->response('Slave => '.JSON($user));
+                $this->response('Slave first => '.JSON($user));
 
+                // TO-DO: Call to a member function query() on null
                 $user = $m_user->SetDB('MASTER')->SelectOne();
                 $this->response('Master => '.JSON($user));
 
-                $field = ['id', 'username', 'password'];
+                $field = ['id', 'username'];
                 $where = ['id' => 2];
                 $user = $m_user->SetDB('SLAVE')->Field($field)->Where($where)->SelectOne();
                 $this->response('Slave again => '.JSON($user));
 
+                $field = ['id', 'username'];
                 $user = $m_user->SetDB('SLAVE')->SelectByID($field, 2);
                 $this->response('Slave by ID => '.JSON($user));
 
-                $field = ['id', 'username', 'addTime'];
+                $field = ['id', 'username', 'password'];
                 $user = $this->load('User')->SetDB('SLAVE')->Field($field)->Suffix(38)->SelectOne();
                 $this->response('Slave with suffix => '.JSON($user));
 
@@ -268,7 +246,7 @@ class C_Websocket extends Controller {
     // Suffix
     public function suffix(){
         try{
-            $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
+            $user = $this->load('User')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
             $this->response(' Suffix user => '.JSON($user));
         }catch (Throwable $e){
 			$this->error($e);
@@ -288,27 +266,16 @@ class C_Websocket extends Controller {
                 $users = $this->m_user->SetDB('MASTER')->SelectAll();
                 $this->response(' Master => '.JSON($users));
 
-                // Slave
-                $admins = $this->load('Admin')->SetDB('SLAVE')->Select();
-                $this->response(' Slave => '.JSON($admins));
-
-                // Slave
-                $city = $this->load('City')->SetDB('SLAVE')->SelectOne();
-                $this->response(' Slave => '.JSON($city));
-
                 // Master
                 $user = $this->m_user->SelectByID('', 2);
                 $this->response(' Master => '.JSON($user));
-
-                // Slave
-                $company = $this->load('Company')->SetDB('SLAVE')->SelectOne();
-                $this->response(' Slave => '.JSON($company));
 
                 $key = $this->getParam('key');
                 $val = Cache::get($key);
                 $this->response(' Redis => '.$val);
 
                 // Suffix
+                // TO-DO: Call to a member function query() on null
                 $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->SelectOne();
                 $this->response(' Suffix user => '.JSON($user));
 

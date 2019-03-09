@@ -88,7 +88,7 @@ class C_Http extends Controller {
             $one_news = $this->m_news->SelectOne();
             $this->response->write(JSON($one_news));
 
-            $this->response->write(PHP_EOL.'=============HERE IS TRANSACTION============='.PHP_EOL);
+            $this->response->write(PHP_EOL.'======= HERE IS TRANSACTION ========='.PHP_EOL);
 
             $this->m_user->BeginTransaction();
             $users = $this->m_user->SelectAll();
@@ -110,30 +110,31 @@ class C_Http extends Controller {
     }
 
     // Transaction
+    // TO-DO: Call to a member function beginTransaction() on null
     public function transaction(){
         try{
-            $this->m_user->BeginTransaction();
-            $user = $this->m_user->SetDB('MASTER')->SelectOne();
+            $this->m_user->SetDB('MASTER')->BeginTransaction();
+            $user = $this->m_user->SelectOne();
             $news = $this->m_news->Select();
 
             if($user && $news){
                 $this->m_news->Commit();
-                $this->response->write('Master => '.JSON($user));
-                $this->response->write('Master => '.JSON($news));
+                $this->response->write('Master user => '.JSON($user)."<br />");
+                $this->response->write('Master news => '.JSON($news)."<br />");
             }else{
                 $this->m_news->Rollback();
                 $this->response->write('ERRORRRRRRRRR');
             }
 
-            $field = ['id', 'username', 'password', 'addTime'];
+            $field = ['id', 'username', 'password'];
             $where = ['id' => 2];
-            $user = $this->m_user->SetDB('SLAVE')->Field($field)->Where($where)->SelectOne();
-            $this->response->write('Slave => '.JSON($user));
+            $user = $this->m_user->SetDB('SLAVE')->ClearSuffix()->Field($field)->Where($where)->SelectOne();
+            $this->response->write('Slave => '.JSON($user)."<br />");
 
             $where = ['status' => 1];
             $order = ['id' => 'DESC'];
             $user = $this->m_user->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
-            $this->response->write('Slave with suffix => '.JSON($user));
+            $this->response->write('Slave with suffix => '.JSON($user)."<br />");
             $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
@@ -142,7 +143,7 @@ class C_Http extends Controller {
 
     // Security
     public function security(){
-        $this->response->end(JSON($this->data));
+        $this->response->end(JSON($this->request));
     }
 
     // Autoload
@@ -171,14 +172,14 @@ class C_Http extends Controller {
                     $news = JSON($news);
                 }
 
-                $retval = $this->response->write($i.' => '.$news.PHP_EOL);
+                $retval = $this->response->write($i.' => '.$news.'<br />');
                 if(!$retval){
                     break;
                 }
 
                 $where  = ['id' => 2];
                 $news   = $this->m_news->Where($where)->SelectOne();
-                $retval = $this->response->write('Another '.JSON($news).PHP_EOL);
+                $retval = $this->response->write('Another '.JSON($news).'<br />');
 
                 $u = [];
                 $u['remark'] = $i;
@@ -230,22 +231,22 @@ class C_Http extends Controller {
     }
 
     // 测试SQL 报错
-    public function user(){
+    public function sql(){
         try{
             $field = ['id', 'usernamex'];
             $order = ['id' => 'DESC'];
             $users = $this->m_user->Field($field)->Order($order)->Select();
             if(!$users){
-                $this->response->write('NO USERS FOUND');
+                $this->response->write('NO USERS FOUND'.'<br />');
             }else{
-                $this->response->write(JSON($users));
+                $this->response->write(JSON($users).'<br />');
             }
 
             $users = $this->m_user->SelectAll();
-            $this->response->write(JSON($users));
+            $this->response->write(JSON($users).'<br />');
 
             $user = $this->m_user->SelectByID('', 1);
-            $this->response->write(JSON($user));
+            $this->response->write(JSON($user).'<br />');
             $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
@@ -256,7 +257,7 @@ class C_Http extends Controller {
     public function suffix(){
         try{
             $user = $this->load('User')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
-            $this->response->end(' Suffix user => '.JSON($user));
+            $this->response->end('Suffix user => '.JSON($user));
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -315,13 +316,14 @@ class C_Http extends Controller {
     public function redis(){
         try{
             $key = $this->getParam('key');
-            $this->response->write($key);
+            $this->response->write('Key => '.$key.'<br />');
             
             if($key){
-                while(1){
+                $i = 1;
+                while($i < 10){
                     $val = Cache::get($key);
-                    $this->response->write(date('Y-m-d H:i:s'). ' => '.$val);
-                    sleep(1);
+                    $this->response->write(date('Y-m-d H:i:s'). ' => '.$val.'<br />');
+                    $i++; sleep(1);
                 }
             }else{
                 $this->response->write('Key is required !');
