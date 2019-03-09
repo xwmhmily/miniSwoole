@@ -222,7 +222,7 @@ class C_Udp extends Controller {
     }
 
     // 测试SQL 报错
-    public function user(){
+    public function sql(){
         try{
             $field = ['id', 'usernamex'];
             $order = ['id' => 'DESC'];
