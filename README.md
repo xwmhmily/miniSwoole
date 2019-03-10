@@ -26,6 +26,7 @@
 
 #### 安装
 > Git clone 至任一目录
+> 创建数据库并导入SQL 文件
 
 #### CLI 命令
 > 启动: sh shell/socket.sh start <br />
