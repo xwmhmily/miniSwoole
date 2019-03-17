@@ -265,10 +265,8 @@ abstract class Model {
 		self::$retries = 0;
 		unset($this->options);
 
-		if(!$this->inTransaction()){
-			if(!$this->insert && $this->db == 'MASTER'){
-				$this->unshift();
-			}
+		if(!$this->inTransaction() && !$this->insert && $this->db == 'MASTER'){
+			$this->unshift();
 		}
 	}
 
