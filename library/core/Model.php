@@ -265,7 +265,6 @@ abstract class Model {
 		self::$retries = 0;
 		unset($this->options);
 
-		// TO-DO: A bug when DB is SLAVE
 		if(!$this->inTransaction()){
 			if(!$this->insert && $this->db == 'MASTER'){
 				$this->unshift();

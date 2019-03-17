@@ -197,7 +197,6 @@ class C_Udp extends Controller {
                 $user = $m_user->SetDB('SLAVE')->SelectOne();
                 $this->response('Slave first => '.JSON($user));
 
-                // TO-DO: Call to a member function query() on null
                 $user = $m_user->SetDB('MASTER')->SelectOne();
                 $this->response('Master => '.JSON($user));
 
@@ -275,7 +274,6 @@ class C_Udp extends Controller {
                 $this->response(' Redis => '.$val);
 
                 // Suffix
-                // TO-DO: Call to a member function query() on null
                 $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->SelectOne();
                 $this->response(' Suffix user => '.JSON($user));
 
