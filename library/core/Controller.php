@@ -36,22 +36,31 @@ abstract class Controller {
 
 	// Output error
 	protected function error($error, $errorCode = 500){
-		$rep['code'] = $errorCode;
 		if(ENV == 'DEV'){
-			$rep['error'] = $error->getMessage();
-			$rep['trace'] = $error->getTraceAsString();
-			$rep['debug'] = debug_print_backtrace();
+			$rep['Error']  = $error->getMessage();
+
+			$last_error    = Logger::$last_error;
+			$rep['Code']   = $last_error['errorNO'];
+			$rep['String'] = $last_error['errorStr'];
+			$rep['File']   = $last_error['errorFile'];
+			$rep['Line']   = $last_error['errorLine'];
+			$rep['Trace']  = $error->getTraceAsString();
 		}else{
+			$rep['code']  = $errorCode;
 			$rep['error'] = 'Internal Server Error';
 		}
 
-		$rep = JSON($rep);
 		if(Server::$type == Server::TYPE_HTTP){
 			$this->httpStatus($errorCode);
-			$this->response->write($rep);
+			foreach($rep as $key => $val){
+				$this->response->write($key. ' => '.$val.'<br />');
+			}
+
 			$this->response->end();
 		}else{
-			$this->response($rep);
+			foreach($rep as $key => $val){
+				$this->response($key. ' => '.$val.PHP_EOL);
+			}
 		}
 	}
 
