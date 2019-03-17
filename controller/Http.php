@@ -110,7 +110,6 @@ class C_Http extends Controller {
     }
 
     // Transaction
-    // TO-DO: Call to a member function beginTransaction() on null
     public function transaction(){
         try{
             $this->m_user->BeginTransaction();
@@ -194,32 +193,35 @@ class C_Http extends Controller {
 		}
     }
 
+    public function pool(){
+        $this->response->end(JSON(Pool::$pool[Pool::TYPE_MYSQL]));
+    }
+
     // MySQL slave
     public function slave(){
         try{
             $m_user = $this->load('User');
 
             $i = 1;
-            while($i <= 100){
+            while($i <= 3){
                 $user = $m_user->SetDB('SLAVE')->SelectOne();
-                $this->response->write('Slave first => '.JSON($user));
+                $this->response->write('Slave first => '.JSON($user).'<br />');
 
-                // TO-DO: Call to a member function query() on null
                 $user = $m_user->SetDB('MASTER')->SelectOne();
-                $this->response->write('Master => '.JSON($user));
+                $this->response->write('Master => '.JSON($user).'<br />');
 
                 $field = ['id', 'username'];
                 $where = ['id' => 2];
                 $user = $m_user->SetDB('SLAVE')->Field($field)->Where($where)->SelectOne();
-                $this->response->write('Slave again => '.JSON($user));
+                $this->response->write('Slave again => '.JSON($user).'<br />');
 
                 $field = ['id', 'username'];
                 $user = $m_user->SetDB('SLAVE')->SelectByID($field, 2);
-                $this->response->write('Slave by ID => '.JSON($user));
+                $this->response->write('Slave by ID => '.JSON($user).'<br />');
 
                 $field = ['id', 'username', 'password'];
                 $user = $this->load('User')->SetDB('SLAVE')->Field($field)->Suffix(38)->SelectOne();
-                $this->response->write('Slave with suffix => '.JSON($user));
+                $this->response->write('Slave with suffix => '.JSON($user).'<br />');
 
                 $i++; sleep(1);
             }
@@ -267,41 +269,40 @@ class C_Http extends Controller {
     public function connector(){
         try{
             for($i = 1; $i <= 100; $i++){
-                $this->response->write('=============='.$i.'==================='.PHP_EOL);
+                $this->response->write('=============='.$i.'===================<br />');
 
                 // Master
                 $news = $this->m_news->Select();
-                $this->response->write(' Master => '.JSON($news));
+                $this->response->write(' Master => '.JSON($news).'<br />');
 
                 $users = $this->m_user->SetDB('MASTER')->SelectAll();
-                $this->response->write(' Master => '.JSON($users));
+                $this->response->write(' Master => '.JSON($users).'<br />');
 
                 // Master
                 $user = $this->m_user->SelectByID('', 2);
-                $this->response->write(' Master => '.JSON($user));
+                $this->response->write(' Master => '.JSON($user).'<br />');
 
                 $key = $this->getParam('key');
                 $val = Cache::get($key);
-                $this->response->write(' Redis => '.$val);
+                $this->response->write(' Redis => '.$val.'<br />');
 
                 // Suffix
-                // TO-DO: Call to a member function query() on null
                 $user = $this->load('User')->SetDB('SLAVE')->Suffix(38)->SelectOne();
-                $this->response->write(' Suffix user => '.JSON($user));
+                $this->response->write(' Suffix user => '.JSON($user).'<br />');
 
                 // What if errors occur
                 $user = $this->load('User')->SetDB('SLAVE')->Suffix(52)->SelectOne();
-                $this->response->write(' Suffix user => '.JSON($user));
+                $this->response->write(' Suffix user => '.JSON($user).'<br />');
 
                 // Master
                 $user = $this->m_user->SelectByID('', 1);
-                $this->response->write(' Master => '.JSON($user));
+                $this->response->write(' Master => '.JSON($user).'<br />');
 
                 // Change Master to Slave, just call the SetDB()
                 $user = $this->m_user->SetDB('SLAVE')->SelectByID('', 1);
-                $this->response->write(' Slave => '.JSON($user));
+                $this->response->write(' Slave => '.JSON($user).'<br />');
 
-                $this->response->write(PHP_EOL.'==============='.$i.'============'.PHP_EOL);
+                $this->response->write(PHP_EOL.'==============='.$i.'============'.'<br />');
 
                 sleep(1);
             }

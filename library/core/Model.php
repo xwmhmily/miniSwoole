@@ -267,7 +267,7 @@ abstract class Model {
 
 		// TO-DO: A bug when DB is SLAVE
 		if(!$this->inTransaction()){
-			if(!$this->insert){
+			if(!$this->insert && $this->db == 'MASTER'){
 				$this->unshift();
 			}
 		}
