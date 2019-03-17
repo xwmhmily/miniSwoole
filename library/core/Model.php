@@ -488,7 +488,7 @@ abstract class Model {
 	 */
 	public function getInsertID() {
 		$lastInsertID = self::$conn->lastInsertId();
-		if(!$this->inTransaction()){
+		if(!$this->inTransaction() && $this->db == 'MASTER'){
 			$this->unshift();
 		}
 		$this->insert = FALSE;
