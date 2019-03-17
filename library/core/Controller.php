@@ -40,6 +40,7 @@ abstract class Controller {
 		if(ENV == 'DEV'){
 			$rep['error'] = $error->getMessage();
 			$rep['trace'] = $error->getTraceAsString();
+			$rep['debug'] = debug_print_backtrace();
 		}else{
 			$rep['error'] = 'Internal Server Error';
 		}
