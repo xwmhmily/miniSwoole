@@ -281,6 +281,16 @@
 ```
 
 #### MySQL
+```
+	'mysql' => [
+		'db'   => 'slave',
+		'host' => '192.168.1.34',
+		'port' => 3306,
+		'user' => 'root',
+		'pwd'  => '123456',
+        'max'  => 3,
+	],
+```
 > 1: 通过模型访问数据库<br />
 > 2: 控制器中使用 $this->m_user = $this->load('User'); 加载 User 模型<br />
 > 3: 使用链式操作 Filed($field)->Where($where)->Order($order)->Limit($limit) 构建 SQL<br />
@@ -291,6 +301,7 @@
 > 8: 断线自动重连3次<br />
 > 9: 通用模型(Default)减少复用性方法很少的模型文件<br />
 > 10: 示例为 model 下的 User.php 和 Default.php, 其中 Default 为默认通用模型文件
+> 11: 配置文件中的 max 是指每一个 worker 有多少个连接对象组成一个连接池
 
 ```
 <?php
@@ -348,7 +359,7 @@ class M_User extends Model {
 ```
 
 ### 分库
-> 为了减轻MySQL 主库压力, 有些时候有必要做读写分离，如何支持和切换主从呢? (注: 仅支持 Select 语句读从库) <br />
+> 为了减轻MySQL 主库压力, 有些时候有必要做读写分离，如何支持和切换主从呢? (注: 仅支持 Select 语句读从库, 因此从库的连接只有一个，并不像主库那样有连接池。当然，如果要实现从库也是连接池，也不难，改改即可) <br />
 > 1: config_ENV 中像 mysql 节点一样设置一个 mysql_slave <br />
 
 ```
