@@ -300,7 +300,7 @@
 > 7: BeginTransaction(), Commit(), Rollback() 操作事务<br />
 > 8: 断线自动重连3次<br />
 > 9: 通用模型(Default)减少复用性方法很少的模型文件<br />
-> 10: 示例为 model 下的 User.php 和 Default.php, 其中 Default 为默认通用模型文件
+> 10: 示例为 model 下的 User.php 和 Default.php, 其中 Default 为默认通用模型文件<br />
 > 11: 配置文件中的 max 是指每一个 worker 有多少个连接对象组成一个连接池
 
 ```
