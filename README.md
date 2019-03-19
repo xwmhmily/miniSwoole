@@ -110,16 +110,20 @@
 ```
     // login 及参数过滤
     public function login(){
-        // 过滤
-        $username = $this->getParam('username');
-        $password = $this->getParam('password');
+        try{
+            // 过滤
+            $username = $this->getParam('username');
+            $password = $this->getParam('password');
 
-        // 回复给客户端
-        $this->response('Username => '.$username.', password => '.$password);
+            // 回复给客户端
+            $this->response('Username => '.$username.', password => '.$password);
 
-        // 不过滤
-        $username = $this->getParam('username', FALSE);
-        $this->response('Username => '.$username.', password => '.$password);
+            // 不过滤
+            $username = $this->getParam('username', FALSE);
+            $this->response('Username => '.$username.', password => '.$password);
+        }catch (Throwable $e){
+            $this->error($e);
+        }
     }
 ```
 > 8: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
@@ -130,7 +134,7 @@
             $result = $this->m_player->SelectOne();
             $this->response('Result is => '.$result);
         }catch (Throwable $e){
-            $this->error($e->getMessage());
+            $this->error($e);
         }
     }
 ```
@@ -176,8 +180,12 @@
 ```
     // udp
     public function udp(){
-        $key = $this->getParam('key');
-        $this->response('Your key is '.$key);
+        try{
+            $key = $this->getParam('key');
+            $this->response('Your key is '.$key);
+        }catch (Throwable $e){
+            $this->error($e);
+        }
     }
 ```
 > 8: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
@@ -188,7 +196,7 @@
             $result = $this->m_player->SelectOne();
             $this->response('Result is => '.$result);
         }catch (Throwable $e){
-            $this->error($e->getMessage());
+            $this->error($e);
         }
     }
 ```
@@ -232,7 +240,7 @@
             $result = $this->m_player->SelectOne();
             $this->response('Result is => '.$result);
         }catch (Throwable $e){
-            $this->error($e->getMessage());
+            $this->error($e);
         }
     }
 ```
@@ -260,11 +268,15 @@
 ```
     // Select all users
     public function users(){
-        $users = $this->m_user->SelectAll();
-        $this->response(JSON($users));
+        try{
+            $users = $this->m_user->SelectAll();
+            $this->response(JSON($users));
 
-        $key = $this->getParam('key');
-        $this->response('Your key is '.$key);
+            $key = $this->getParam('key');
+            $this->response('Your key is '.$key);
+        }catch (Throwable $e){
+            $this->error($e);
+        }
     }
 ```
 > 8: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
@@ -275,7 +287,7 @@
             $result = $this->m_player->SelectOne();
             $this->response('Result is => '.$result);
         }catch (Throwable $e){
-            $this->error($e->getMessage());
+            $this->error($e);
         }
     }
 ```
@@ -314,34 +326,50 @@ class M_User extends Model {
     }
 
     public function SelectAll(){
-        $field = ['id', 'username', 'password'];
-        return $this->Field($field)->Select();
+        try{
+            $field = ['id', 'username', 'password'];
+            return $this->Field($field)->Select();
+        }catch (Throwable $e){
+            $this->error($e);
+        }
     }
 }
 ```
 
 ``` 
 	// 控制器中调用通用的方法
-	$this->m_user = $this->load('User');
-	$field = ['id', 'username'];
-	$where = ['status' => 1];
-	$order = ['id' => 'DESC'];
-	$users = $this->m_user->Field($field)->Where($where)->Order($order)->Select();
-	$this->response(JSON($users));
+    try{
+        $this->m_user = $this->load('User');
+        $field = ['id', 'username'];
+        $where = ['status' => 1];
+        $order = ['id' => 'DESC'];
+        $users = $this->m_user->Field($field)->Where($where)->Order($order)->Select();
+        $this->response(JSON($users));
+    }catch (Throwable $e){
+        $this->error($e);
+    }
 ```
 
 ``` 
     // 调用可复用的 SelectAll();
-    $users = $this->m_user->SelectAll();
-    $this->response(JSON($users));
+    try{
+        $users = $this->m_user->SelectAll();
+        $this->response(JSON($users));
+    }catch (Throwable $e){
+        $this->error($e);
+    }
 ```
 ```
     // 默认的通用模型使用, model 目录下并没有 News.php, 但一样可以这样使用
-    $this->m_news = $this->load('News');
-    $where = ['status' => 1];
-    $order = ['id' => 'DESC'];
-    $news = $this->m_news->Where($where)->Order($order)->Select();
-    $this->response(JSON($news));
+    try{
+        $this->m_news = $this->load('News');
+        $where = ['status' => 1];
+        $order = ['id' => 'DESC'];
+        $news = $this->m_news->Where($where)->Order($order)->Select();
+        $this->response(JSON($news));
+    }catch (Throwable $e){
+        $this->error($e);
+    }
 ```
 ```
     //复杂的SQL(join 等)使用原生的SQL来写，方便维护
@@ -386,11 +414,15 @@ class M_User extends Model {
 ```
 > 5: 来个长的链式操作
 ``` 
-    $field = ['id', 'mobile', 'summary', 'address'];
-    $where = ['companyID' => 38];
-    $order = ['id' => 'DESC'];
-    $customer = $this->load('Customer_ref')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
-    $this->response('Slave with suffix => '.JSON($customer));
+    try{
+        $field = ['id', 'mobile', 'summary', 'address'];
+        $where = ['companyID' => 38];
+        $order = ['id' => 'DESC'];
+        $customer = $this->load('Customer_ref')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
+        $this->response('Slave with suffix => '.JSON($customer));
+    }catch (Throwable $e){
+        $this->error($e);
+    }
 ```
 
 #### Redis
@@ -409,7 +441,7 @@ class M_User extends Model {
 			$rabbit = new RabbitMQ();
 			$this->response('A Rabbit is running happily now');
 		}catch (Throwable $e){
-			$this->error($e->getMessage());
+			$this->error($e);
 		}
 	}
 ```
@@ -436,11 +468,15 @@ tick 方法则这样接收, 然后使用Timer::clear($timerID);来清除定时�
 
 ```
 	public function tick(int $timerID, $args){
-		$this->response('Time in tick '.date("Y-m-d H:i:s\n"));
-		$this->response('Args in tick '.JSON($args));
+        try{
+            $this->response('Time in tick '.date("Y-m-d H:i:s\n"));
+            $this->response('Args in tick '.JSON($args));
 
-		// Clear timer
-		Timer::clear($timerID);
+            // Clear timer
+            Timer::clear($timerID);
+        }catch (Throwable $e){
+            $this->error($e);
+        }
 	}
 ```
 
