@@ -73,6 +73,8 @@ class MiniSwoole {
 		require_once CORE_PATH.'/Controller.php';
 
 		// Error log
+		error_reporting(E_ALL ^ E_NOTICE);
+		
 		$config = Config::getConfig();
 		define('LOG_FILE',   $config['common']['log_file']);
 		define('ERROR_FILE', $config['common']['error_file']);
