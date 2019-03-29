@@ -10,6 +10,18 @@ class C_Http extends Controller {
         $this->m_news = $this->load('News');
     }
 
+    public function log(){
+        Logger::debug('This is a debug msg');
+        Logger::info('This is an info msg');
+        Logger::warn('This is a warn msg');
+        Logger::error('This is an error msg');
+        Logger::fatal('This is a fatal msg');
+        Logger::log('This is a log msg');
+
+        $config = Config::getConfig();
+        $this->response->end('Current error_level => '.$config['common']['error_level']);
+    }
+
     // 测试onError事件
     // 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题
     // 使用 try...catch(Throwable) 来处理

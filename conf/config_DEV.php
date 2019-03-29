@@ -28,7 +28,8 @@ $config = [
 		'pid_file'   => __DIR__.'/../pid/swoole.pid',
 		'log_level'  => 3,
 		'log_file'   => '/var/log/app/mini_swoole_'.date('Y-m-d').'.log',
-		'error_file' => '/var/log/app/mini_swoole_error_'.date('Y-m-d').'.log',
+		'error_level'    => 2,
+		'error_file'     => '/var/log/app/mini_swoole_error_'.date('Y-m-d').'.log',
 		'mysql_log_file' => '/var/log/app/mini_swoole_mysql_'.date('Y-m-d').'.log',
 	],
 

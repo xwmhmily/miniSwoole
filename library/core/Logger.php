@@ -6,28 +6,78 @@
 
 abstract class Logger {
 
+    const LEVEL_DEBUG = 1;
+    const LEVEL_INFO  = 2;
+    const LEVEL_WARN  = 3;
+    const LEVEL_ERROR = 4;
+    const LEVEL_FATAL = 5;
+
     public static $last_error;
 
-    public static function error($msg) {
-        $error = date('Y-m-d H:i:s').' | '.self::getMicrotime().' | '.$msg.PHP_EOL;
-        file_put_contents(ERROR_FILE, $error, FILE_APPEND);        
+    public static function debug($msg){
+        self::appand(self::LEVEL_DEBUG, $msg);
     }
-    
-    public static function log($msg) {
-        $error = date('Y-m-d H:i:s').' | '.self::getMicrotime().' | ';
 
-        if(Server::$clientFD){
-            $client = Server::$instance->getClientInfo(Server::$clientFD);
-            $error .= $client['remote_ip'].' | ';
+    public static function info($msg){
+        self::appand(self::LEVEL_INFO, $msg);
+    }
+
+    // Alias of info
+    public static function log($msg){
+        self::appand(self::LEVEL_INFO, $msg);
+    }
+
+    public static function warn($msg){
+        self::appand(self::LEVEL_WARN, $msg);
+    }
+
+    public static function error($msg) {
+        self::appand(self::LEVEL_ERROR, $msg);
+    }
+
+    public static function fatal($msg){
+        self::appand(self::LEVEL_FATAL, $msg);
+    }
+
+    private static function appand($level, $msg){
+        $config = Config::getConfig();
+        $log_level = $config['common']['error_level'];
+        if($level < $log_level){
+            return;
+        }else{
+            $error_file = $config['common']['error_file'];
         }
 
-        $error .= $msg.PHP_EOL;
-        file_put_contents(LOG_FILE, $error, FILE_APPEND);        
+        switch($level){
+            case self::LEVEL_DEBUG:
+                $level_text = 'DEBUG';
+            break;
+
+            case self::LEVEL_INFO:
+                $level_text = 'INFO';
+            break;
+
+            case self::LEVEL_WARN:
+                $level_text = 'WARN';
+            break;
+
+            case self::LEVEL_ERROR:
+                $level_text = 'ERROR';
+            break;
+
+            case self::LEVEL_FATAL:
+                $level_text = 'FATAL';
+            break;
+        }
+
+        $error = date('Y-m-d H:i:s').' | '.self::getMicrotime().' | ' .$level_text.' | '.$msg.PHP_EOL;
+        file_put_contents($error_file, $error, FILE_APPEND);
     }
 
 	public static function logMySQL($msg) {
-        $error = date('Y-m-d H:i:s').' | '.self::getMicrotime().' | '.$msg.PHP_EOL;
-        file_put_contents(MYSQL_LOG_FILE, $error, FILE_APPEND);        
+        $config = Config::getConfig();
+        $error = date('Y-m-d H:i:s').' | '.self::getMicrotime().' | ERROR | '.$msg.PHP_EOL;
+        file_put_contents($config['common']['mysql_log_file'], $error, FILE_APPEND);        
     }
     
     // Get current microtime
@@ -44,11 +94,11 @@ abstract class Logger {
 
         // if(strpos($error, 'Undefinedindex') === FALSE && strpos($error, 'Undefinedvariable') === FALSE){
             if(!$sql){
-                self::log('ErrorNO: '.$errorNO);
-                self::log('Error: '.$errorStr);
-                self::log('File: '.$errorFile);
-                self::log('Line: '.$errorLine);
-                self::log(str_repeat('=', 80));
+                self::error('ErrorNO: '.$errorNO);
+                self::error('Error: '.$errorStr);
+                self::error('File: '.$errorFile);
+                self::error('Line: '.$errorLine);
+                self::error(str_repeat('=', 80));
             }else{
                 self::logMySQL('ErrorNO: '.$errorNO);
                 self::logMySQL('Error: '.$errorStr);
