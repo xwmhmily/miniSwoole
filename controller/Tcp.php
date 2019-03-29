@@ -24,7 +24,11 @@ class C_Tcp extends Controller {
 
     // Pong
     public function ping(){
-        $this->response('PONG');
+        try{
+            $this->response('PONG');
+        }catch (Throwable $e){
+			$this->error($e);
+		}
     }
 
     // Get all users
@@ -49,14 +53,18 @@ class C_Tcp extends Controller {
 
     // MySQL 压力测试
     public function stress(){
-        $max = 100000;
-        $start_time = Logger::getMicrotime();
-        for($i = 1; $i <= $max; $i++){
-            $news = $this->m_news->Select();
-        }
-        $end_time = Logger::getMicrotime();
-        $cost = $end_time - $start_time;
-        $this->response('Time => '.$cost.', TPS => '.$max/$cost);
+        try{
+            $max = 100000;
+            $start_time = Logger::getMicrotime();
+            for($i = 1; $i <= $max; $i++){
+                $news = $this->m_news->Select();
+            }
+            $end_time = Logger::getMicrotime();
+            $cost = $end_time - $start_time;
+            $this->response('Time => '.$cost.', TPS => '.$max/$cost);
+        }catch (Throwable $e){
+			$this->error($e);
+		}
     }
 
     // tcp SelectAll
@@ -138,7 +146,11 @@ class C_Tcp extends Controller {
 
     // Security
     public function security(){
-        $this->response(JSON($this->data));
+        try{
+            $this->response(JSON($this->data));
+        }catch (Throwable $e){
+			$this->error($e);
+		}
     }
 
     // Autoload
