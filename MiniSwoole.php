@@ -52,7 +52,7 @@ class MiniSwoole {
 	public function init(){
 		// Consts
 		define('TB_PK', 'id');
-		define('MINI_SWOOLE_VERSION', '1.0');
+		define('MINI_SWOOLE_VERSION', '2.0');
 		define('LIB_PATH',  APP_PATH.'/library');
 		define('CORE_PATH', LIB_PATH.'/core');
 		define('CONF_PATH', APP_PATH.'/conf');
