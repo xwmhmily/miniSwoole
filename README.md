@@ -453,6 +453,20 @@ class M_User extends Model {
 > 4: 任意地方调用 Logger::debug($msg); Logger::info($msg); Logger::warn($msg); Logger::error($msg); Logger::fatal($msg); 则将 $msg 以指定的级别写入 $config['common']['error_file']<br />
 > 5: SQL 的错误文件由 $config['common']['mysql_log_file'] 指定, 当执行SQL发生错误时，自动写入, 级别均为 ERROR<br />
 
+```
+public function log(){
+    Logger::debug('This is a debug msg');
+    Logger::info('This is an info msg');
+    Logger::warn('This is a warn msg');
+    Logger::error('This is an error msg');
+    Logger::fatal('This is a fatal msg');
+    Logger::log('This is a log msg');
+
+    $config = Config::getConfig();
+    $this->response->end('Current error_level => '.$config['common']['error_level']);
+}
+```
+
 ### 安全与过滤
 > 1: 控制器中使用 $this->getParam($key) 来获取请求的参数，比如 $username = $this->getParam('username'), 默认会对数据进行过滤，若不过滤，将第二个参数设置为 FALSE: $username = $this->getParam('username', FALSE) <br />
 > 2：getParam() 默认会进行 XSS 过滤, addslashes(), trim() <br />
