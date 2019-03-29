@@ -28,13 +28,13 @@ class Hooker {
         for($i = 1; $i <= $max; $i++){
             $retval = Pool::getInstance(Pool::TYPE_MYSQL);
             if($retval === FALSE){
-                Logger::log('Error: Worker '.$workerID.' fail to connect MySQL !');
+                Logger::error('Worker '.$workerID.' fail to connect MySQL !');
             }
         }
 
         $retval = Pool::getInstance(Pool::TYPE_REDIS);
         if($retval === FALSE){
-            Logger::log('Error: Worker '.$workerID.' fail to connect Redis !');
+            Logger::error('Worker '.$workerID.' fail to connect Redis !');
         }
 
         Worker::afterStart($server, $workerID);
@@ -211,7 +211,7 @@ class Hooker {
 
     // Worker error
 	public static function onWorkerError(swoole_server $serv, int $workerID, int $workerPID, int $exitCode, int $signal){
-		Logger::log('Worker '.$workerID.' exit with code '.$exitCode.' and signal '.$signal);
+		Logger::fatal('Worker '.$workerID.' exit with code '.$exitCode.' and signal '.$signal);
 	}
 
     // Worker stop

@@ -75,7 +75,7 @@ abstract class Pool {
             $mysql = new PDO($dsn, $user, $pwd);
         } catch (PDOException $e) {
         	Helper::raiseError(debug_backtrace(), $e->getMessage());
-        	Logger::log('Error: fail to init MySQL instance');
+        	Logger::error('Fail to init MySQL instance');
             return FALSE;
         }
 
@@ -93,14 +93,14 @@ abstract class Pool {
 		$redis  = new \Redis();
         $retval = $redis->connect($host, $port);
         if(!$retval){
-        	Logger::log('Error: fail to init Redis instance');
+        	Logger::error('Fail to init Redis instance');
             return FALSE;
         }
 
         if($pwd){
         	$auth_retval = $redis->auth($pwd);
         	if(!$auth_retval){
-        		Logger::log('Error: fail to auth Redis');
+        		Logger::error('Fail to auth Redis');
         		return FALSE;
         	}
         }
