@@ -447,9 +447,11 @@ class M_User extends Model {
 ```
 
 ### 日志
-> 1: PHP 的错误文件由 $config['common']['log_file'] 指定, 任意地方调用 Logger::log($msg) 即可写入日志<br />
-> 2: $config['common']['error_file'] 指定了可自定义的错误日志, 任意地方调用 Logger::error($msg) 即可写入日志, 这样可避免过多的日志数据定入 log_file, 更易于 Debug <br />
-> 3: SQL 的错误文件由 $config['common']['mysql_log_file'] 指定, 当执行SQL发生错误时，自动写入<br />
+> 1: 系统的错误文件由 $config['common']['log_file'] 指定<br />
+> 2: $config['common']['error_level'] 指定手动记录日志的级别, [1|2|3|4|5], 分别代表 DEBUG, INFO, WARN, ERROR, FATAL，低于规定的日志级别则不记录 <br />
+> 3: $config['common']['error_file'] 指定手动记录日志的文件<br />
+> 4: 任意地方调用 Logger::debug($msg); Logger::info($msg); Logger::warn($msg); Logger::error($msg); Logger::fatal($msg); 则将 $msg 以指定的级别写入 $config['common']['error_file']<br />
+> 5: SQL 的错误文件由 $config['common']['mysql_log_file'] 指定, 当执行SQL发生错误时，自动写入, 级别均为 ERROR<br />
 
 ### 安全与过滤
 > 1: 控制器中使用 $this->getParam($key) 来获取请求的参数，比如 $username = $this->getParam('username'), 默认会对数据进行过滤，若不过滤，将第二个参数设置为 FALSE: $username = $this->getParam('username', FALSE) <br />
