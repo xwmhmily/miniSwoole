@@ -77,8 +77,8 @@ class MiniSwoole {
 		
 		$config = Config::getConfig();
 		ini_set('log_errors', 'on');
+		ini_set('display_errors', 'off');
         ini_set('error_log', $config['common']['log_file']);
-        ini_set('display_errors', 'off');
         set_error_handler(['Logger', 'errorHandler'], E_ALL | E_STRICT);
 
         // APP_NAME
