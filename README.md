@@ -455,15 +455,19 @@ class M_User extends Model {
 
 ```
 public function log(){
-    Logger::debug('This is a debug msg');
-    Logger::info('This is an info msg');
-    Logger::warn('This is a warn msg');
-    Logger::error('This is an error msg');
-    Logger::fatal('This is a fatal msg');
-    Logger::log('This is a log msg');
+    try{
+        Logger::debug('This is a debug msg');
+        Logger::info('This is an info msg');
+        Logger::warn('This is a warn msg');
+        Logger::error('This is an error msg');
+        Logger::fatal('This is a fatal msg');
+        Logger::log('This is a log msg');
 
-    $config = Config::getConfig();
-    $this->response->end('Current error_level => '.$config['common']['error_level']);
+        $config = Config::getConfig();
+        $this->response->end('Current error_level => '.$config['common']['error_level']);
+    }catch (Throwable $e){
+        $this->error($e);
+    }
 }
 ```
 
