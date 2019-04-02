@@ -19,6 +19,8 @@ BLUE_COLOR='\E[1;34m'  #蓝
 PINK='\E[1;35m'        #粉红
 RES='\E[0m'
 
+cat logo.txt
+
 start() {
     SWOOLE_MASTER_PID=`cat $PID_FILE`
     if [ $SWOOLE_MASTER_PID ]; then
