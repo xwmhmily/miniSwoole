@@ -317,10 +317,12 @@ class C_Websocket extends Controller {
             $this->response($key);
             
             if($key){
-                while(1){
+                $i = 1;
+                while($i <= 10){
                     $val = Cache::get($key);
                     $this->response(date('Y-m-d H:i:s'). ' => '.$val);
                     sleep(1);
+                    $i++;
                 }
             }else{
                 $this->response('Key is required !');
