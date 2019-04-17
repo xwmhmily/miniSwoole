@@ -22,7 +22,7 @@ class C_Tcp extends Controller {
 		}
 	}
 
-    // Pong
+    // Ping and Pong
     public function ping(){
         try{
             $this->response('PONG');

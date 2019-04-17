@@ -22,7 +22,7 @@ class C_Websocket extends Controller {
 		}
 	}
 
-    // Pong
+    // Ping and Pong
     public function ping(){
         try{
             $this->response('PONG');
@@ -67,7 +67,7 @@ class C_Websocket extends Controller {
 		}
     }
 
-    // tcp SelectAll
+    // SelectAll
     public function all(){
         try{
             $users = $this->m_user->SelectAll();
