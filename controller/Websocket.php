@@ -314,13 +314,13 @@ class C_Websocket extends Controller {
     public function redis(){
         try{
             $key = $this->getParam('key');
-            $this->response($key);
+            $this->response('Key is '.$key.PHP_EOL);
             
             if($key){
                 $i = 1;
                 while($i <= 10){
                     $val = Cache::get($key);
-                    $this->response(date('Y-m-d H:i:s'). ' => '.$val);
+                    $this->response(date('Y-m-d H:i:s'). ' => '.$val.PHP_EOL);
                     sleep(1);
                     $i++;
                 }
