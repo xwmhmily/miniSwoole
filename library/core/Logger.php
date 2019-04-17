@@ -92,21 +92,19 @@ abstract class Logger {
         self::$last_error['errorFile'] = $errorFile;
         self::$last_error['errorLine'] = $errorLine;
 
-        // if(strpos($error, 'Undefinedindex') === FALSE && strpos($error, 'Undefinedvariable') === FALSE){
-            if(!$sql){
-                self::error('ErrorNO: '.$errorNO);
-                self::error('Error: '.$errorStr);
-                self::error('File: '.$errorFile);
-                self::error('Line: '.$errorLine);
-                self::error(str_repeat('=', 80));
-            }else{
-                self::logMySQL('ErrorNO: '.$errorNO);
-                self::logMySQL('Error: '.$errorStr);
-                self::logMySQL('File: '.$errorFile);
-                self::logMySQL('Line: '.$errorLine);
-                self::logMySQL('SQL: '.$sql);
-                self::logMySQL(str_repeat('=', 80));
-            }
-        //}
+        if(!$sql){
+            self::error('ErrorNO: '.$errorNO);
+            self::error('Error: '.$errorStr);
+            self::error('File: '.$errorFile);
+            self::error('Line: '.$errorLine);
+            self::error(str_repeat('=', 80));
+        }else{
+            self::logMySQL('ErrorNO: '.$errorNO);
+            self::logMySQL('Error: '.$errorStr);
+            self::logMySQL('File: '.$errorFile);
+            self::logMySQL('Line: '.$errorLine);
+            self::logMySQL('SQL: '.$sql);
+            self::logMySQL(str_repeat('=', 80));
+        }
 	}
 }

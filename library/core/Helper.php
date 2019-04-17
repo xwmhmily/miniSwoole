@@ -69,10 +69,8 @@ abstract class Helper {
 	 * @param string error to display
 	 * @param string error SQL statement
 	 * @return null
-	 * @remark: trace 进一步处理
 	 */
 	public static function raiseError($trace, $error, $sql = '') {
-		// 自定义错误编号
 		$errorNO   = 9999; 
 		$errorFile = $trace[0]['file'];
 		$errorLine = $trace[0]['line'];

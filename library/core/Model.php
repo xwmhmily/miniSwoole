@@ -4,9 +4,6 @@
  * Functionality: Core PDO model class
  * Author: 大眼猫
  * Date: 2013-2-28
- * Note:
- *	1 => This class requires PDO support !
- *	2 => $conn MUST BE set to static for transaction !
  */
 
 abstract class Model {
@@ -29,11 +26,8 @@ abstract class Model {
 	// The result of last operation: failure OR success
 	private $success = FALSE;
 
-	/**
-	 * Constructor
-	 */
 	function __construct() {
-		//$this->connect();
+		
 	}
 
 	private function connect(){
@@ -86,7 +80,6 @@ abstract class Model {
 		$str = '';
 		if(is_array($field)){
 			foreach($field as $val){
-				// 判断有没有 AS
 				if(strpos($val, strtoupper('as')) !== FALSE){
 					$str .= $val.',';
 				}else{
@@ -94,7 +87,7 @@ abstract class Model {
 				}
 			}
 
-			$this->options['field'] = substr($str, 0, strlen($str)-2); // 2:　Cos there is a BLANK
+			$this->options['field'] = substr($str, 0, strlen($str)-2);
 		}else{
 			$this->options['field'] = $field;
 		}
@@ -192,7 +185,6 @@ abstract class Model {
 
 		// 无限 WHERE
 		if(isset($this->options['where'])){
-			// 是否是 OR
 			if($this->options['or']){
 				$connector = ' OR ';
 				$this->options['or'] = FALSE;
@@ -773,7 +765,6 @@ abstract class Model {
 		return TRUE;
     }
 
-	// ********* Execute transaction ********* //
 	/**
 	 * Start a transaction
 	 *
@@ -820,7 +811,6 @@ abstract class Model {
 		self::$conn->rollBack();
 		$this->unshift();
 	}
-	// *************** End ***************** //
 
 	/**
 	 * Close master connection

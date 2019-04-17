@@ -77,22 +77,18 @@ abstract class Controller {
 		}
 	}
 
-	// HTTP header
 	protected function httpHeader(string $key = 'Content-Type', string $value = 'text/html; charset=utf-8'){
 		return $this->response->header($key, $value);
 	}
 
-	// HTTP cookie
 	protected function httpCookie(string $key, string $value = '', int $expire = 0, string $path = '/', string $domain = '', bool $secure = FALSE, bool $httpOnly = FALSE){
 		return $this->response->cookie($key, $value, $expire, $path, $domain, $secure, $httpOnly);
 	}
 
-	// HTTP status
 	protected function httpStatus(int $statusCode){
 		return $this->response->status($statusCode);
 	}
 
-	// HTTP gzip
 	protected function httpGzip(int $level = 1){
 		return $this->response->gzip($level);
 	}

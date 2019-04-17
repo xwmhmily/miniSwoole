@@ -38,7 +38,7 @@ class C_Http extends Controller {
 		}
 	}
 
-    // Pong
+    // Ping and Pong
     public function ping(){
         try{
             $this->response->end('PONG');
@@ -83,7 +83,7 @@ class C_Http extends Controller {
 		}
     }
 
-    // tcp SelectAll
+    // SelectAll
     public function all(){
         try{
             $users = $this->m_user->SelectAll();
@@ -124,7 +124,7 @@ class C_Http extends Controller {
                 $this->response->write(JSON($news));
             }else{
                 $this->m_news->Rollback();
-                $this->response->write('ERRORRRRRRRRR');
+                $this->response->write('ERRORRRRRRRRRRRRRR');
             }
 
             $this->response->end();
@@ -146,7 +146,7 @@ class C_Http extends Controller {
                 $this->response->write('Master news => '.JSON($news)."<br />");
             }else{
                 $this->m_news->Rollback();
-                $this->response->write('ERRORRRRRRRRR');
+                $this->response->write('ERRORRRRRRRRRRRRR');
             }
 
             $field = ['id', 'username', 'password'];
