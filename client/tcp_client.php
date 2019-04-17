@@ -5,9 +5,11 @@ $client = new Swoole\Client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
 
 $client->on("connect", function($cli){
     $d = [];
-    $d['controller']  = 'tcp';
-    $d['action']      = 'onError';
+    $d['module']      = 'api';
+    $d['controller']  = 'login';
+    $d['action']      = 'go';
     $d['key']         = 'foo';
+    $d['captcha']     = 'foo';
     $d['username'] = 'DELETE FROM sl_table <script>dym</script>';
     $d['password'] = md5(123456);
 

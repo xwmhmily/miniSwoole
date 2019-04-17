@@ -44,57 +44,63 @@ class Hooker {
     // Http onRequest, 将请求路由至控制器
     public static function onRequest(swoole_http_request $request, swoole_http_response $response){
         $method = strtoupper($request->server['request_method']);
+        if($method != 'GET' && $method != 'POST'){
+            $response->end('Error: Only GET and POST supported now !'); return;
+        }
+
+        $config  = Config::getConfig('common');
+        $modules = explode(',', $config['module']);
+
+        $module = $controller = $action = '';
         $request_uri = explode('/', $request->server['request_uri']);
 
-        $controller = $action = '';
-        if($method == 'GET'){
-            if(isset($request->get['controller'])){
-                $action     = trim($request->get['action']);
-                $controller = trim($request->get['controller']);
-            }else{
-                if(isset($request_uri[2])){
-                    $action = trim($request_uri[2]);
-                }
+        if(in_array($request_uri[1], $modules)){
+            $module = trim($request_uri[1]);
 
-                $controller = trim($request_uri[1]);
+            if(isset($request_uri[2])){
+                $controller = trim($request_uri[2]);
             }
-        }else if($method == 'POST'){
-            if(isset($request->post['controller'])){
-                $action     = trim($request->post['action']);
-                $controller = trim($request->post['controller']);
-            }else{
-                $action     = trim($request_uri[2]);
-                $controller = trim($request_uri[1]);
+
+            if(isset($request_uri[3])){
+                $action = trim($request_uri[3]);
             }
         }else{
-            $response->end('Error: Only GET and POST supported now !'); return;
+            if(isset($request_uri[1])){
+                $controller = trim($request_uri[1]);
+            }
+
+            if(isset($request_uri[2])){
+                $action = trim($request_uri[2]);
+            }
+        }
+
+        if(!$module){
+            $module = 'index';
         }
 
         if(!$controller){
             $controller = 'index';
         }
 
+        if(!$action){
+            $action = 'index';
+        }
+
         Worker::beforeRequest($method, $request, $response);
 
-        if($controller){
-            $instance = Helper::import($controller);
+        $instance = Helper::import($module, $controller);
+        if($instance !== FALSE){
+            $instance->method   = $method;
+            $instance->request  = $request;
+            $instance->response = $response;
 
-            if($instance !== FALSE){
-                $instance->method   = $method;
-                $instance->request  = $request;
-                $instance->response = $response;
+            $instance->$action();
+        }else{
+            $response->status('404');
 
-                if(!$action){
-                    $action = 'index';
-                }
-                $instance->$action();
-            }else{
-                $response->status('404');
-
-                $rep['code']  = 0;
-                $rep['error'] = 'Controller '.$controller.' not found';
-                $response->end(JSON($rep));
-            }
+            $rep['code']  = 0;
+            $rep['error'] = 'Controller '.$controller.' not found';
+            $response->end(JSON($rep));
         }
     }
 
@@ -114,9 +120,14 @@ class Hooker {
             foreach($data_list as $msg){
                 $data = json_decode($msg, TRUE);
                 if($data){
+                    $module = trim($data['module']);
+                    if(!$module){
+                        $module = 'index';
+                    }
+
                     $controller = trim($data['controller']);
                     if($controller){
-                        $instance = Helper::import($controller);
+                        $instance = Helper::import($module, $controller);
 
                         if($instance !== FALSE){
                             $instance->data   = $data;
@@ -146,9 +157,14 @@ class Hooker {
             $rep['error'] = 'Not valid JSON';
             $server->sendto($client['address'], $client['port'], JSON($rep));
         }else{
+            $module = trim($data['module']);
+            if(!$module){
+                $module = 'index';
+            }
+
             $controller = trim($data['controller']);
             if($controller){
-                $instance = Helper::import($controller);
+                $instance = Helper::import($module, $controller);
 
                 if($instance !== FALSE){
                     $instance->data   = $data;
@@ -182,9 +198,14 @@ class Hooker {
             $rep['error'] = 'Not valid JSON';
             $server->push($frame->fd, JSON($rep));
         }else{
+            $module = trim($data['module']);
+            if(!$module){
+                $module = 'index';
+            }
+
             $controller = trim($data['controller']);
             if($controller){
-                $instance = Helper::import($controller);
+                $instance = Helper::import($module, $controller);
 
                 if($instance !== FALSE){
                     $instance->data   = $data;

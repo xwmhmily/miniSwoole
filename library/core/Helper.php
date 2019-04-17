@@ -10,10 +10,14 @@ abstract class Helper {
 	
 	private static $controllers;
 
-	public static function import($controller){
-		$hash = sha1(trim($controller));
+	public static function import($module, $controller){
+		$hash = sha1($module.$controller);
 		if(!isset(self::$controllers[$hash])){
-			$file = APP_PATH .'/controller/'.ucfirst($controller).'.php';
+			if($module == 'index'){
+				$file = APP_PATH .'/controller/'.ucfirst($controller).'.php';
+			}else{
+				$file = APP_PATH .'/module/'.ucfirst($module).'/controller/'.ucfirst($controller).'.php';
+			}
 
 			if(file_exists($file)){
 				require_once $file;
