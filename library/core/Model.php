@@ -365,7 +365,7 @@ abstract class Model {
 		$sql .= "(`$sqlFieldStr`) VALUES $sqlValueStr";
 
 		$this->sql = $sql;
-		return self::$conn->exec($this->sql);
+		return $this->Execute();
 	}
 
 	/**
