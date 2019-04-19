@@ -24,6 +24,7 @@
 > 心跳检测<br />
 > 自动路由<br />
 > Hooker 与 Worker <br />
+> 多模块划分
 
 #### 环境要求
 > PHP >= 7.0 <br />
@@ -54,7 +55,9 @@
 > EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
 
 #### 使用
-> 采用 Controll-Model 模式, 所有的请求均转至 Controller下处理 <br />
+> 采用 Module-Controll-Model 模式, 所有的请求均转至 Module-Controller下处理 <br />
+> 默认 Module 为index, 无须声明, 对应的控制器文件位是根目录的 controller
+> 在配置文件的 module 中声明新模块，以英文逗号分隔，如 'Api, Admin, Mall, Shop', 对应的控制器文件是 /module/$moduleName/controller
 > Controller 中加载 Model 操作数据库 <br />
 > Worker.php 的 afterStart(), afterOpen(), afterClose(), afterConnect(), afterStop() 可在 worker start, onOpen, onClose, onConnect, work stop 后处理自定义业务
 
@@ -98,7 +101,7 @@
 
 #### TCP 服务之控制器
 > A: library 目录的 Worker::afterConnect(), Worker::afterClose() 负责处理 tcp 的 onConnect, onClose 事件<br />
-> B: 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 controller 及 action, 比如要指定由 Tcp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/tcp_client.php】
+> B: 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 module (默认是index, 可以忽略), controller 及 action, 比如要指定由 Tcp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/tcp_client.php】
 ```
 	$data = [];
 	$data['controller'] = 'tcp';
@@ -148,7 +151,7 @@
 ```
 
 #### UDP 服务之控制器
-> A: 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 controller 及 action, 比如要指定由 Udp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/udp_client.php】
+> A: 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 module(默认是index, 可以忽略), controller 及 action, 比如要指定由 Udp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/udp_client.php】
 
 ```
     $client = new Swoole\Client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
@@ -176,7 +179,7 @@
         
     });
 
-    $client->connect('192.168.1.31', 9502, 0.5);
+    $client->connect('127.0.0.1', 9502, 0.5);
 ```
 > 1: 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
 > 2: 如果 action 不存在, 客户端收到: Method $action not found<br />
@@ -210,27 +213,33 @@
 ```
 
 #### HTTP 服务之控制器
-> A: controller 目录的 Index.php/index(), 负责处理 http 的 index 事件<br />
-> B: 为了将控制权由 onRequest 路由至今控制器, 客户端应该在URL中指定处理该请求的 controller 及 action, 示例如下: 
+> A:根目录的 controller 的 Index.php/index(), 负责处理 http 的 index 事件<br />
+> B: 为了将控制权由 onRequest 路由至今控制器, 客户端应该在URL中指定处理该请求的 module (默认是index, 可以忽略), controller 及 action, 示例如下: 
 
 ``` 
     // ==== GET 的示例 ==== //
     // Index 控制器下的 index() 来处理, 也就是首页, 则URL
-    http://192.168.1.31:9503
+    http://127.0.0.1:9100
 
     // Http 控制器下的 index() 来处理, 并且带上GET参数, 则URL
-    http://192.168.1.31:9503/http?username=dym&password=123456
+    http://127.0.0.1:9100/http?username=dym&password=123456
 
     // Http 控制器下的 login() 来处理, 并且带上GET参数, 则URL
-    http://192.168.1.31:9503/http/login?username=dym&password=123456
+    http://127.0.0.1:9100/http/login?username=dym&password=123456
 
     // ==== POST 的示例 ==== //
-    $url = 'http://192.168.1.31:9503/http/login';
+    $url = 'http://127.0.0.1:9100/http/login';
     $postData = [];
     $postData['key'] = 'FOO';
 
     $retval = HttpClient::post($url, $postData);
     print_r($retval);
+
+    // Api模块的Login控制器下的 logout() 来处理, 则URL
+    http://127.0.0.1:9100/api/login/logout
+
+    // Api模块的User控制器下的 index() 来处理, 则URL
+    http://127.0.0.1:9100/api/user  
 ```
 > C: 可自行在library 目录的 Worker::beforeRequest() 中处理在 http request 前的业务<br />
 
@@ -239,7 +248,7 @@
 > 3: 暂时只支持 GET / POST 方法<br />
 > 4: 控制器的方法中调用 $this->response->write($rep) 将数据发送至客户端, write()可以调用多次, 最后使用 $this->response->end() 来结束这个请求 <br />
 > 5: 使用write分段发送数据后，end方法将不接受任何参数<br />
-> 6: 控制器的示例为 controller下的 Index.php 与 Http.php<br />
+> 6: 控制器的示例为 controller下的 Index.php 与 Http.php 及 module/Api/controller 下的 Login.php 和 User.php <br />
 > 7: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
@@ -257,7 +266,7 @@
 
 #### Websocket 服务之控制器
 > A: library 目录的 Worker::afterOpen() 负责处理 websocket 的 onOpen 事件<br />
-> B: 为了将控制权由 onMessage 转至控制器, 客户端发送的数据需要指定处理该请求的 controller 及 action, 比如要指定由 websocket 控制器下的 go() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/ws.html】
+> B: 为了将控制权由 onMessage 转至控制器, 客户端发送的数据需要指定处理该请求的module (默认是index, 可以忽略), controller 及 action, 比如要指定由 websocket 控制器下的 go() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/ws.html】
 
 ```
     var arr = {};
@@ -593,7 +602,7 @@ after 方法
 ```
 > 3: 最后就是连接服务端了, 示例文件 client/tcp_client.php
 ```
-    $client->connect('192.168.1.31', 9500);
+    $client->connect('127.0.0.1', 9500);
 ```
 
 #### UDP 客户端调用
@@ -635,7 +644,7 @@ after 方法
 4：最后就是连接
 
 ```
-    $client->connect('192.168.1.31', 9501);
+    $client->connect('127.0.0.1', 9501);
 ```
 
 #### Websocket 客户端调用
