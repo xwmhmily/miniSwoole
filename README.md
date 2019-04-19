@@ -9,43 +9,43 @@
 |_|  |_|_|_| |_|_| |____/ \_/\_/ \___/ \___/|_|\___|
 ```
 
-> 支持 TCP, UDP, HTTP, Websocket <br />
-> Master-Worker 模式<br />
-> Controller-Model 分层 <br />
-> MySQL 断线自动重连 <br />
-> Timer, Task 简易封装 <br />
-> MySQL, Redis 连接池<br />
-> MySQL 分表分库 <br />
-> JSON 作数据通信格式<br />
-> Shell 脚本控制服务<br />
-> Autoload<br />
-> 安全过滤<br />
-> 日志收集<br />
-> 心跳检测<br />
-> 自动路由<br />
-> Hooker 与 Worker <br />
-> 多模块划分
+- 支持 TCP, UDP, HTTP, Websocket <br />
+- Master-Worker 模式<br />
+- Controller-Model 分层 <br />
+- MySQL 断线自动重连 <br />
+- Timer, Task 简易封装 <br />
+- MySQL, Redis 连接池<br />
+- MySQL 分表分库 <br />
+- JSON 作数据通信格式<br />
+- Shell 脚本控制服务<br />
+- Autoload<br />
+- 安全过滤<br />
+- 日志收集<br />
+- 心跳检测<br />
+- 自动路由<br />
+- Hooker 与 Worker <br />
+- 多模块划分
 
 #### 环境要求
-> PHP >= 7.0 <br />
-> swoole, 建议 2.2.0 <br />
-> pdo <br />
-> redis <br />
-> pdo_mysql <br />
+- PHP >= 7.0 <br />
+- swoole, 建议 2.2.0 <br />
+- pdo <br />
+- redis <br />
+- pdo_mysql <br />
 
 #### 安装
-> Git clone 至任一目录
-> 创建数据库并导入SQL 文件
+- Git clone 至任一目录
+- 创建数据库并导入SQL 文件
 
 #### CLI 命令
-> 启动: sh shell/socket.sh start <br />
-> 状态: sh shell/socket.sh status <br />
-> 停止: sh shell/socket.sh stop <br />
-> 重启: sh shell/socket.sh restart <br />
-> Reload: sh shell/socket.sh reload, 重启所有Worker/Task进程 <br />
+- 启动: sh shell/socket.sh start <br />
+- 状态: sh shell/socket.sh status <br />
+- 停止: sh shell/socket.sh stop <br />
+- 重启: sh shell/socket.sh restart <br />
+- Reload: sh shell/socket.sh reload, 重启所有Worker/Task进程 <br />
 
 ### 心跳检测
-> 利用Crond 定时运行 shell/heartbeat.sh 即可<br />
+- 利用Crond 定时运行 shell/heartbeat.sh 即可<br />
 
 #### 配置
 > 配置文件是 conf/config_ENV.php, ENV 区分为 DEV, UAT, PRODUCTION, 在 Boostrap 的最开始定义, 请自行根据运行环境调整 <br />
