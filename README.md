@@ -48,11 +48,11 @@
 - 利用Crond 定时运行 shell/heartbeat.sh 即可<br />
 
 #### 配置
-> 配置文件是 conf/config_ENV.php, ENV 区分为 DEV, UAT, PRODUCTION, 在 Boostrap 的最开始定义, 请自行根据运行环境调整 <br />
-> common 为公共配置部分, 影响整体 <br />
-> http, tcp, udp, websocket, mysql, redis 配置 <br />
-> 配置文件的 key 务必使用小写字母 <br />
-> EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
+- 配置文件是 conf/config_ENV.php, ENV 区分为 DEV, UAT, PRODUCTION, 在 Boostrap 的最开始定义, 请自行根据运行环境调整 <br />
+- common 为公共配置部分, 影响整体 <br />
+- http, tcp, udp, websocket, mysql, redis 配置 <br />
+- 配置文件的 key 务必使用小写字母 <br />
+- EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
 
 #### 使用
 - 采用 Module-Controll-Model 模式, 所有的请求均转至 Module-Controller下处理 <br />
@@ -62,46 +62,46 @@
 - Worker.php 的 afterStart(), afterOpen(), afterClose(), afterConnect(), afterStop() 可在 worker start, onOpen, onClose, onConnect, work stop 后处理自定义业务
 
 #### TCP 服务
-> 将 tcp 段的enable 设置为 true, 其他服务设置为 false <br />
-> sh shell/socket.sh restart 重启服务 <br />
-> ps -ef | grep Mini 将看到 <br />
->> Mini_Swoole_tcp_master: 为 master 进程  <br />
->> Mini_Swoole_manager: 为 manager 进程<br />
->> Mini_Swoole_task: N 个 task 进程 <br />
->> Mini_Swoole_worker: M 个 worker 进程 <br />
+- 将 tcp 段的enable 设置为 true, 其他服务设置为 false <br />
+- sh shell/socket.sh restart 重启服务 <br />
+- ps -ef | grep Mini 将看到 <br />
+> Mini_Swoole_tcp_master: 为 master 进程  <br />
+> Mini_Swoole_manager: 为 manager 进程<br />
+> Mini_Swoole_task: N 个 task 进程 <br />
+> Mini_Swoole_worker: M 个 worker 进程 <br />
 
 #### UDP 服务
-> 将 udp 段的enable 设置为 true, 其他服务设置为 false <br />
-> sh shell/socket.sh restart 重启服务 <br />
-> ps -ef | grep Mini 将看到 <br />
->> Mini_Swoole_udp_master: 为 master 进程  <br />
->> Mini_Swoole_manager: 为 manager 进程<br />
->> Mini_Swoole_task: N 个 task 进程 <br />
->> Mini_Swoole_worker: M 个 worker 进程 <br />
+- 将 udp 段的enable 设置为 true, 其他服务设置为 false <br />
+- sh shell/socket.sh restart 重启服务 <br />
+- ps -ef | grep Mini 将看到 <br />
+> Mini_Swoole_udp_master: 为 master 进程  <br />
+> Mini_Swoole_manager: 为 manager 进程<br />
+> Mini_Swoole_task: N 个 task 进程 <br />
+> Mini_Swoole_worker: M 个 worker 进程 <br />
 
 #### HTTP 服务
-> 将 http 段的enable 设置为 true, 其他服务设置为 false <br />
-> sh shell/socket.sh restart 重启服务 <br />
-> ps -ef | grep Mini 将看到 <br />
->> Mini_Swoole_http_master: 为 master 进程  <br />
->> Mini_Swoole_manager: 为 manager 进程<br />
->> Mini_Swoole_task: N 个 task 进程 <br />
->> Mini_Swoole_worker: M 个 worker 进程 <br />
+- 将 http 段的enable 设置为 true, 其他服务设置为 false <br />
+- sh shell/socket.sh restart 重启服务 <br />
+- ps -ef | grep Mini 将看到 <br />
+> Mini_Swoole_http_master: 为 master 进程  <br />
+> Mini_Swoole_manager: 为 manager 进程<br />
+> Mini_Swoole_task: N 个 task 进程 <br />
+> Mini_Swoole_worker: M 个 worker 进程 <br />
 
 #### Websocket 服务
-> 将 websocket 段的enable 设置为 true, 其他服务设置为 false <br />
-> sh shell/socket.sh restart 重启服务 <br />
-> ps -ef | grep Mini 将看到 <br />
->> Mini_Swoole_websocket_master: 为 master 进程  <br />
->> Mini_Swoole_manager: 为 manager 进程<br />
->> Mini_Swoole_task: N 个 task 进程 <br />
->> Mini_Swoole_worker: M 个 worker 进程 <br />
+- 将 websocket 段的enable 设置为 true, 其他服务设置为 false <br />
+- sh shell/socket.sh restart 重启服务 <br />
+- ps -ef | grep Mini 将看到 <br />
+> Mini_Swoole_websocket_master: 为 master 进程  <br />
+> Mini_Swoole_manager: 为 manager 进程<br />
+> Mini_Swoole_task: N 个 task 进程 <br />
+> Mini_Swoole_worker: M 个 worker 进程 <br />
 
-> 注: N 和 M 由 $config['common']['worker_num'] 与 $config['common']['task_worker_num'] 指定 <br />
+##### 注: N 和 M 由 $config['common']['worker_num'] 与 $config['common']['task_worker_num'] 指定 <br />
 
 #### TCP 服务之控制器
-> A: library 目录的 Worker::afterConnect(), Worker::afterClose() 负责处理 tcp 的 onConnect, onClose 事件<br />
-> B: 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 module (默认是index, 可以忽略), controller 及 action, 比如要指定由 Tcp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/tcp_client.php】
+- library 目录的 Worker::afterConnect(), Worker::afterClose() 负责处理 tcp 的 onConnect, onClose 事件<br />
+- 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 module (默认是index, 可以忽略), controller 及 action, 比如要指定由 Tcp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/tcp_client.php】
 ```
 	$data = [];
 	$data['controller'] = 'tcp';
@@ -110,13 +110,13 @@
 	$data['password']   = md5(123456);
 	$cli->send(json_encode($data)."\r\n");
 ```
-> 1: 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
-> 2: 如果 action 不存在, 客户端收到: Method $action not found<br />
-> 3: 请以 $config['common']['package_eof'] 指定的方式分包, 默认是 \r\n <br />
-> 4: 控制器中的 $this->data 为客户端发过来的完整数据, 格式为数组 <br />
-> 5: 控制器的方法中调用 $this->response($rep) 将数据发送至客户端<br />
-> 6: 控制器的示例为 controller下的 Tcp.php<br />
-> 7: 更多 tcp server 信息请参考 https://wiki.swoole.com/wiki/page/p-server.html
+- 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
+- 如果 action 不存在, 客户端收到: Method $action not found<br />
+- 请以 $config['common']['package_eof'] 指定的方式分包, 默认是 \r\n <br />
+- 控制器中的 $this->data 为客户端发过来的完整数据, 格式为数组 <br />
+- 控制器的方法中调用 $this->response($rep) 将数据发送至客户端<br />
+- 控制器的示例为 controller下的 Tcp.php<br />
+- 更多 tcp server 信息请参考 https://wiki.swoole.com/wiki/page/p-server.html
 
 ```
     // login 及参数过滤
@@ -137,7 +137,7 @@
         }
     }
 ```
-> 8: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
+- 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
     public function onError(){
@@ -151,7 +151,7 @@
 ```
 
 #### UDP 服务之控制器
-> A: 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 module(默认是index, 可以忽略), controller 及 action, 比如要指定由 Udp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/udp_client.php】
+- 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 module(默认是index, 可以忽略), controller 及 action, 比如要指定由 Udp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/udp_client.php】
 
 ```
     $client = new Swoole\Client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
@@ -181,12 +181,12 @@
 
     $client->connect('127.0.0.1', 9502, 0.5);
 ```
-> 1: 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
-> 2: 如果 action 不存在, 客户端收到: Method $action not found<br />
-> 4: 控制器中的 $this->data 为客户端发过来的完整数据, 格式为数组 <br />
-> 5: 控制器的方法中调用 $this->response($rep) 将数据发送至客户端<br />
-> 6: 控制器的示例为 controller下的 Udp.php<br />
-> 7: 更多 udp server 信息请参考 https://wiki.swoole.com/wiki/page/p-server.html
+- 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
+- 如果 action 不存在, 客户端收到: Method $action not found<br />
+- 控制器中的 $this->data 为客户端发过来的完整数据, 格式为数组 <br />
+- 控制器的方法中调用 $this->response($rep) 将数据发送至客户端<br />
+- 控制器的示例为 controller下的 Udp.php<br />
+- 更多 udp server 信息请参考 https://wiki.swoole.com/wiki/page/p-server.html
 
 ```
     // udp
@@ -199,7 +199,7 @@
         }
     }
 ```
-> 8: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
+- 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
     public function onError(){
