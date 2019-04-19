@@ -241,8 +241,7 @@
     // Api模块的User控制器下的 index() 来处理, 则URL
     http://127.0.0.1:9100/api/user  
 ```
-- 可自行在library 目录的 Worker::beforeRequest() 中处理在 http request 前的业务<br />
-
+- 可自行在library 目录的 Worker::beforeRequest() 中处理在 http request 前的业务
 - 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
 - 如果 action 不存在, 客户端收到: Method $action not found<br />
 - 暂时只支持 GET / POST 方法<br />
