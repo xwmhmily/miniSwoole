@@ -26,6 +26,7 @@ class C_Login extends Controller {
 
     public function logout(){
         try{
+            // Destroy the token or session
             $this->response->end(__METHOD__);
         }catch (Throwable $e){
 			$this->error($e);
