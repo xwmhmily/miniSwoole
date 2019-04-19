@@ -55,11 +55,11 @@
 > EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
 
 #### 使用
-> 采用 Module-Controll-Model 模式, 所有的请求均转至 Module-Controller下处理 <br />
-> 默认 Module 为index, 无须声明, 对应的控制器文件位是根目录的 controller
-> 在配置文件的 module 中声明新模块，以英文逗号分隔，如 'Api, Admin, Mall, Shop', 对应的控制器文件是 /module/$moduleName/controller
-> Controller 中加载 Model 操作数据库 <br />
-> Worker.php 的 afterStart(), afterOpen(), afterClose(), afterConnect(), afterStop() 可在 worker start, onOpen, onClose, onConnect, work stop 后处理自定义业务
+- 采用 Module-Controll-Model 模式, 所有的请求均转至 Module-Controller下处理 <br />
+- 默认 Module 为index, 无须声明, 对应的控制器文件位是根目录的 controller<br />
+- 在配置文件的 module 中声明新模块，以英文逗号分隔，如 'Api, Admin, Mall, Shop', 对应的控制器文件是 /module/$moduleName/controller<br />
+- Controller 中加载 Model 操作数据库 <br />
+- Worker.php 的 afterStart(), afterOpen(), afterClose(), afterConnect(), afterStop() 可在 worker start, onOpen, onClose, onConnect, work stop 后处理自定义业务
 
 #### TCP 服务
 > 将 tcp 段的enable 设置为 true, 其他服务设置为 false <br />
