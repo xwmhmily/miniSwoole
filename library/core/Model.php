@@ -365,7 +365,7 @@ abstract class Model {
 		$sql .= "(`$sqlFieldStr`) VALUES $sqlValueStr";
 
 		$this->sql = $sql;
-		return $this->Execute();
+		return $this->Exec();
 	}
 
 	/**
@@ -537,7 +537,7 @@ abstract class Model {
 		}
 
 		$this->reset();
-		return TRUE;
+		return true;
 	}
 
 	/**

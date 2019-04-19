@@ -367,4 +367,32 @@ class C_Http extends Controller {
 			$this->error($e);
 		}
     }
+
+    public function QueryOne(){
+        $username = $this->getParam('username');
+        $user = $this->m_user->getUserByUsername($username);
+        $this->response->end(JSON($user));
+    }
+
+    public function multiInsert(){
+        $user = $users = [];
+
+        $user['username'] = 'Kobe';
+        $user['password'] = md5('Lakers');
+        $user['status']   = 1;
+        $users[] = $user;
+
+        $user['username'] = 'Curry';
+        $user['password'] = md5('Warriors');
+        $user['status']   = 1;
+        $users[] = $user;
+
+        $user['username'] = 'Thompson';
+        $user['password'] = md5('Warriors');
+        $user['status']   = 1;
+        $users[] = $user;
+
+        $retval = $this->m_user->multiInsert($users);
+        $this->response->end($retval);
+    }
 }
