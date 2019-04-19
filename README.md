@@ -213,8 +213,8 @@
 ```
 
 #### HTTP 服务之控制器
-> A:根目录的 controller 的 Index.php/index(), 负责处理 http 的 index 事件<br />
-> B: 为了将控制权由 onRequest 路由至今控制器, 客户端应该在URL中指定处理该请求的 module (默认是index, 可以忽略), controller 及 action, 示例如下: 
+- 根目录的 controller 的 Index.php/index(), 负责处理 http 的 index 事件<br />
+- 为了将控制权由 onRequest 路由至今控制器, 客户端应该在URL中指定处理该请求的 module (默认是index, 可以忽略), controller 及 action, 示例如下: 
 
 ``` 
     // ==== GET 的示例 ==== //
@@ -241,15 +241,15 @@
     // Api模块的User控制器下的 index() 来处理, 则URL
     http://127.0.0.1:9100/api/user  
 ```
-> C: 可自行在library 目录的 Worker::beforeRequest() 中处理在 http request 前的业务<br />
+- 可自行在library 目录的 Worker::beforeRequest() 中处理在 http request 前的业务<br />
 
-> 1: 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
-> 2: 如果 action 不存在, 客户端收到: Method $action not found<br />
-> 3: 暂时只支持 GET / POST 方法<br />
-> 4: 控制器的方法中调用 $this->response->write($rep) 将数据发送至客户端, write()可以调用多次, 最后使用 $this->response->end() 来结束这个请求 <br />
-> 5: 使用write分段发送数据后，end方法将不接受任何参数<br />
-> 6: 控制器的示例为 controller下的 Index.php 与 Http.php 及 module/Api/controller 下的 Login.php 和 User.php <br />
-> 7: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
+- 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
+- 如果 action 不存在, 客户端收到: Method $action not found<br />
+- 暂时只支持 GET / POST 方法<br />
+- 控制器的方法中调用 $this->response->write($rep) 将数据发送至客户端, write()可以调用多次, 最后使用 $this->response->end() 来结束这个请求 <br />
+- 使用write分段发送数据后，end方法将不接受任何参数<br />
+- 控制器的示例为 controller下的 Index.php 与 Http.php 及 module/Api/controller 下的 Login.php 和 User.php <br />
+- 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
     public function onError(){
@@ -262,11 +262,11 @@
     }
 ```
 
-> 8: 更多 http server 信息请参考 https://wiki.swoole.com/wiki/page/326.html
+- 更多 http server 信息请参考 https://wiki.swoole.com/wiki/page/326.html
 
 #### Websocket 服务之控制器
-> A: library 目录的 Worker::afterOpen() 负责处理 websocket 的 onOpen 事件<br />
-> B: 为了将控制权由 onMessage 转至控制器, 客户端发送的数据需要指定处理该请求的module (默认是index, 可以忽略), controller 及 action, 比如要指定由 websocket 控制器下的 go() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/ws.html】
+- library 目录的 Worker::afterOpen() 负责处理 websocket 的 onOpen 事件<br />
+- 为了将控制权由 onMessage 转至控制器, 客户端发送的数据需要指定处理该请求的module (默认是index, 可以忽略), controller 及 action, 比如要指定由 websocket 控制器下的 go() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/ws.html】
 
 ```
     var arr = {};
@@ -275,12 +275,12 @@
     arr.key        = $('#key').val();
     ws.send(JSON.stringify(arr));
 ```
-> 1: 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
-> 2: 如果 action 不存在, 客户端收到: Method $action not found<br />
-> 4: 控制器中的 $this->data 为客户端发过来的完整数据,<br />
-> 5: 控制器的方法中调用 $this->response($rep) 将数据发送至客户端<br />
-> 6: 控制器的示例为 controller下的 Websocket.php<br />
-> 7: 更多 websocket server 信息请参考 https://wiki.swoole.com/wiki/page/397.html
+- 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
+- 如果 action 不存在, 客户端收到: Method $action not found<br />
+- 控制器中的 $this->data 为客户端发过来的完整数据,<br />
+- 控制器的方法中调用 $this->response($rep) 将数据发送至客户端<br />
+- 控制器的示例为 controller下的 Websocket.php<br />
+- 更多 websocket server 信息请参考 https://wiki.swoole.com/wiki/page/397.html
 
 ```
     // Select all users
@@ -296,7 +296,7 @@
         }
     }
 ```
-> 8: 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
+- 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
 
 ```
     public function onError(){
@@ -320,17 +320,17 @@
         'max'  => 3,
 	],
 ```
-> 1: 通过模型访问数据库<br />
-> 2: 控制器中使用 $this->m_user = $this->load('User'); 加载 User 模型<br />
-> 3: 使用链式操作 Filed($field)->Where($where)->Order($order)->Limit($limit) 构建 SQL<br />
-> 4: Insert(), MultiInsert(), SelectOne(), Select(), UpdateOne(), Update(), UpdateByID(), DeleteOne(), Delete(), DeleteByID() <br />
-> 5: 根据ID 查询: SelectByID(), SelectFieldByID()<br />
-> 6: 执行复杂的 SQL: Query($sql), QueryOne($sql)<br />
-> 7: BeginTransaction(), Commit(), Rollback() 操作事务<br />
-> 8: 断线自动重连3次<br />
-> 9: 通用模型(Default)减少复用性方法很少的模型文件<br />
-> 10: 示例为 model 下的 User.php 和 Default.php, 其中 Default 为默认通用模型文件<br />
-> 11: 配置文件中的 max 是指每一个 worker 有多少个连接对象组成一个连接池
+- 通过模型访问数据库<br />
+- 控制器中使用 $this->m_user = $this->load('User'); 加载 User 模型<br />
+- 使用链式操作 Filed($field)->Where($where)->Order($order)->Limit($limit) 构建 SQL<br />
+- Insert(), MultiInsert(), SelectOne(), Select(), UpdateOne(), Update(), UpdateByID(), DeleteOne(), Delete(), DeleteByID() <br />
+- 根据ID 查询: SelectByID(), SelectFieldByID()<br />
+- 执行复杂的 SQL: Query($sql), QueryOne($sql)<br />
+- BeginTransaction(), Commit(), Rollback() 操作事务<br />
+- 断线自动重连3次<br />
+- 通用模型(Default)减少复用性方法很少的模型文件<br />
+- 示例为 model 下的 User.php 和 Default.php, 其中 Default 为默认通用模型文件<br />
+- 配置文件中的 max 是指每一个 worker 有多少个连接对象组成一个连接池
 
 ```
 <?php
@@ -397,15 +397,15 @@ class M_User extends Model {
 ```
 
 ### 分表
-> 调用 Suffix($tb_suffix) 即可, 如 customer 有 1 至 100 个表，分别是 customer_1, customer_2, .... customer_100, 模型有一个 M_Customer 即可, 访问分表 customer_38 像这样
+- 调用 Suffix($tb_suffix) 即可, 如 customer 有 1 至 100 个表，分别是 customer_1, customer_2, .... customer_100, 模型有一个 M_Customer 即可, 访问分表 customer_38 像这样
 ```
     1: config_ENV 中设置 tb_suffix_sf 为 _
     2: 代码中: $customer = $this->load('Customer')->Suffix(38)->SelectOne();
 ```
 
 ### 分库
-> 为了减轻MySQL 主库压力, 有些时候有必要做读写分离，如何支持和切换主从呢? (注: 仅支持 Select 语句读从库, 因此从库的连接只有一个，并不像主库那样有连接池。当然，如果要实现从库也是连接池，也不难，改改即可) <br />
-> 1: config_ENV 中像 mysql 节点一样设置一个 mysql_slave <br />
+- 为了减轻MySQL 主库压力, 有些时候有必要做读写分离，如何支持和切换主从呢? (注: 仅支持 Select 语句读从库, 因此从库的连接只有一个，并不像主库那样有连接池。当然，如果要实现从库也是连接池，也不难，改改即可) <br />
+- config_ENV 中像 mysql 节点一样设置一个 mysql_slave <br />
 
 ```
 	'mysql_slave' => [
@@ -417,19 +417,19 @@ class M_User extends Model {
 	],
 ```
 
-> 2: 代码中调用 SetDB('SLAVE') 后再 Select() <br />
+- 代码中调用 SetDB('SLAVE') 后再 Select() <br />
 ```
     $user = $this->load('User')->SetDB('SLAVE')->SelectOne();
 ```
-> 3: 调皮的你又想切换为 MASTER 呢
+- 调皮的你又想切换为 MASTER 呢
 ```
     $user = $this->load('User')->SetDB('MASTER')->SelectOne();
 ```
-> 4: 还可以结合分表一起使用
+- 还可以结合分表一起使用
 ```
     $customer = $this->load('Customer')->SetDB('SLAVE')->Suffix(38)->SelectOne();
 ```
-> 5: 来个长的链式操作
+- 来个长的链式操作
 ``` 
     try{
         $field = ['id', 'mobile', 'summary', 'address'];
@@ -443,14 +443,14 @@ class M_User extends Model {
 ```
 
 #### Redis
-> 1: Cache::get($key) <br />
-> 2: Cache::del($key) <br />
-> 3: Cache::set($key, $val) <br />
-> 4: 任意地方均可调用
+- Cache::get($key) <br />
+- Cache::del($key) <br />
+- Cache::set($key, $val) <br />
+- 任意地方均可调用
 
 ### Autoload
-> 1: 框架设置了 autoload 的目录是 library, 因此只要将类位于此目录下, 就能实现自动加载<br />
-> 2: 例如控制器中要实例化 RabbitMQ, 文件名是 /library/RabbitMQ.php
+- 框架设置了 autoload 的目录是 library, 因此只要将类位于此目录下, 就能实现自动加载<br />
+- 例如控制器中要实例化 RabbitMQ, 文件名是 /library/RabbitMQ.php
 ```
 	// Autoload 自动加载 RabbitMQ
 	public function rabbit(){
@@ -464,11 +464,11 @@ class M_User extends Model {
 ```
 
 ### 日志
-> 1: 系统的错误文件由 $config['common']['log_file'] 指定<br />
-> 2: $config['common']['error_level'] 指定手动记录日志的级别, [1|2|3|4|5], 分别代表 DEBUG, INFO, WARN, ERROR, FATAL，低于规定的日志级别则不记录 <br />
-> 3: $config['common']['error_file'] 指定手动记录日志的文件<br />
-> 4: 任意地方调用 Logger::debug($msg); Logger::info($msg); Logger::warn($msg); Logger::error($msg); Logger::fatal($msg); 则将 $msg 以指定的级别写入 $config['common']['error_file']<br />
-> 5: SQL 的错误文件由 $config['common']['mysql_log_file'] 指定, 当执行SQL发生错误时，自动写入, 级别均为 ERROR<br />
+- 系统的错误文件由 $config['common']['log_file'] 指定<br />
+- $config['common']['error_level'] 指定手动记录日志的级别, [1|2|3|4|5], 分别代表 DEBUG, INFO, WARN, ERROR, FATAL，低于规定的日志级别则不记录 <br />
+- $config['common']['error_file'] 指定手动记录日志的文件<br />
+- 任意地方调用 Logger::debug($msg); Logger::info($msg); Logger::warn($msg); Logger::error($msg); Logger::fatal($msg); 则将 $msg 以指定的级别写入 $config['common']['error_file']<br />
+- SQL 的错误文件由 $config['common']['mysql_log_file'] 指定, 当执行SQL发生错误时，自动写入, 级别均为 ERROR<br />
 
 ```
 public function log(){
@@ -489,15 +489,15 @@ public function log(){
 ```
 
 ### 安全与过滤
-> 1: 控制器中使用 $this->getParam($key) 来获取请求的参数，比如 $username = $this->getParam('username'), 默认会对数据进行过滤，若不过滤，将第二个参数设置为 FALSE: $username = $this->getParam('username', FALSE) <br />
-> 2：getParam() 默认会进行 XSS 过滤, addslashes(), trim() <br />
-> 3: 文件是 library/core/Security.php
+- 控制器中使用 $this->getParam($key) 来获取请求的参数，比如 $username = $this->getParam('username'), 默认会对数据进行过滤，若不过滤，将第二个参数设置为 FALSE: $username = $this->getParam('username', FALSE) <br />
+- getParam() 默认会进行 XSS 过滤, addslashes(), trim() <br />
+- 文件是 library/core/Security.php
 
 ### 普通方法
-> 1: 将要增加的方法写入 library/core/Function.php 即可随处调用
+- 将要增加的方法写入 library/core/Function.php 即可随处调用
 
 #### 定时器 Timer
-> 1: 控制器中想每2秒执行当前类的 tick() 方法, 并且传递 xyx 作为参数, 则这样做
+- 控制器中想每2秒执行当前类的 tick() 方法, 并且传递 xyx 作为参数, 则这样做
 ```
 	Timer::add(2000, [$this, 'tick'], 'xyz');
 ```
@@ -517,7 +517,7 @@ tick 方法则这样接收, 然后使用Timer::clear($timerID);来清除定时�
 	}
 ```
 
-> 2: 控制器中想5秒后执行当前类的 after() 方法, 则这样做。
+- 控制器中想5秒后执行当前类的 after() 方法, 则这样做。
 ```
     Timer::after(5000, [$this, 'after']);
 ```
@@ -532,7 +532,7 @@ after 方法
 ```
 
 #### 任务投递 Task
-> 1: 控制器user中要将数据投递到 task 且由当前类的 myTask() 来处理业务逻辑
+- 控制器user中要将数据投递到 task 且由当前类的 myTask() 来处理业务逻辑
 ```
 	// Task
     $args = [];
@@ -561,15 +561,15 @@ after 方法
 ```
 
 #### Process 与 MySQL 连接池
-> 1: 如果在 Worker 里启动一个 process, 在 process 里如何使用 MySQL 连接池及共用底层的 model 使用方式？请参见 controller/http/process 里的写法
+- 如果在 Worker 里启动一个 process, 在 process 里如何使用 MySQL 连接池及共用底层的 model 使用方式？请参见 controller/http/process 里的写法
 
 #### TCP 客户端调用
-> 1：初始化一个异步的tcp Swoole\Client
+- 初始化一个异步的tcp Swoole\Client
 ```
     $client = new Swoole\Client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
 ```
 
-> 2：设置回调, onReceive(), onConnect(), onClose(), onError()
+- 设置回调, onReceive(), onConnect(), onClose(), onError()
 
 ```
     $client->on("connect", function($cli){
@@ -600,19 +600,19 @@ after 方法
         echo "Connection close".PHP_EOL;
     });
 ```
-> 3: 最后就是连接服务端了, 示例文件 client/tcp_client.php
+- 最后就是连接服务端了, 示例文件 client/tcp_client.php
 ```
     $client->connect('127.0.0.1', 9500);
 ```
 
 #### UDP 客户端调用
-> 1：初始化一个异步的 udp Swoole\Client
+- 初始化一个异步的 udp Swoole\Client
 ```
     $client = new Swoole\Client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
 ```
 
-> 2：设置 onConnect(), onError(), onReceive(), OnClose() <br />
-> 3：onConnect() 中发送数据, onReceive() 中接收
+- 设置 onConnect(), onError(), onReceive(), OnClose() <br />
+- onConnect() 中发送数据, onReceive() 中接收
 
 ```
     $client->on("connect", function($cli){
@@ -648,8 +648,8 @@ after 方法
 ```
 
 #### Websocket 客户端调用
-> 1：支持 WebSocket 的现代浏览器 <br />
-> 2：onOpen() 后同样以 JSON 构造处理请求的 controller 与 action
+- 支持 WebSocket 的现代浏览器 <br />
+- onOpen() 后同样以 JSON 构造处理请求的 controller 与 action
 
 ```
     ws.onopen = function () {
@@ -661,11 +661,11 @@ after 方法
         ws.send(JSON.stringify(arr));
     };
 ```
-> 3：send() 之后 onmessage() 中接收数据
+- send() 之后 onmessage() 中接收数据
 
 ```
     ws.onmessage = function (event){
         console.log(event.data);
     }
 ```
-> 4：自行维持心跳机制, 示例文件 client/ws.html
+- 自行维持心跳机制, 示例文件 client/ws.html
