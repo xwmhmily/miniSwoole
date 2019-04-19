@@ -24,6 +24,14 @@ class C_Login extends Controller {
 		}
     }
 
+    public function logout(){
+        try{
+            $this->response->end(__METHOD__);
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
+
     // tcp / udp / websocket demo
     public function go(){
         try{
