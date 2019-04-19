@@ -9,6 +9,7 @@ class C_Login extends Controller {
     }
 
     // http demo
+    // URL: http://127.0.0.1:9100/api/login
     public function index(){
         try{
             $captcha  = $this->getParam('captcha');
@@ -24,6 +25,7 @@ class C_Login extends Controller {
 		}
     }
 
+    // URL: http://127.0.0.1:9100/api/login/logout
     public function logout(){
         try{
             // Destroy the token or session
@@ -34,6 +36,7 @@ class C_Login extends Controller {
     }
 
     // tcp / udp / websocket demo
+    // URL: http://127.0.0.1:9100/api/go
     public function go(){
         try{
             $captcha  = $this->getParam('captcha');

@@ -9,6 +9,7 @@ class C_User extends Controller {
     }
 
     // Profile
+    // URL: http://127.0.0.1:9100/api/user
     public function index(){
         try{
             $user = [];
