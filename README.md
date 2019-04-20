@@ -37,6 +37,15 @@
 - Git clone 至任一目录
 - 创建数据库并导入SQL 文件
 
+#### 配置
+- EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
+- 配置文件是 conf/config_ENV.php。 ENV 区分为 DEV, UAT, PRODUCTION, 请自行根据运行环境调整 <br />
+- common 为公共配置部分, 影响整体 <br />
+- 六个 $section 分为: http, tcp, udp, websocket, mysql, redis 配置 <br />
+- 配置文件的 key 务必使用小写字母 <br />
+- Init.php 中可自由配置业务需要的参数和常量
+- 任意地方均可使用 Config::getConfig($section) 来获取配置文件中 $section 的参数
+
 #### CLI 命令
 - 启动: sh shell/socket.sh start <br />
 - 状态: sh shell/socket.sh status <br />
@@ -46,15 +55,6 @@
 
 #### 心跳检测
 - 利用Crond 定时运行 shell/heartbeat.sh 即可<br />
-
-#### 配置
-- EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
-- 配置文件是 conf/config_ENV.php。 ENV 区分为 DEV, UAT, PRODUCTION, 请自行根据运行环境调整 <br />
-- common 为公共配置部分, 影响整体 <br />
-- 六个 $section 分为: http, tcp, udp, websocket, mysql, redis 配置 <br />
-- 配置文件的 key 务必使用小写字母 <br />
-- Init.php 中可自由配置业务需要的参数和常量
-- 任意地方均可使用 Config::getConfig($section) 来获取配置文件中 $section 的参数
 
 #### 使用
 - 采用 Module-Controll-Model 模式, 所有的请求均转至 Module-Controller下处理 <br />
