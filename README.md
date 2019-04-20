@@ -540,9 +540,6 @@ after 方法
     }
 ```
 
-#### Process 与 MySQL 连接池
-- 如果在 Worker 里启动一个 process, 在 process 里如何使用 MySQL 连接池及共用底层的 model 使用方式？请参见 controller/http/process 里的写法
-
 #### TCP 客户端调用
 - 初始化一个异步的tcp Swoole\Client
 ```
