@@ -13,8 +13,8 @@ class MiniSwoole {
 		$this->checkSapi();
 		$this->checkVersion();
 		$this->checkExtension();
-		$this->init();
 		$this->config();
+		$this->init();
 
 		return $this;
 	}
@@ -50,9 +50,7 @@ class MiniSwoole {
 		return TRUE;
 	}
 
-	// Init
-	public function init(){
-		// Consts
+	public function config(){
 		define('TB_PK', 'id');
 		define('MINI_SWOOLE_VERSION', '2.0');
 		define('LIB_PATH',  APP_PATH.'/library');
@@ -106,7 +104,7 @@ class MiniSwoole {
 		return $this;
 	}
 
-	public function config(){
+	public function Init(){
 		include APP_PATH.'/Init.php';
 		return $this;
 	}
