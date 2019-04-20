@@ -8,6 +8,7 @@
 | |  | | | | | | |  ___) \ V  V / (_) | (_) | |  __/
 |_|  |_|_|_| |_|_| |____/ \_/\_/ \___/ \___/|_|\___|
 ```
+<hr />
 
 - 支持 TCP, UDP, HTTP, Websocket <br />
 - Master-Worker 模式<br />
@@ -25,6 +26,7 @@
 - 自动路由<br />
 - Hooker 与 Worker <br />
 - 多模块划分
+<hr />
 
 #### 环境要求
 - PHP >= 7.0 <br />
@@ -32,10 +34,13 @@
 - pdo <br />
 - redis <br />
 - pdo_mysql <br />
+<hr />
 
 #### 安装
 - Git clone 至任一目录
 - 创建数据库并导入SQL 文件
+
+<hr />
 
 #### 配置
 - EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
@@ -45,6 +50,7 @@
 - 配置文件的 key 务必使用小写字母 <br />
 - Init.php 中可自由配置业务需要的参数和常量
 - 任意地方均可使用 Config::getConfig($section) 来获取配置文件中 $section 的参数
+<hr />
 
 #### CLI 命令
 - 启动: sh shell/socket.sh start <br />
@@ -52,9 +58,11 @@
 - 停止: sh shell/socket.sh stop <br />
 - 重启: sh shell/socket.sh restart <br />
 - Reload: sh shell/socket.sh reload, 重启所有Worker/Task进程 <br />
+<hr />
 
 #### 心跳检测
 - 利用Crond 定时运行 shell/heartbeat.sh 即可<br />
+<hr />
 
 #### 使用
 - 采用 Module-Controll-Model 模式, 所有的请求均转至 Module-Controller下处理 <br />
@@ -70,6 +78,7 @@
     > afterClose() : 在 tcp / udp 连接关闭后做一些的工作<br />
     > afterConnect(): 在 tcp 连接后做一些好玩的工作，写缓存或广播通知<br />
     > afterStop(): 在 worker 关闭后做一些日志性或清理动作，如清理相关的 Redis 缓存或广播通知<br />
+<hr />
 
 #### 日志和错误处理
 - 系统的错误文件由 $config['common']['log_file'] 指定<br />
@@ -117,6 +126,7 @@ File => /Users/user/Downloads/miniSwoole/controller/Http.php
 Line => 34
 Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http->onError() #1 {main}
 ```
+<hr />
 
 #### TCP 服务
 - 将 tcp 段的enable 设置为 true, 其他服务设置为 false <br />
@@ -127,6 +137,8 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
     > Mini_Swoole_task: N 个 task 进程 <br />
     > Mini_Swoole_worker: M 个 worker 进程 <br />
 
+<hr />
+
 #### UDP 服务
 - 将 udp 段的enable 设置为 true, 其他服务设置为 false <br />
 - sh shell/socket.sh restart 重启服务 <br />
@@ -135,6 +147,8 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
     > Mini_Swoole_manager: 为 manager 进程<br />
     > Mini_Swoole_task: N 个 task 进程 <br />
     > Mini_Swoole_worker: M 个 worker 进程 <br />
+
+<hr />
 
 #### HTTP 服务
 - 将 http 段的enable 设置为 true, 其他服务设置为 false <br />
