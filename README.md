@@ -48,11 +48,11 @@
 - 利用Crond 定时运行 shell/heartbeat.sh 即可<br />
 
 #### 配置
-- 配置文件是 conf/config_ENV.php, ENV 区分为 DEV, UAT, PRODUCTION, 在 Boostrap 的最开始定义, 请自行根据运行环境调整 <br />
+- EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
+- 配置文件是 conf/config_ENV.php。 ENV 区分为 DEV, UAT, PRODUCTION, 请自行根据运行环境调整 <br />
 - common 为公共配置部分, 影响整体 <br />
 - http, tcp, udp, websocket, mysql, redis 配置 <br />
 - 配置文件的 key 务必使用小写字母 <br />
-- EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
 - Init.php 中可自由配置业务需要的参数和常量
 
 #### 使用
