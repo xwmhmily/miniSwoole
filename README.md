@@ -252,7 +252,7 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
 - 可自行在library 目录的 Worker::beforeRequest() 中处理在 http request 前的业务
 - 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
 - 如果 action 不存在, 客户端收到: Method $action not found<br />
-- 控制器的方法中调用 $this->response->write($rep) 将数据发送至客户端, write()可以调用多次, 最后使用 $this->response->end() 来结束这个请求 <br />
+- 控制器的方法中调用 $this->response->write($rep) 将数据发送至客户端, 可以调用多次, 最后使用 $this->response->end() 来结束这个请求 <br />
 - 使用write分段发送数据后，end方法将不接受任何参数<br />
 - 控制器的示例为 controller下的 Index.php 与 Http.php 及 module/Api/controller 下的 Login.php 和 User.php <br />
 - 更多 http server 信息请参考 https://wiki.swoole.com/wiki/page/326.html
@@ -301,17 +301,16 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
         'max'  => 3,
 	],
 ```
-- 通过模型访问数据库<br />
-- 控制器中使用 $this->m_user = $this->load('User'); 加载 User 模型<br />
+- 断线自动重连3次<br />
+- 配置文件中的 max 是指每一个 worker 有多少个连接对象组成一个连接池
+- 控制器中使用 $this->m_user = $this->load('User'); 加载模型<br />
 - 使用链式操作 Filed($field)->Where($where)->Order($order)->Limit($limit) 构建 SQL<br />
 - Insert(), MultiInsert(), SelectOne(), Select(), UpdateOne(), Update(), UpdateByID(), DeleteOne(), Delete(), DeleteByID() <br />
 - 根据ID 查询: SelectByID(), SelectFieldByID()<br />
 - 执行复杂的 SQL: Query($sql), QueryOne($sql)<br />
 - BeginTransaction(), Commit(), Rollback() 操作事务<br />
-- 断线自动重连3次<br />
 - 通用模型(Default)减少复用性方法很少的模型文件<br />
 - 示例为 model 下的 User.php 和 Default.php, 其中 Default 为默认通用模型文件<br />
-- 配置文件中的 max 是指每一个 worker 有多少个连接对象组成一个连接池
 
 ```
 <?php
