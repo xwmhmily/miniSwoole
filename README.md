@@ -60,15 +60,15 @@
 - 默认 Module 为index, 无须声明, 对应的控制器文件位是根目录的 controller<br />
 - 在配置文件的 module 中声明新模块，以英文逗号分隔，如 'Api, Admin, Mall, Shop', 对应的控制器文件是 /module/$moduleName/controller<br />
 - 来看看 Worker.php 一些有用的函数
-  > beforeRequest(): 在正式将请求转让前做一些全局的工作，比如验证token, 并发数，来源IP等
-  > beforeMessage(): 与 beforeRequest() 类似，只不过仅当服务为 websocket 时有效
-  > beforePacket() : 与 beforeRequest() 类似，只不过仅当服务为 udp 时有效
-  > beforeReceieve() : 与 beforeRequest() 类似，只不过仅当服务为 tcp 时有效
-  > afterStart(): 在 worker 启动后做一些好玩的工作，比如设置定时器，创建其他服务的连接池等
-  > afterOpen(): 在 websocket 客户端与服务器建立连接并完成握手后会回调此函数
-  > afterClose() : 在 tcp / udp 连接关闭后做一些的工作
-  > afterConnect(): 在 tcp 连接后做一些好玩的工作，写缓存或广播通知
-  > afterStop(): 在 worker 关闭后做一些日志性或清理动作，如清理相关的 Redis 缓存或广播通知
+  > beforeRequest(): 在正式将请求转让前做一些全局的工作，比如验证token, 并发数，来源IP等<br />
+  > beforeMessage(): 与 beforeRequest() 类似，只不过仅当服务为 websocket 时有效<br />
+  > beforePacket() : 与 beforeRequest() 类似，只不过仅当服务为 udp 时有效<br />
+  > beforeReceieve() : 与 beforeRequest() 类似，只不过仅当服务为 tcp 时有效<br />
+  > afterStart(): 在 worker 启动后做一些好玩的工作，比如设置定时器，创建其他服务的连接池等<br />
+  > afterOpen(): 在 websocket 客户端与服务器建立连接并完成握手后会回调此函数<br />
+  > afterClose() : 在 tcp / udp 连接关闭后做一些的工作<br />
+  > afterConnect(): 在 tcp 连接后做一些好玩的工作，写缓存或广播通知<br />
+  > afterStop(): 在 worker 关闭后做一些日志性或清理动作，如清理相关的 Redis 缓存或广播通知<br />
 
 #### TCP 服务
 - 将 tcp 段的enable 设置为 true, 其他服务设置为 false <br />
