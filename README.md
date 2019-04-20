@@ -53,6 +53,7 @@
 - http, tcp, udp, websocket, mysql, redis 配置 <br />
 - 配置文件的 key 务必使用小写字母 <br />
 - EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
+- Init.php 中可自由配置业务需要的参数和常量
 
 #### 使用
 - 采用 Module-Controll-Model 模式, 所有的请求均转至 Module-Controller下处理 <br />

@@ -13,6 +13,8 @@ class MiniSwoole {
 		$this->checkSapi();
 		$this->checkVersion();
 		$this->checkExtension();
+		$this->init();
+		$this->config();
 
 		return $this;
 	}
@@ -104,12 +106,8 @@ class MiniSwoole {
 		return $this;
 	}
 
-	// Do something you want to, but DO NOT forget to return $this
 	public function config(){
-		// Here is your code 
-		
-
-		// Don't delete the next code
+		require APP_PATH.'/Init.php';
 		return $this;
 	}
 

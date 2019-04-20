@@ -8,4 +8,4 @@ date_default_timezone_set('Asia/Chongqing');
 require APP_PATH.'/MiniSwoole.php';
 
 $miniSwoole = new MiniSwoole();
-$miniSwoole->boostrap()->init()->config()->run();
+$miniSwoole->boostrap()->run();
