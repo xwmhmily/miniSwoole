@@ -513,7 +513,7 @@ after 方法
 
 #### 任务投递 Task
 - 以数组形式指定 callback 与 param, 调用 Task::add($args)
-- 以下例子投递一个 Task, 由 Importer 的 Run() 方法处理, 参数是 ['Lakers', 'Swoole', 'Westlife'];
+- 以下例子投递一个任务, 由 Importer 的 Run() 方法处理, 参数是 ['Lakers', 'Swoole', 'Westlife'];
 ```
 	public function task(){
         try{
