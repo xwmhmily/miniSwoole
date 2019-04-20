@@ -159,6 +159,8 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
     > Mini_Swoole_task: N 个 task 进程 <br />
     > Mini_Swoole_worker: M 个 worker 进程 <br />
 
+<hr />
+
 #### Websocket 服务
 - 将 websocket 段的enable 设置为 true, 其他服务设置为 false <br />
 - sh shell/socket.sh restart 重启服务 <br />
@@ -168,7 +170,11 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
     > Mini_Swoole_task: N 个 task 进程 <br />
     > Mini_Swoole_worker: M 个 worker 进程 <br />
 
+<hr />
+
 ##### 注: N 和 M 由 $config['common']['worker_num'] 与 $config['common']['task_worker_num'] 指定 <br />
+
+<hr />
 
 #### TCP 服务之控制器
 - library 目录的 Worker::afterConnect(), Worker::afterClose() 负责处理 tcp 的 onConnect, onClose 事件<br />
@@ -208,6 +214,8 @@ public function login(){
     }
 }
 ```
+
+<hr />
 
 #### UDP 服务之控制器
 - 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 module(默认是index, 可以忽略), controller 及 action, 比如要指定由 Udp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/udp_client.php】
@@ -258,6 +266,8 @@ public function udp(){
 }
 ```
 
+<hr />
+
 #### HTTP 服务之控制器
 - 根目录的 controller 的 Index.php/index(), 负责处理 http 的 index 事件, 也就是首页<br />
 - 为了将控制权由 onRequest 路由至控制器, 客户端应该在URL中指定处理该请求的 module (默认是index, 可以忽略), controller 及 action (默认是index, 可以忽略), 示例如下: 
@@ -296,6 +306,8 @@ http://127.0.0.1:9100/api/user
 - 控制器的示例为 controller下的 Index.php 与 Http.php 及 module/Api/controller 下的 Login.php 和 User.php <br />
 - 更多 http server 信息请参考 https://wiki.swoole.com/wiki/page/326.html
 
+<hr />
+
 #### Websocket 服务之控制器
 - library 目录的 Worker::afterOpen() 负责处理 websocket 的 onOpen 事件<br />
 - 为了将控制权由 onMessage 转至控制器, 客户端发送的数据需要指定处理该请求的module (默认是index, 可以忽略), controller 及 action, 比如要指定由 websocket 控制器下的 go() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/ws.html】
@@ -328,6 +340,7 @@ public function users(){
     }
 }
 ```
+<hr />
 
 #### MySQL
 ```
@@ -413,6 +426,7 @@ public function getOnlineUsers($roomID){
     return $this->Query($sql);
 }
 ```
+<hr />
 
 #### 分表
 - 调用 Suffix($tb_suffix) 即可, 如 customer 有 1 至 100 个表，分别是 customer_1, customer_2, .... customer_100, 模型有一个 M_Customer 即可, 访问分表 customer_38 像这样
@@ -420,6 +434,7 @@ public function getOnlineUsers($roomID){
 1: 配置文件中设置 tb_suffix_sf 为 _
 2: 代码中: $customer = $this->load('Customer')->Suffix(38)->SelectOne();
 ```
+<hr />
 
 #### 分库
 - 为了减轻MySQL 主库压力, 有些时候有必要做读写分离，如何支持和切换主从呢? (注: 仅支持 Select 语句读从库, 因此从库的连接只有一个，并不像主库那样有连接池。当然，如果要实现从库也是连接池，也不难，改改即可) <br />
@@ -460,11 +475,15 @@ try{
 }
 ```
 
+<hr />
+
 #### Redis
 - Cache::get($key) <br />
 - Cache::del($key) <br />
 - Cache::set($key, $val) <br />
 - 任意地方均可调用
+
+<hr />
 
 #### Autoload
 - 框架设置了 autoload 的目录是 library, 因此只要将类位于此目录下, 就能实现自动加载<br />
@@ -480,13 +499,19 @@ public function rabbit(){
 }
 ```
 
+<hr />
+
 #### 安全与过滤
 - 控制器中使用 $this->getParam($key) 来获取请求的参数，比如 $username = $this->getParam('username'), 默认会对数据进行过滤，若不过滤，将第二个参数设置为 FALSE: $username = $this->getParam('username', FALSE) <br />
 - getParam() 默认会进行 XSS 过滤, addslashes(), trim() <br />
 - 文件是 library/core/Security.php
 
+<hr />
+
 #### 普通方法
 - 将要增加的方法写入 library/core/Function.php 即可随处调用
+
+<hr />
 
 #### 定时器 Timer
 - 控制器中想每2秒执行当前类的 tick() 方法, 并且传递 xyx 作为参数, 则这样做
@@ -523,6 +548,8 @@ public function after(){
 }
 ```
 
+<hr />
+
 #### 任务投递 Task
 - 以数组形式指定 callback 与 param, 调用 Task::add($args)
 - 以下例子投递一个任务, 由 Importer 的 Run() 处理, 参数是 ['Lakers', 'Swoole', 'Westlife'];
@@ -553,6 +580,8 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
     Logger::log('taskID => '.$taskID.' => finish');
 }
 ```
+
+<hr />
 
 #### TCP 客户端
 - 初始化一个异步的tcp Swoole\Client
@@ -596,6 +625,8 @@ $client->on("close", function(swoole_client $cli){
 $client->connect('127.0.0.1', 9500);
 ```
 
+<hr />
+
 #### UDP 客户端
 - 初始化一个异步的 udp Swoole\Client
 ```
@@ -637,6 +668,8 @@ $client->on("close", function(swoole_client $cli){
 ```
 $client->connect('127.0.0.1', 9501);
 ```
+
+<hr />
 
 #### Websocket 客户端
 - 支持 WebSocket 的现代浏览器 <br />
