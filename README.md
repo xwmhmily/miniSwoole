@@ -456,7 +456,6 @@ try{
 - 框架设置了 autoload 的目录是 library, 因此只要将类位于此目录下, 就能实现自动加载<br />
 - 例如控制器中要实例化 RabbitMQ, 文件名是 /library/RabbitMQ.php
 ```
-// Autoload 自动加载 RabbitMQ
 public function rabbit(){
     try{
         $rabbit = new RabbitMQ();
