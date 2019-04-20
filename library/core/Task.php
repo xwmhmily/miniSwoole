@@ -12,6 +12,7 @@ abstract class Task {
 
 	public static function onTask(swoole_server $server, int $taskID, int $workerID, $args) {
 		call_user_func_array($args['callback'], $args['param']);
+		$server->finish($taskID);
 	}
 
 	public static function onFinish(swoole_server $server, int $taskID, string $data){
