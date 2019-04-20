@@ -369,30 +369,68 @@ class C_Http extends Controller {
     }
 
     public function QueryOne(){
-        $username = $this->getParam('username');
-        $user = $this->m_user->getUserByUsername($username);
-        $this->response->end(JSON($user));
+        try{
+            $username = $this->getParam('username');
+            $user = $this->m_user->getUserByUsername($username);
+            $this->response->end(JSON($user));
+        }catch (Throwable $e){
+			$this->error($e);
+		}
     }
 
     public function multiInsert(){
-        $user = $users = [];
+        try{
+            $user = $users = [];
 
-        $user['username'] = 'Kobe';
-        $user['password'] = md5('Lakers');
-        $user['status']   = 1;
-        $users[] = $user;
+            $user['username'] = 'Kobe';
+            $user['password'] = md5('Lakers');
+            $user['status']   = 1;
+            $users[] = $user;
 
-        $user['username'] = 'Curry';
-        $user['password'] = md5('Warriors');
-        $user['status']   = 1;
-        $users[] = $user;
+            $user['username'] = 'Curry';
+            $user['password'] = md5('Warriors');
+            $user['status']   = 1;
+            $users[] = $user;
 
-        $user['username'] = 'Thompson';
-        $user['password'] = md5('Warriors');
-        $user['status']   = 1;
-        $users[] = $user;
+            $user['username'] = 'Thompson';
+            $user['password'] = md5('Warriors');
+            $user['status']   = 1;
+            $users[] = $user;
 
-        $retval = $this->m_user->multiInsert($users);
-        $this->response->end($retval);
+            $retval = $this->m_user->multiInsert($users);
+            $this->response->end($retval);
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
+
+    public function timer(){
+        try{
+            $timerID = Timer::add(2000, [$this, 'tick'], ['xyz', 'abc', '123']);
+            $this->response->end('Timer has been set, id is => '.$timerID);
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
+
+    public function tick($timerID, $args){
+        try{
+            Logger::log('Args in '.__METHOD__.' => '.JSON($args));
+            Timer::clear($timerID);
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
+
+    public function task(){
+        try{
+            $args   = [];
+            $args['callback'] = ['Importer', 'Run'];
+            $args['param']    = ['Lakers', 'Swoole', 'Westlife'];
+            $taskID = Task::add($args);
+            $this->response->end('Task has been set, id is => '.$taskID);
+        }catch (Throwable $e){
+			$this->error($e);
+		}
     }
 }

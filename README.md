@@ -512,25 +512,31 @@ after 方法
 ```
 
 #### 任务投递 Task
-- 控制器user中要将数据投递到 task 且由当前类的 myTask() 来处理业务逻辑
+- 以数组形式指定 callback 与 param, 调用 Task::add($args)
+- 以下例子投递一个 Task, 由 Importer 的 Run() 方法处理, 参数是 ['Lakers', 'Swoole', 'Westlife'];
 ```
-	// Task
-    $args = [];
-    $args['controller']   = 'user';
-    $args['action']       = 'myTask';
-    $args['data']['line'] = __LINE__;
-    $args['data']['type'] = Server::$type;
-    Task::add($args);
+	public function task(){
+        try{
+            $args   = [];
+            $args['callback'] = ['Importer', 'Run'];
+            $args['param']    = ['Lakers', 'Swoole', 'Westlife'];
+            $taskID = Task::add($args);
+            $this->response->end('Task has been set, id is => '.$taskID);
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
 ```
-2: myTask 方法则这样接收参数, $args 仅包括 $args['data'] 中的数据, 不包括 controller 与 action, 因为并不需要包括了
 
 ```
-	public function myTask($args){
-		Logger::log(__METHOD__);
-		Logger::log(JSON($args));
-	}
+    class Importer {
+
+        public static function run(...$param){
+            Logger::log('Param in '.__METHOD__.' => '.JSON($param));
+        }
+    }
 ```
-3：当任务完成后, onFinish回调函数就派上用场了。任务完成时，task进程会将结果发送给onFinish函数，在由onFinish函数返回给worker
+2：当任务完成后, onFinish回调函数就派上用场了。任务完成时，task进程会将结果发送给onFinish函数，在由onFinish函数返回给worker
 ```
     // 文件: Task.php
     // $data 即为 onTask $server->finish($data) 的参数, 根据参数进行业务处理
