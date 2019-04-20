@@ -69,6 +69,18 @@
   > afterClose() : 在 tcp / udp 连接关闭后做一些的工作<br />
   > afterConnect(): 在 tcp 连接后做一些好玩的工作，写缓存或广播通知<br />
   > afterStop(): 在 worker 关闭后做一些日志性或清理动作，如清理相关的 Redis 缓存或广播通知<br />
+- 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
+
+```
+    public function onError(){
+        try{
+            $result = $this->m_player->SelectOne();
+            $this->response('Result is => '.$result);
+        }catch (Throwable $e){
+            $this->error($e);
+        }
+    }
+```
 
 #### TCP 服务
 - 将 tcp 段的enable 设置为 true, 其他服务设置为 false <br />
@@ -146,18 +158,6 @@
         }
     }
 ```
-- 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
-
-```
-    public function onError(){
-        try{
-            $result = $this->m_player->SelectOne();
-            $this->response('Result is => '.$result);
-        }catch (Throwable $e){
-            $this->error($e);
-        }
-    }
-```
 
 #### UDP 服务之控制器
 - 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 module(默认是index, 可以忽略), controller 及 action, 比如要指定由 Udp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/udp_client.php】
@@ -208,18 +208,6 @@
         }
     }
 ```
-- 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
-
-```
-    public function onError(){
-        try{
-            $result = $this->m_player->SelectOne();
-            $this->response('Result is => '.$result);
-        }catch (Throwable $e){
-            $this->error($e);
-        }
-    }
-```
 
 #### HTTP 服务之控制器
 - 根目录的 controller 的 Index.php/index(), 负责处理 http 的 index 事件<br />
@@ -257,19 +245,6 @@
 - 控制器的方法中调用 $this->response->write($rep) 将数据发送至客户端, write()可以调用多次, 最后使用 $this->response->end() 来结束这个请求 <br />
 - 使用write分段发送数据后，end方法将不接受任何参数<br />
 - 控制器的示例为 controller下的 Index.php 与 Http.php 及 module/Api/controller 下的 Login.php 和 User.php <br />
-- 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
-
-```
-    public function onError(){
-        try{
-            $result = $this->m_player->SelectOne();
-            $this->response('Result is => '.$result);
-        }catch (Throwable $e){
-            $this->error($e);
-        }
-    }
-```
-
 - 更多 http server 信息请参考 https://wiki.swoole.com/wiki/page/326.html
 
 #### Websocket 服务之控制器
@@ -299,18 +274,6 @@
 
             $key = $this->getParam('key');
             $this->response('Your key is '.$key);
-        }catch (Throwable $e){
-            $this->error($e);
-        }
-    }
-```
-- 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
-
-```
-    public function onError(){
-        try{
-            $result = $this->m_player->SelectOne();
-            $this->response('Result is => '.$result);
         }catch (Throwable $e){
             $this->error($e);
         }
