@@ -69,6 +69,31 @@
   > afterClose() : 在 tcp / udp 连接关闭后做一些的工作<br />
   > afterConnect(): 在 tcp 连接后做一些好玩的工作，写缓存或广播通知<br />
   > afterStop(): 在 worker 关闭后做一些日志性或清理动作，如清理相关的 Redis 缓存或广播通知<br />
+
+### 日志和错误处理
+- 系统的错误文件由 $config['common']['log_file'] 指定<br />
+- $config['common']['error_level'] 指定手动记录日志的级别, [1|2|3|4|5], 分别代表 DEBUG, INFO, WARN, ERROR, FATAL，低于规定的日志级别则不记录 <br />
+- $config['common']['error_file'] 指定手动记录日志的文件<br />
+- 任意地方调用 Logger::debug($msg); Logger::info($msg); Logger::warn($msg); Logger::error($msg); Logger::fatal($msg); 则将 $msg 以指定的级别写入 $config['common']['error_file']<br />
+- SQL 的错误文件由 $config['common']['mysql_log_file'] 指定, 当执行SQL发生错误时，自动写入, 级别均为 ERROR<br />
+
+```
+public function log(){
+    try{
+        Logger::debug('This is a debug msg');
+        Logger::info('This is an info msg');
+        Logger::warn('This is a warn msg');
+        Logger::error('This is an error msg');
+        Logger::fatal('This is a fatal msg');
+        Logger::log('This is a log msg');
+
+        $config = Config::getConfig();
+        $this->response->end('Current error_level => '.$config['common']['error_level']);
+    }catch (Throwable $e){
+        $this->error($e);
+    }
+}
+```
 - 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 控制器中使用 try...catch(Throwable) 来处理
 
 ```
@@ -441,31 +466,6 @@ class M_User extends Model {
 			$this->error($e);
 		}
 	}
-```
-
-### 日志
-- 系统的错误文件由 $config['common']['log_file'] 指定<br />
-- $config['common']['error_level'] 指定手动记录日志的级别, [1|2|3|4|5], 分别代表 DEBUG, INFO, WARN, ERROR, FATAL，低于规定的日志级别则不记录 <br />
-- $config['common']['error_file'] 指定手动记录日志的文件<br />
-- 任意地方调用 Logger::debug($msg); Logger::info($msg); Logger::warn($msg); Logger::error($msg); Logger::fatal($msg); 则将 $msg 以指定的级别写入 $config['common']['error_file']<br />
-- SQL 的错误文件由 $config['common']['mysql_log_file'] 指定, 当执行SQL发生错误时，自动写入, 级别均为 ERROR<br />
-
-```
-public function log(){
-    try{
-        Logger::debug('This is a debug msg');
-        Logger::info('This is an info msg');
-        Logger::warn('This is a warn msg');
-        Logger::error('This is an error msg');
-        Logger::fatal('This is a fatal msg');
-        Logger::log('This is a log msg');
-
-        $config = Config::getConfig();
-        $this->response->end('Current error_level => '.$config['common']['error_level']);
-    }catch (Throwable $e){
-        $this->error($e);
-    }
-}
 ```
 
 ### 安全与过滤
