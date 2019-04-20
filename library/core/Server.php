@@ -7,7 +7,6 @@
 abstract class Server {
 
 	public static $type;
-	public static $clientFD;
 	public static $instance;
 
 	const TYPE_TCP        = 'tcp';

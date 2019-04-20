@@ -130,9 +130,9 @@ class Hooker {
                         $instance = Helper::import($module, $controller);
 
                         if($instance !== FALSE){
+                            $instance->fd     = $fd;
                             $instance->data   = $data;
                             $instance->server = $server;
-                            $instance->fd = Server::$clientFD = $fd;
 
                             $action = trim($data['action']);
                             !$action && $action = 'index';
