@@ -480,7 +480,7 @@ public function rabbit(){
 #### 定时器 Timer
 - 控制器中想每2秒执行当前类的 tick() 方法, 并且传递 xyx 作为参数, 则这样做
 ```
-	Timer::add(2000, [$this, 'tick'], 'xyz');
+Timer::add(2000, [$this, 'tick'], 'xyz');
 ```
 tick 方法则这样接收, 然后使用Timer::clear($timerID);来清除定时器
 
