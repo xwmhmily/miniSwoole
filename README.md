@@ -220,8 +220,8 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
 ```
 
 #### HTTP 服务之控制器
-- 根目录的 controller 的 Index.php/index(), 负责处理 http 的 index 事件<br />
-- 为了将控制权由 onRequest 路由至今控制器, 客户端应该在URL中指定处理该请求的 module (默认是index, 可以忽略), controller 及 action, 示例如下: 
+- 根目录的 controller 的 Index.php/index(), 负责处理 http 的 index 事件, 也就是首页<br />
+- 为了将控制权由 onRequest 路由至控制器, 客户端应该在URL中指定处理该请求的 module (默认是index, 可以忽略), controller 及 action (默认是index, 可以忽略), 示例如下: 
 
 ``` 
     // ==== GET 的示例 ==== //
@@ -248,10 +248,10 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
     // Api模块的User控制器下的 index() 来处理, 则URL
     http://127.0.0.1:9100/api/user  
 ```
+- 暂时只支持 GET / POST 方法<br />
 - 可自行在library 目录的 Worker::beforeRequest() 中处理在 http request 前的业务
 - 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
 - 如果 action 不存在, 客户端收到: Method $action not found<br />
-- 暂时只支持 GET / POST 方法<br />
 - 控制器的方法中调用 $this->response->write($rep) 将数据发送至客户端, write()可以调用多次, 最后使用 $this->response->end() 来结束这个请求 <br />
 - 使用write分段发送数据后，end方法将不接受任何参数<br />
 - 控制器的示例为 controller下的 Index.php 与 Http.php 及 module/Api/controller 下的 Login.php 和 User.php <br />
