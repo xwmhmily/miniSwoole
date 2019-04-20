@@ -403,13 +403,13 @@ public function getOnlineUsers($roomID){
 #### 分表
 - 调用 Suffix($tb_suffix) 即可, 如 customer 有 1 至 100 个表，分别是 customer_1, customer_2, .... customer_100, 模型有一个 M_Customer 即可, 访问分表 customer_38 像这样
 ```
-    1: config_ENV 中设置 tb_suffix_sf 为 _
-    2: 代码中: $customer = $this->load('Customer')->Suffix(38)->SelectOne();
+1: 配置文件中设置 tb_suffix_sf 为 _
+2: 代码中: $customer = $this->load('Customer')->Suffix(38)->SelectOne();
 ```
 
 #### 分库
 - 为了减轻MySQL 主库压力, 有些时候有必要做读写分离，如何支持和切换主从呢? (注: 仅支持 Select 语句读从库, 因此从库的连接只有一个，并不像主库那样有连接池。当然，如果要实现从库也是连接池，也不难，改改即可) <br />
-- config_ENV 中像 mysql 节点一样设置一个 mysql_slave <br />
+- 配置文件中像 mysql 节点一样设置一个 mysql_slave <br />
 
 ```
 'mysql_slave' => [
