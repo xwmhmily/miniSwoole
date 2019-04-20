@@ -107,7 +107,7 @@ class MiniSwoole {
 	}
 
 	public function config(){
-		require APP_PATH.'/Init.php';
+		include APP_PATH.'/Init.php';
 		return $this;
 	}
 
