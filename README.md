@@ -531,7 +531,6 @@ public function task(){
 
 ```
 class Importer {
-
     public static function run(...$param){
         Logger::log('Param in '.__METHOD__.' => '.JSON($param));
     }
@@ -539,11 +538,8 @@ class Importer {
 ```
 2：当任务完成后, onFinish回调函数就派上用场了。任务完成时，task进程会将结果发送给onFinish函数，在由onFinish函数返回给worker
 ```
-// 文件: Task.php
-// $data 即为 onTask $server->finish($data) 的参数, 根据参数进行业务处理
 public static function onFinish(swoole_server $server, int $taskID, string $data){
-    Logger::log(__METHOD__.' taskID => '.$taskID);
-    Logger::log(__METHOD__.' data => '.$data);
+    Logger::log('taskID => '.$taskID.' => finish');
 }
 ```
 
