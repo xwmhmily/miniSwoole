@@ -342,7 +342,7 @@ abstract class Model {
 		}
 		$sql .= " INTO ". $this->table;
 
-		$sqlFieldArr = $sqlValueArr = [];
+		$field = $value = [];
 		$first = TRUE;
 		foreach($data as $item){
 			if(!is_array($item)){
@@ -350,19 +350,19 @@ abstract class Model {
 			}
 
 			if($first){
-				$sqlFieldArr = array_keys($item);
+				$field = array_keys($item);
 
-				$sqlFieldStr = implode('`,`', $sqlFieldArr);
+				$fieldString = implode('`,`', $field);
 				$first = FALSE;
 			}
 
 			$tmp = implode('\',\'', $item);
 			$tmp = "('$tmp')";
-			$sqlValueArr[] = $tmp;
+			$value[] = $tmp;
 		}
 
-		$sqlValueStr = implode(',', $sqlValueArr);
-		$sql .= "(`$sqlFieldStr`) VALUES $sqlValueStr";
+		$valueString = implode(',', $value);
+		$sql .= "(`$fieldString`) VALUES $valueString";
 
 		$this->sql = $sql;
 		return $this->Exec();
