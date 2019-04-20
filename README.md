@@ -44,16 +44,17 @@
 - 重启: sh shell/socket.sh restart <br />
 - Reload: sh shell/socket.sh reload, 重启所有Worker/Task进程 <br />
 
-### 心跳检测
+#### 心跳检测
 - 利用Crond 定时运行 shell/heartbeat.sh 即可<br />
 
 #### 配置
 - EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
 - 配置文件是 conf/config_ENV.php。 ENV 区分为 DEV, UAT, PRODUCTION, 请自行根据运行环境调整 <br />
 - common 为公共配置部分, 影响整体 <br />
-- http, tcp, udp, websocket, mysql, redis 配置 <br />
+- 六个 $section 分为: http, tcp, udp, websocket, mysql, redis 配置 <br />
 - 配置文件的 key 务必使用小写字母 <br />
 - Init.php 中可自由配置业务需要的参数和常量
+- 任意地方均可使用 Config::getConfig($section) 来获取配置文件中 $section 的参数
 
 #### 使用
 - 采用 Module-Controll-Model 模式, 所有的请求均转至 Module-Controller下处理 <br />
@@ -70,7 +71,7 @@
   > afterConnect(): 在 tcp 连接后做一些好玩的工作，写缓存或广播通知<br />
   > afterStop(): 在 worker 关闭后做一些日志性或清理动作，如清理相关的 Redis 缓存或广播通知<br />
 
-### 日志和错误处理
+#### 日志和错误处理
 - 系统的错误文件由 $config['common']['log_file'] 指定<br />
 - $config['common']['error_level'] 指定手动记录日志的级别, [1|2|3|4|5], 分别代表 DEBUG, INFO, WARN, ERROR, FATAL，低于规定的日志级别则不记录 <br />
 - $config['common']['error_file'] 指定手动记录日志的文件<br />
@@ -401,14 +402,14 @@ class M_User extends Model {
     }
 ```
 
-### 分表
+#### 分表
 - 调用 Suffix($tb_suffix) 即可, 如 customer 有 1 至 100 个表，分别是 customer_1, customer_2, .... customer_100, 模型有一个 M_Customer 即可, 访问分表 customer_38 像这样
 ```
     1: config_ENV 中设置 tb_suffix_sf 为 _
     2: 代码中: $customer = $this->load('Customer')->Suffix(38)->SelectOne();
 ```
 
-### 分库
+#### 分库
 - 为了减轻MySQL 主库压力, 有些时候有必要做读写分离，如何支持和切换主从呢? (注: 仅支持 Select 语句读从库, 因此从库的连接只有一个，并不像主库那样有连接池。当然，如果要实现从库也是连接池，也不难，改改即可) <br />
 - config_ENV 中像 mysql 节点一样设置一个 mysql_slave <br />
 
@@ -453,7 +454,7 @@ class M_User extends Model {
 - Cache::set($key, $val) <br />
 - 任意地方均可调用
 
-### Autoload
+#### Autoload
 - 框架设置了 autoload 的目录是 library, 因此只要将类位于此目录下, 就能实现自动加载<br />
 - 例如控制器中要实例化 RabbitMQ, 文件名是 /library/RabbitMQ.php
 ```
@@ -468,12 +469,12 @@ class M_User extends Model {
 	}
 ```
 
-### 安全与过滤
+#### 安全与过滤
 - 控制器中使用 $this->getParam($key) 来获取请求的参数，比如 $username = $this->getParam('username'), 默认会对数据进行过滤，若不过滤，将第二个参数设置为 FALSE: $username = $this->getParam('username', FALSE) <br />
 - getParam() 默认会进行 XSS 过滤, addslashes(), trim() <br />
 - 文件是 library/core/Security.php
 
-### 普通方法
+#### 普通方法
 - 将要增加的方法写入 library/core/Function.php 即可随处调用
 
 #### 定时器 Timer
@@ -546,7 +547,7 @@ after 方法
     }
 ```
 
-#### TCP 客户端调用
+#### TCP 客户端
 - 初始化一个异步的tcp Swoole\Client
 ```
     $client = new Swoole\Client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
@@ -588,7 +589,7 @@ after 方法
     $client->connect('127.0.0.1', 9500);
 ```
 
-#### UDP 客户端调用
+#### UDP 客户端
 - 初始化一个异步的 udp Swoole\Client
 ```
     $client = new Swoole\Client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
@@ -630,7 +631,7 @@ after 方法
     $client->connect('127.0.0.1', 9501);
 ```
 
-#### Websocket 客户端调用
+#### Websocket 客户端
 - 支持 WebSocket 的现代浏览器 <br />
 - onOpen() 后同样以 JSON 构造处理请求的 controller 与 action
 
