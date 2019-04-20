@@ -61,15 +61,15 @@
 - 默认 Module 为index, 无须声明, 对应的控制器文件位是根目录的 controller<br />
 - 在配置文件的 module 中声明新模块，以英文逗号分隔，如 'Api, Admin, Mall, Shop', 对应的控制器文件是 /module/$moduleName/controller<br />
 - 来看看 Worker.php 一些有用的函数
-  > beforeRequest(): 在正式将请求转让前做一些全局的工作，比如验证token, 并发数，来源IP等<br />
-  > beforeMessage(): 与 beforeRequest() 类似，只不过仅当服务为 websocket 时有效<br />
-  > beforePacket() : 与 beforeRequest() 类似，只不过仅当服务为 udp 时有效<br />
-  > beforeReceieve() : 与 beforeRequest() 类似，只不过仅当服务为 tcp 时有效<br />
-  > afterStart(): 在 worker 启动后做一些好玩的工作，比如设置定时器，创建其他服务的连接池等<br />
-  > afterOpen(): 在 websocket 客户端与服务器建立连接并完成握手后会回调此函数<br />
-  > afterClose() : 在 tcp / udp 连接关闭后做一些的工作<br />
-  > afterConnect(): 在 tcp 连接后做一些好玩的工作，写缓存或广播通知<br />
-  > afterStop(): 在 worker 关闭后做一些日志性或清理动作，如清理相关的 Redis 缓存或广播通知<br />
+    > beforeRequest(): 在正式将请求转让前做一些全局的工作，比如验证token, 并发数，来源IP等<br />
+    > beforeMessage(): 与 beforeRequest() 类似，只不过仅当服务为 websocket 时有效<br />
+    > beforePacket() : 与 beforeRequest() 类似，只不过仅当服务为 udp 时有效<br />
+    > beforeReceieve() : 与 beforeRequest() 类似，只不过仅当服务为 tcp 时有效<br />
+    > afterStart(): 在 worker 启动后做一些好玩的工作，比如设置定时器，创建其他服务的连接池等<br />
+    > afterOpen(): 在 websocket 客户端与服务器建立连接并完成握手后会回调此函数<br />
+    > afterClose() : 在 tcp / udp 连接关闭后做一些的工作<br />
+    > afterConnect(): 在 tcp 连接后做一些好玩的工作，写缓存或广播通知<br />
+    > afterStop(): 在 worker 关闭后做一些日志性或清理动作，如清理相关的 Redis 缓存或广播通知<br />
 
 #### 日志和错误处理
 - 系统的错误文件由 $config['common']['log_file'] 指定<br />
@@ -121,38 +121,38 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
 #### TCP 服务
 - 将 tcp 段的enable 设置为 true, 其他服务设置为 false <br />
 - sh shell/socket.sh restart 重启服务 <br />
-- ps -ef | grep Mini 将看到 <br />
-> Mini_Swoole_tcp_master: 为 master 进程  <br />
-> Mini_Swoole_manager: 为 manager 进程<br />
-> Mini_Swoole_task: N 个 task 进程 <br />
-> Mini_Swoole_worker: M 个 worker 进程 <br />
+- ps -ef | grep Mini 将看到
+    > Mini_Swoole_tcp_master: 为 master 进程  <br />
+    > Mini_Swoole_manager: 为 manager 进程<br />
+    > Mini_Swoole_task: N 个 task 进程 <br />
+    > Mini_Swoole_worker: M 个 worker 进程 <br />
 
 #### UDP 服务
 - 将 udp 段的enable 设置为 true, 其他服务设置为 false <br />
 - sh shell/socket.sh restart 重启服务 <br />
 - ps -ef | grep Mini 将看到 <br />
-> Mini_Swoole_udp_master: 为 master 进程  <br />
-> Mini_Swoole_manager: 为 manager 进程<br />
-> Mini_Swoole_task: N 个 task 进程 <br />
-> Mini_Swoole_worker: M 个 worker 进程 <br />
+    > Mini_Swoole_udp_master: 为 master 进程  <br />
+    > Mini_Swoole_manager: 为 manager 进程<br />
+    > Mini_Swoole_task: N 个 task 进程 <br />
+    > Mini_Swoole_worker: M 个 worker 进程 <br />
 
 #### HTTP 服务
 - 将 http 段的enable 设置为 true, 其他服务设置为 false <br />
 - sh shell/socket.sh restart 重启服务 <br />
 - ps -ef | grep Mini 将看到 <br />
-> Mini_Swoole_http_master: 为 master 进程  <br />
-> Mini_Swoole_manager: 为 manager 进程<br />
-> Mini_Swoole_task: N 个 task 进程 <br />
-> Mini_Swoole_worker: M 个 worker 进程 <br />
+    > Mini_Swoole_http_master: 为 master 进程  <br />
+    > Mini_Swoole_manager: 为 manager 进程<br />
+    > Mini_Swoole_task: N 个 task 进程 <br />
+    > Mini_Swoole_worker: M 个 worker 进程 <br />
 
 #### Websocket 服务
 - 将 websocket 段的enable 设置为 true, 其他服务设置为 false <br />
 - sh shell/socket.sh restart 重启服务 <br />
 - ps -ef | grep Mini 将看到 <br />
-> Mini_Swoole_websocket_master: 为 master 进程  <br />
-> Mini_Swoole_manager: 为 manager 进程<br />
-> Mini_Swoole_task: N 个 task 进程 <br />
-> Mini_Swoole_worker: M 个 worker 进程 <br />
+    > Mini_Swoole_websocket_master: 为 master 进程  <br />
+    > Mini_Swoole_manager: 为 manager 进程<br />
+    > Mini_Swoole_task: N 个 task 进程 <br />
+    > Mini_Swoole_worker: M 个 worker 进程 <br />
 
 ##### 注: N 和 M 由 $config['common']['worker_num'] 与 $config['common']['task_worker_num'] 指定 <br />
 
