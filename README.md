@@ -107,7 +107,7 @@ public function log(){
         }
     }
 ```
-调用此方法，服务端将收到如下错误提示 (排版不好，但提示还是不错的，对吧)：
+调用此方法，客户端将收到如下错误提示 (排版不好，但提示还是不错的，对吧)：
 ```
 Error => Call to a member function SelectOne() on null
 Code => 8
