@@ -234,7 +234,6 @@ $client->connect('127.0.0.1', 9502, 0.5);
 - 更多 udp server 信息请参考 https://wiki.swoole.com/wiki/page/p-server.html
 
 ```
-// udp
 public function udp(){
     try{
         $key = $this->getParam('key');
@@ -340,7 +339,6 @@ public function users(){
 
 ```
 <?php
-// User 模型
 class M_User extends Model {
     
     function __construct(){
