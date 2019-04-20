@@ -41,7 +41,7 @@
 - EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
 - 配置文件是 conf/config_ENV.php。 ENV 区分为 DEV, UAT, PRODUCTION, 请自行根据运行环境调整 <br />
 - common 为公共配置部分, 影响整体 <br />
-- 六个 $section 分为: http, tcp, udp, websocket, mysql, redis 配置 <br />
+- 七个 $section 分为: common, http, tcp, udp, websocket, mysql, redis 配置 <br />
 - 配置文件的 key 务必使用小写字母 <br />
 - Init.php 中可自由配置业务需要的参数和常量
 - 任意地方均可使用 Config::getConfig($section) 来获取配置文件中 $section 的参数
