@@ -69,9 +69,10 @@
   > afterClose() : 在 tcp / udp 连接关闭后做一些的工作<br />
   > afterConnect(): 在 tcp 连接后做一些好玩的工作，写缓存或广播通知<br />
   > afterStop(): 在 worker 关闭后做一些日志性或清理动作，如清理相关的 Redis 缓存或广播通知<br />
-- 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 使用 try...catch(Throwable) 来处理
+- 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 控制器中使用 try...catch(Throwable) 来处理
 
 ```
+    // 故意令 $this->m_player 为空
     public function onError(){
         try{
             $result = $this->m_player->SelectOne();
@@ -80,6 +81,15 @@
             $this->error($e);
         }
     }
+```
+调用此方法，服务端将收到如下错误提示 (排版不好，但提示还是不错的，对吧)：
+```
+Error => Call to a member function SelectOne() on null
+Code => 8
+String => Undefined property: C_Http::$m_player
+File => /Users/user/Downloads/miniSwoole/controller/Http.php
+Line => 34
+Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http->onError() #1 {main}
 ```
 
 #### TCP 服务
