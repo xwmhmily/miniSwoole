@@ -98,15 +98,15 @@ public function log(){
 - 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 控制器中使用 try...catch(Throwable) 来处理
 
 ```
-    // 故意令 $this->m_player 为空
-    public function onError(){
-        try{
-            $result = $this->m_player->SelectOne();
-            $this->response('Result is => '.$result);
-        }catch (Throwable $e){
-            $this->error($e);
-        }
+// 故意令 $this->m_player 为空
+public function onError(){
+    try{
+        $result = $this->m_player->SelectOne();
+        $this->response('Result is => '.$result);
+    }catch (Throwable $e){
+        $this->error($e);
     }
+}
 ```
 调用此方法，客户端将收到如下错误提示 (排版不好，但提示还是不错的，对吧)：
 ```
@@ -160,12 +160,12 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
 - library 目录的 Worker::afterConnect(), Worker::afterClose() 负责处理 tcp 的 onConnect, onClose 事件<br />
 - 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 module (默认是index, 可以忽略), controller 及 action, 比如要指定由 Tcp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/tcp_client.php】
 ```
-	$data = [];
-	$data['controller'] = 'tcp';
-	$data['action']     = 'login';
-	$data['username']   = 'dym';
-	$data['password']   = md5(123456);
-	$cli->send(json_encode($data)."\r\n");
+$data = [];
+$data['controller'] = 'tcp';
+$data['action']     = 'login';
+$data['username']   = 'dym';
+$data['password']   = md5(123456);
+$cli->send(json_encode($data)."\r\n");
 ```
 - 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
 - 如果 action 不存在, 客户端收到: Method $action not found<br />
@@ -176,55 +176,55 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
 - 更多 tcp server 信息请参考 https://wiki.swoole.com/wiki/page/p-server.html
 
 ```
-    // login 及参数过滤
-    public function login(){
-        try{
-            // 过滤
-            $username = $this->getParam('username');
-            $password = $this->getParam('password');
+// login 及参数过滤
+public function login(){
+    try{
+        // 过滤
+        $username = $this->getParam('username');
+        $password = $this->getParam('password');
 
-            // 回复给客户端
-            $this->response('Username => '.$username.', password => '.$password);
+        // 回复给客户端
+        $this->response('Username => '.$username.', password => '.$password);
 
-            // 不过滤
-            $username = $this->getParam('username', FALSE);
-            $this->response('Username => '.$username.', password => '.$password);
-        }catch (Throwable $e){
-            $this->error($e);
-        }
+        // 不过滤
+        $username = $this->getParam('username', FALSE);
+        $this->response('Username => '.$username.', password => '.$password);
+    }catch (Throwable $e){
+        $this->error($e);
     }
+}
 ```
 
 #### UDP 服务之控制器
 - 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 module(默认是index, 可以忽略), controller 及 action, 比如要指定由 Udp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/udp_client.php】
 
 ```
-    $client = new Swoole\Client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
+$client = new Swoole\Client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
 
-    $client->on("connect", function(swoole_client $cli) {
-        $d = [];
-        $d['controller']  = 'udp';
-        $d['action']      = 'login';
-        $d['username'] = 'fooDELETE FROM sl_table <script>dym</script>';
-        $d['password'] = 'fooDELETE 123123</script>';
-        $data = json_encode($d);
+$client->on("connect", function(swoole_client $cli) {
+    $d = [];
+    $d['controller']  = 'udp';
+    $d['action']      = 'login';
+    $d['username'] = 'fooDELETE FROM sl_table <script>dym</script>';
+    $d['password'] = 'fooDELETE 123123</script>';
+    $data = json_encode($d);
 
-        $cli->send($data);
-    });
+    $cli->send($data);
+});
 
-    $client->on("receive", function(swoole_client $cli, $data){
-        print_r($data);
-    });
+$client->on("receive", function(swoole_client $cli, $data){
+    print_r($data);
+});
 
-    $client->on("error", function(swoole_client $cli){
-        
-    });
+$client->on("error", function(swoole_client $cli){
+    
+});
 
-    $client->on("close", function(swoole_client $cli){
-        
-    });
+$client->on("close", function(swoole_client $cli){
+    
+});
 
-    $client->connect('127.0.0.1', 9502, 0.5);
+$client->connect('127.0.0.1', 9502, 0.5);
 ```
 - 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
 - 如果 action 不存在, 客户端收到: Method $action not found<br />
@@ -234,15 +234,15 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
 - 更多 udp server 信息请参考 https://wiki.swoole.com/wiki/page/p-server.html
 
 ```
-    // udp
-    public function udp(){
-        try{
-            $key = $this->getParam('key');
-            $this->response('Your key is '.$key);
-        }catch (Throwable $e){
-            $this->error($e);
-        }
+// udp
+public function udp(){
+    try{
+        $key = $this->getParam('key');
+        $this->response('Your key is '.$key);
+    }catch (Throwable $e){
+        $this->error($e);
     }
+}
 ```
 
 #### HTTP 服务之控制器
@@ -250,29 +250,29 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
 - 为了将控制权由 onRequest 路由至控制器, 客户端应该在URL中指定处理该请求的 module (默认是index, 可以忽略), controller 及 action (默认是index, 可以忽略), 示例如下: 
 
 ``` 
-    // ==== GET 的示例 ==== //
-    // Index 控制器下的 index() 来处理, 也就是首页, 则URL
-    http://127.0.0.1:9100
+// ==== GET 的示例 ==== //
+// Index 控制器下的 index() 来处理, 也就是首页, 则URL
+http://127.0.0.1:9100
 
-    // Http 控制器下的 index() 来处理, 并且带上GET参数, 则URL
-    http://127.0.0.1:9100/http?username=dym&password=123456
+// Http 控制器下的 index() 来处理, 并且带上GET参数, 则URL
+http://127.0.0.1:9100/http?username=dym&password=123456
 
-    // Http 控制器下的 login() 来处理, 并且带上GET参数, 则URL
-    http://127.0.0.1:9100/http/login?username=dym&password=123456
+// Http 控制器下的 login() 来处理, 并且带上GET参数, 则URL
+http://127.0.0.1:9100/http/login?username=dym&password=123456
 
-    // ==== POST 的示例 ==== //
-    $url = 'http://127.0.0.1:9100/http/login';
-    $postData = [];
-    $postData['key'] = 'FOO';
+// ==== POST 的示例 ==== //
+$url = 'http://127.0.0.1:9100/http/login';
+$postData = [];
+$postData['key'] = 'FOO';
 
-    $retval = HttpClient::post($url, $postData);
-    print_r($retval);
+$retval = HttpClient::post($url, $postData);
+print_r($retval);
 
-    // Api模块的Login控制器下的 logout() 来处理, 则URL
-    http://127.0.0.1:9100/api/login/logout
+// Api模块的Login控制器下的 logout() 来处理, 则URL
+http://127.0.0.1:9100/api/login/logout
 
-    // Api模块的User控制器下的 index() 来处理, 则URL
-    http://127.0.0.1:9100/api/user  
+// Api模块的User控制器下的 index() 来处理, 则URL
+http://127.0.0.1:9100/api/user  
 ```
 - 暂时只支持 GET / POST 方法<br />
 - 可自行在library 目录的 Worker::beforeRequest() 中处理在 http request 前的业务
@@ -288,11 +288,11 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
 - 为了将控制权由 onMessage 转至控制器, 客户端发送的数据需要指定处理该请求的module (默认是index, 可以忽略), controller 及 action, 比如要指定由 websocket 控制器下的 go() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/ws.html】
 
 ```
-    var arr = {};
-    arr.controller = 'websocket';
-    arr.action     = 'go';
-    arr.key        = $('#key').val();
-    ws.send(JSON.stringify(arr));
+var arr = {};
+arr.controller = 'websocket';
+arr.action     = 'go';
+arr.key        = $('#key').val();
+ws.send(JSON.stringify(arr));
 ```
 - 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
 - 如果 action 不存在, 客户端收到: Method $action not found<br />
@@ -302,30 +302,30 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
 - 更多 websocket server 信息请参考 https://wiki.swoole.com/wiki/page/397.html
 
 ```
-    // Select all users
-    public function users(){
-        try{
-            $users = $this->m_user->SelectAll();
-            $this->response(JSON($users));
+// Select all users
+public function users(){
+    try{
+        $users = $this->m_user->SelectAll();
+        $this->response(JSON($users));
 
-            $key = $this->getParam('key');
-            $this->response('Your key is '.$key);
-        }catch (Throwable $e){
-            $this->error($e);
-        }
+        $key = $this->getParam('key');
+        $this->response('Your key is '.$key);
+    }catch (Throwable $e){
+        $this->error($e);
     }
+}
 ```
 
 #### MySQL
 ```
-	'mysql' => [
-		'db'   => 'slave',
-		'host' => '192.168.1.34',
-		'port' => 3306,
-		'user' => 'root',
-		'pwd'  => '123456',
-        'max'  => 3,
-	],
+'mysql' => [
+    'db'   => 'slave',
+    'host' => '192.168.1.34',
+    'port' => 3306,
+    'user' => 'root',
+    'pwd'  => '123456',
+    'max'  => 3,
+],
 ```
 - 断线自动重连3次<br />
 - 配置文件中的 max 是指每一个 worker 有多少个连接对象组成一个连接池
@@ -360,46 +360,46 @@ class M_User extends Model {
 ```
 
 ``` 
-	// 控制器中调用通用的方法
-    try{
-        $this->m_user = $this->load('User');
-        $field = ['id', 'username'];
-        $where = ['status' => 1];
-        $order = ['id' => 'DESC'];
-        $users = $this->m_user->Field($field)->Where($where)->Order($order)->Select();
-        $this->response(JSON($users));
-    }catch (Throwable $e){
-        $this->error($e);
-    }
+// 控制器中调用通用的方法
+try{
+    $this->m_user = $this->load('User');
+    $field = ['id', 'username'];
+    $where = ['status' => 1];
+    $order = ['id' => 'DESC'];
+    $users = $this->m_user->Field($field)->Where($where)->Order($order)->Select();
+    $this->response(JSON($users));
+}catch (Throwable $e){
+    $this->error($e);
+}
 ```
 
 ``` 
-    // 调用可复用的 SelectAll();
-    try{
-        $users = $this->m_user->SelectAll();
-        $this->response(JSON($users));
-    }catch (Throwable $e){
-        $this->error($e);
-    }
+// 调用可复用的 SelectAll();
+try{
+    $users = $this->m_user->SelectAll();
+    $this->response(JSON($users));
+}catch (Throwable $e){
+    $this->error($e);
+}
 ```
 ```
-    // 默认的通用模型使用, model 目录下并没有 News.php, 但一样可以这样使用
-    try{
-        $this->m_news = $this->load('News');
-        $where = ['status' => 1];
-        $order = ['id' => 'DESC'];
-        $news = $this->m_news->Where($where)->Order($order)->Select();
-        $this->response(JSON($news));
-    }catch (Throwable $e){
-        $this->error($e);
-    }
+// 默认的通用模型使用, model 目录下并没有 News.php, 但一样可以这样使用
+try{
+    $this->m_news = $this->load('News');
+    $where = ['status' => 1];
+    $order = ['id' => 'DESC'];
+    $news = $this->m_news->Where($where)->Order($order)->Select();
+    $this->response(JSON($news));
+}catch (Throwable $e){
+    $this->error($e);
+}
 ```
 ```
-    //复杂的SQL(join 等)使用原生的SQL来写，方便维护
-    public function getOnlineUsers($roomID){
-        $sql = 'SELECT u.id, u.username, c.roomName FROM '.$this->table.' AS u LEFT JOIN '.TB_PREFIX.'chatroom AS c ON u.roomID = c.id WHERE u.roomID = "'.$roomID.'" ORDER BY u.id DESC LIMIT 20';
-        return $this->Query($sql);
-    }
+//复杂的SQL(join 等)使用原生的SQL来写，方便维护
+public function getOnlineUsers($roomID){
+    $sql = 'SELECT u.id, u.username, c.roomName FROM '.$this->table.' AS u LEFT JOIN '.TB_PREFIX.'chatroom AS c ON u.roomID = c.id WHERE u.roomID = "'.$roomID.'" ORDER BY u.id DESC LIMIT 20';
+    return $this->Query($sql);
+}
 ```
 
 #### 分表
@@ -414,38 +414,38 @@ class M_User extends Model {
 - config_ENV 中像 mysql 节点一样设置一个 mysql_slave <br />
 
 ```
-	'mysql_slave' => [
-		'db'   => 'slave',
-		'host' => '192.168.1.34',
-		'port' => 3306,
-		'user' => 'root',
-		'pwd'  => '123456',
-	],
+'mysql_slave' => [
+    'db'   => 'slave',
+    'host' => '192.168.1.34',
+    'port' => 3306,
+    'user' => 'root',
+    'pwd'  => '123456',
+],
 ```
 
 - 代码中调用 SetDB('SLAVE') 后再 Select() <br />
 ```
-    $user = $this->load('User')->SetDB('SLAVE')->SelectOne();
+$user = $this->load('User')->SetDB('SLAVE')->SelectOne();
 ```
 - 调皮的你又想切换为 MASTER 呢
 ```
-    $user = $this->load('User')->SetDB('MASTER')->SelectOne();
+$user = $this->load('User')->SetDB('MASTER')->SelectOne();
 ```
 - 还可以结合分表一起使用
 ```
-    $customer = $this->load('Customer')->SetDB('SLAVE')->Suffix(38)->SelectOne();
+$customer = $this->load('Customer')->SetDB('SLAVE')->Suffix(38)->SelectOne();
 ```
 - 来个长的链式操作
-``` 
-    try{
-        $field = ['id', 'mobile', 'summary', 'address'];
-        $where = ['companyID' => 38];
-        $order = ['id' => 'DESC'];
-        $customer = $this->load('Customer_ref')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
-        $this->response('Slave with suffix => '.JSON($customer));
-    }catch (Throwable $e){
-        $this->error($e);
-    }
+```
+try{
+    $field = ['id', 'mobile', 'summary', 'address'];
+    $where = ['companyID' => 38];
+    $order = ['id' => 'DESC'];
+    $customer = $this->load('Customer_ref')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
+    $this->response('Slave with suffix => '.JSON($customer));
+}catch (Throwable $e){
+    $this->error($e);
+}
 ```
 
 #### Redis
@@ -458,15 +458,15 @@ class M_User extends Model {
 - 框架设置了 autoload 的目录是 library, 因此只要将类位于此目录下, 就能实现自动加载<br />
 - 例如控制器中要实例化 RabbitMQ, 文件名是 /library/RabbitMQ.php
 ```
-	// Autoload 自动加载 RabbitMQ
-	public function rabbit(){
-		try{
-			$rabbit = new RabbitMQ();
-			$this->response('A Rabbit is running happily now');
-		}catch (Throwable $e){
-			$this->error($e);
-		}
-	}
+// Autoload 自动加载 RabbitMQ
+public function rabbit(){
+    try{
+        $rabbit = new RabbitMQ();
+        $this->response('A Rabbit is running happily now');
+    }catch (Throwable $e){
+        $this->error($e);
+    }
+}
 ```
 
 #### 安全与过滤
@@ -485,150 +485,150 @@ class M_User extends Model {
 tick 方法则这样接收, 然后使用Timer::clear($timerID);来清除定时器
 
 ```
-	public function tick(int $timerID, $args){
-        try{
-            $this->response('Time in tick '.date("Y-m-d H:i:s\n"));
-            $this->response('Args in tick '.JSON($args));
+public function tick(int $timerID, $args){
+    try{
+        $this->response('Time in tick '.date("Y-m-d H:i:s\n"));
+        $this->response('Args in tick '.JSON($args));
 
-            // Clear timer
-            Timer::clear($timerID);
-        }catch (Throwable $e){
-            $this->error($e);
-        }
-	}
+        // Clear timer
+        Timer::clear($timerID);
+    }catch (Throwable $e){
+        $this->error($e);
+    }
+}
 ```
 
 - 控制器中想5秒后执行当前类的 after() 方法, 则这样做。
 ```
-    Timer::after(5000, [$this, 'after']);
+Timer::after(5000, [$this, 'after']);
 ```
 
 after 方法
 
 ```
-	// 注: after定时器不接收任何参数
-	public function after(){
-		$this->response('Execute '.__METHOD__.' in after timer');
-	}
+// 注: after定时器不接收任何参数
+public function after(){
+    $this->response('Execute '.__METHOD__.' in after timer');
+}
 ```
 
 #### 任务投递 Task
 - 以数组形式指定 callback 与 param, 调用 Task::add($args)
 - 以下例子投递一个任务, 由 Importer 的 Run() 处理, 参数是 ['Lakers', 'Swoole', 'Westlife'];
 ```
-	public function task(){
-        try{
-            $args   = [];
-            $args['callback'] = ['Importer', 'Run'];
-            $args['param']    = ['Lakers', 'Swoole', 'Westlife'];
-            $taskID = Task::add($args);
-            $this->response->end('Task has been set, id is => '.$taskID);
-        }catch (Throwable $e){
-			$this->error($e);
-		}
+public function task(){
+    try{
+        $args   = [];
+        $args['callback'] = ['Importer', 'Run'];
+        $args['param']    = ['Lakers', 'Swoole', 'Westlife'];
+        $taskID = Task::add($args);
+        $this->response->end('Task has been set, id is => '.$taskID);
+    }catch (Throwable $e){
+        $this->error($e);
     }
+}
 ```
 
 ```
-    class Importer {
+class Importer {
 
-        public static function run(...$param){
-            Logger::log('Param in '.__METHOD__.' => '.JSON($param));
-        }
+    public static function run(...$param){
+        Logger::log('Param in '.__METHOD__.' => '.JSON($param));
     }
+}
 ```
 2：当任务完成后, onFinish回调函数就派上用场了。任务完成时，task进程会将结果发送给onFinish函数，在由onFinish函数返回给worker
 ```
-    // 文件: Task.php
-    // $data 即为 onTask $server->finish($data) 的参数, 根据参数进行业务处理
-    public static function onFinish(swoole_server $server, int $taskID, string $data){
-        Logger::log(__METHOD__.' taskID => '.$taskID);
-        Logger::log(__METHOD__.' data => '.$data);
-    }
+// 文件: Task.php
+// $data 即为 onTask $server->finish($data) 的参数, 根据参数进行业务处理
+public static function onFinish(swoole_server $server, int $taskID, string $data){
+    Logger::log(__METHOD__.' taskID => '.$taskID);
+    Logger::log(__METHOD__.' data => '.$data);
+}
 ```
 
 #### TCP 客户端
 - 初始化一个异步的tcp Swoole\Client
 ```
-    $client = new Swoole\Client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
+$client = new Swoole\Client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
 ```
 
 - 设置回调, onReceive(), onConnect(), onClose(), onError()
 
 ```
-    $client->on("connect", function($cli){
-        // 指定处理该请求的 controller 和 action 
-        $d = [];
-        $d['controller']  = 'user';
-        $d['action']      = 'all'
+$client->on("connect", function($cli){
+    // 指定处理该请求的 controller 和 action 
+    $d = [];
+    $d['controller']  = 'user';
+    $d['action']      = 'all'
 
-        // 参数都用 data 包起来
-        $d['data']['username'] = 'DELETE FROM sl_table <script>dym</script>';
-        $d['data']['password'] = md5(123456);
+    // 参数都用 data 包起来
+    $d['data']['username'] = 'DELETE FROM sl_table <script>dym</script>';
+    $d['data']['password'] = md5(123456);
 
-        // 以 "\r\n" 分包
-        $cli->send(json_encode($d)."\r\n");
-    });
+    // 以 "\r\n" 分包
+    $cli->send(json_encode($d)."\r\n");
+});
 
-    $client->on("receive", function(swoole_client $cli, $data){
-        echo $data.PHP_EOL;
-        // $cli->close();
-    });
+$client->on("receive", function(swoole_client $cli, $data){
+    echo $data.PHP_EOL;
+    // $cli->close();
+});
 
-    $client->on("error", function(swoole_client $cli){
-        echo "error".PHP_EOL;
-        $cli->close();
-    });
+$client->on("error", function(swoole_client $cli){
+    echo "error".PHP_EOL;
+    $cli->close();
+});
 
-    $client->on("close", function(swoole_client $cli){
-        echo "Connection close".PHP_EOL;
-    });
+$client->on("close", function(swoole_client $cli){
+    echo "Connection close".PHP_EOL;
+});
 ```
 - 最后就是连接服务端了, 示例文件 client/tcp_client.php
 ```
-    $client->connect('127.0.0.1', 9500);
+$client->connect('127.0.0.1', 9500);
 ```
 
 #### UDP 客户端
 - 初始化一个异步的 udp Swoole\Client
 ```
-    $client = new Swoole\Client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
+$client = new Swoole\Client(SWOOLE_SOCK_UDP, SWOOLE_SOCK_ASYNC);
 ```
 
 - 设置 onConnect(), onError(), onReceive(), OnClose() <br />
 - onConnect() 中发送数据, onReceive() 中接收
 
 ```
-    $client->on("connect", function($cli){
-        $d = [];
-        $d['controller']  = 'user';
-        $d['action']      = 'all';
-        $d['data']['key'] = 'foo';
+$client->on("connect", function($cli){
+    $d = [];
+    $d['controller']  = 'user';
+    $d['action']      = 'all';
+    $d['data']['key'] = 'foo';
 
-        $d['data']['username'] = 'DELETE FROM sl_table <script>dym</script>';
-        $d['data']['password'] = md5(123456);
+    $d['data']['username'] = 'DELETE FROM sl_table <script>dym</script>';
+    $d['data']['password'] = md5(123456);
 
-        $cli->send(json_encode($d));
-    });
+    $cli->send(json_encode($d));
+});
 
-    $client->on("receive", function(swoole_client $cli, $data){
-        echo $data.PHP_EOL;
-        // $cli->close();
-    });
+$client->on("receive", function(swoole_client $cli, $data){
+    echo $data.PHP_EOL;
+    // $cli->close();
+});
 
-    $client->on("error", function(swoole_client $cli){
-        echo "error".PHP_EOL;
-        $cli->close();
-    });
+$client->on("error", function(swoole_client $cli){
+    echo "error".PHP_EOL;
+    $cli->close();
+});
 
-    $client->on("close", function(swoole_client $cli){
-        echo "Connection close".PHP_EOL;
-    });
+$client->on("close", function(swoole_client $cli){
+    echo "Connection close".PHP_EOL;
+});
 ```
 4：最后就是连接
 
 ```
-    $client->connect('127.0.0.1', 9501);
+$client->connect('127.0.0.1', 9501);
 ```
 
 #### Websocket 客户端
@@ -636,20 +636,20 @@ after 方法
 - onOpen() 后同样以 JSON 构造处理请求的 controller 与 action
 
 ```
-    ws.onopen = function () {
-        //心跳检测重置
-        // heartCheck.reset().start();
-        var arr = {};
-        arr.controller = 'user';
-        arr.action     = 'websocket';
-        ws.send(JSON.stringify(arr));
-    };
+ws.onopen = function () {
+    //心跳检测重置
+    // heartCheck.reset().start();
+    var arr = {};
+    arr.controller = 'user';
+    arr.action     = 'websocket';
+    ws.send(JSON.stringify(arr));
+};
 ```
 - send() 之后 onmessage() 中接收数据
 
 ```
-    ws.onmessage = function (event){
-        console.log(event.data);
-    }
+ws.onmessage = function (event){
+    console.log(event.data);
+}
 ```
 - 自行维持心跳机制, 示例文件 client/ws.html
