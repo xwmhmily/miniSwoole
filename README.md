@@ -50,6 +50,7 @@
 - 配置文件的 key 务必使用小写字母 <br />
 - Init.php 中可自由配置业务需要的参数和常量
 - 任意地方均可使用 Config::getConfig($section) 来获取配置文件中 $section 的参数
+- 任意地方均可使用 Config::getConfig($section, $key) 来获取配置文件中 $section 中的 $key 对应的参数
 <hr />
 
 #### CLI 命令
