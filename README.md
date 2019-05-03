@@ -357,12 +357,17 @@ public function users(){
 - 断线自动重连3次<br />
 - 配置文件中的 max 是指每一个 worker 有多少个连接对象组成一个连接池
 - 控制器中使用 $this->m_user = $this->load('User'); 加载模型<br />
-- 使用链式操作 Filed($field)->Where($where)->Order($order)->Limit($limit) 构建 SQL<br />
+- 使用链式操作 Filed($field)->Where($where)->Order($order)->Limit() 构建 SQL<br />
 - Insert(), MultiInsert(), SelectOne(), Select(), UpdateOne(), Update(), UpdateByID(), DeleteOne(), Delete(), DeleteByID() <br />
 - 根据ID 查询: SelectByID(), SelectFieldByID()<br />
 - 执行复杂的 SQL: Query($sql), QueryOne($sql)<br />
 - BeginTransaction(), Commit(), Rollback() 操作事务<br />
 - 通用模型(Default)减少复用性方法很少的模型文件<br />
+- 分页？ 在 HTTP 为 GET 的情况下，调用 ->Limit() 方法, 就自动分页了，默认是一页 10 条记录
+```
+    查询10条： Filed($field)->Where($where)->Order($order)->Limit();
+    一页20条： Filed($field)->Where($where)->Order($order)->Limit(20);
+```
 - 示例为 model 下的 User.php 和 Default.php, 其中 Default 为默认通用模型文件<br />
 
 ```
@@ -468,7 +473,7 @@ try{
     $field = ['id', 'mobile', 'summary', 'address'];
     $where = ['companyID' => 38];
     $order = ['id' => 'DESC'];
-    $customer = $this->load('Customer_ref')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
+    $customer = $this->load('Customer_ref')->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit()->Select();
     $this->response('Slave with suffix => '.JSON($customer));
 }catch (Throwable $e){
     $this->error($e);
