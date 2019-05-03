@@ -74,10 +74,10 @@ class C_Http extends Controller {
 		}
     }
 
-    // Get all news
+    // Get all news with pagination
     public function news(){
         try{
-            $news = $this->m_news->Select();
+            $news = $this->m_news->Limit()->Select();
             $this->response->end(JSON($news));
         }catch (Throwable $e){
 			$this->error($e);

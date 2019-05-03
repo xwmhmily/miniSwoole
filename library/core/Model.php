@@ -238,17 +238,13 @@ abstract class Model {
 
 	/*
 	 * Limit
-	 * 可传一个或二个参数
 	 */
-	final public function Limit($start, $size = ''){
-		$this->options['limit'] = $start;
+	final public function Limit($size = 10){
+		$page = $_GET['page'];
+		$start = ($page - 1) * $size;
+		$this->options['limit'] .= ' LIMIT '.$start.', '.$size;
 
-		if($size){
-			$this->options['limit'] .= ', '.$size;
-		}
-
-		unset($start, $size);
-
+		unset($page, $start);
 		return $this;
 	}
 
