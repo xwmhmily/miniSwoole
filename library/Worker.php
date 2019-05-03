@@ -25,12 +25,12 @@ class Worker {
 			Server::$page = intval($request->get['page']);
 		}
 
-		HttpMiddleware::handle($method, $request, $response);
+		HttpMiddleware::beforeRequest($method, $request, $response);
 	}
 
 	// Do anything you want after http request
 	public static function afterRequest($method, swoole_http_request $request, swoole_http_response $response){
-		HttpMiddleware::afterHandle($method, $request, $response);
+		HttpMiddleware::afterRequest($method, $request, $response);
 		$response->end();
 	}
 

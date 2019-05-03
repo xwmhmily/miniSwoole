@@ -2,12 +2,14 @@
 
 class HttpMiddleware {
 
-	public static function handle($method, swoole_http_request $request, swoole_http_response $response){
-		$response->write(__METHOD__);
+	// Do anything you want before http request
+	public static function beforeRequest($method, swoole_http_request $request, swoole_http_response $response){
+		
 	}
 
-	public static function afterHandle($method, swoole_http_request $request, swoole_http_response $response){
-		$response->write(__METHOD__);
+	// Do anything you want after http request
+	public static function afterRequest($method, swoole_http_request $request, swoole_http_response $response){
+		
 	}
 
 }
