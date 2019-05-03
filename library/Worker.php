@@ -30,6 +30,7 @@ class Worker {
 
 	// Do anything you want after http request
 	public static function afterRequest($method, swoole_http_request $request, swoole_http_response $response){
+		HttpMiddleware::afterHandle($method, $request, $response);
 		$response->end();
 	}
 
