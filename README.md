@@ -403,7 +403,7 @@ try{
     $field = ['id', 'username'];
     $where = ['status' => 1];
     $order = ['id' => 'DESC'];
-    $users = $this->m_user->Field($field)->Where($where)->Order($order)->Select();
+    $users = $this->m_user->Field($field)->Where($where)->Order($order)->Limit()->Select();
     $this->response(JSON($users));
 }catch (Throwable $e){
     $this->error($e);
