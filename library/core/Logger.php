@@ -40,7 +40,7 @@ abstract class Logger {
     }
 
     private static function appand($level, $msg){
-        $config = Config::getConfig();
+        $config = Config::get();
         $log_level = $config['common']['error_level'];
         if($level < $log_level){
             return;
@@ -75,7 +75,7 @@ abstract class Logger {
     }
 
 	public static function logMySQL($msg) {
-        $config = Config::getConfig();
+        $config = Config::get();
         $error = date('Y-m-d H:i:s').' | '.self::getMicrotime().' | ERROR | '.$msg.PHP_EOL;
         file_put_contents($config['common']['mysql_log_file'], $error, FILE_APPEND);        
     }

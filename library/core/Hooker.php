@@ -17,7 +17,7 @@ class Hooker {
             $max = 1;
             $process_name = APP_NAME.'_task';
         }else{
-            $config = Config::getConfig(Pool::TYPE_MYSQL);
+            $config = Config::get(Pool::TYPE_MYSQL);
             $max = $config['max'];
             !$max && $max = 1;
             $process_name = APP_NAME.'_worker';
@@ -48,7 +48,7 @@ class Hooker {
             $response->end('Error: Only GET and POST supported now !'); return;
         }
 
-        $config  = Config::getConfig('common');
+        $config  = Config::get('common');
         $modules = explode(',', $config['module']);
 
         $module = $controller = $action = '';

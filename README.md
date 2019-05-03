@@ -49,8 +49,8 @@
 - 七个 $section 分为: common, http, tcp, udp, websocket, mysql, redis 配置 <br />
 - 配置文件的 key 务必使用小写字母 <br />
 - Init.php 中可自由配置业务需要的参数和常量
-- 任意地方均可使用 Config::getConfig($section) 来获取配置文件中 $section 的参数
-- 任意地方均可使用 Config::getConfig($section, $key) 来获取配置文件中 $section 中的 $key 对应的参数
+- 任意地方均可使用 Config::get($section) 来获取配置文件中 $section 的参数
+- 任意地方均可使用 Config::get($section, $key) 来获取配置文件中 $section 中的 $key 对应的参数
 <hr />
 
 #### CLI 命令
@@ -98,7 +98,7 @@ public function log(){
         Logger::fatal('This is a fatal msg');
         Logger::log('This is a log msg');
 
-        $level = Config::getConfig('common', 'error_level');
+        $level = Config::get('common', 'error_level');
         $this->response->end('Current error_level => '.$level);
     }catch (Throwable $e){
         $this->error($e);

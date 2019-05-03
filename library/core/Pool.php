@@ -11,7 +11,7 @@ abstract class Pool {
 	const TYPE_REDIS = 'REDIS';
 
 	public static function createMySQLConnectionPool(){
-		$config = Config::getConfig(self::TYPE_MYSQL);
+		$config = Config::get(self::TYPE_MYSQL);
 		$config['max'] = $config['max'] ?? 1;
 			
 		for($i = 1; $i <= $config['max']; $i++){
@@ -30,7 +30,7 @@ abstract class Pool {
 	}
 
 	public static function getSlaveInstance(){
-		$config = Config::getConfig('mysql_slave');
+		$config = Config::get('mysql_slave');
         return self::connectMySQL($config['host'], $config['port'], $config['user'], $config['pwd'], $config['db']);
 	}
 
@@ -47,7 +47,7 @@ abstract class Pool {
 	}
 
 	private static function connect($type){
-		$config = Config::getConfig($type);
+		$config = Config::get($type);
 
 		if(strtoupper($type) == self::TYPE_MYSQL){
 			$db   = $config['db'];

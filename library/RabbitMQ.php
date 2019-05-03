@@ -43,7 +43,7 @@ class RabbitMQ {
      */
     public function __construct($exchange_name = 'D_APP_PUSHER', $queue_name = 'Q_APP_PUSHER', $route_key = 'R_APP_PUSHER', $type = AMQP_EX_TYPE_DIRECT) {
 
-        $global_config = Config::getConfig();
+        $global_config = Config::get();
         $config = [
             'host' => $global_config['rabbit_host'],
             'port' => $global_config['rabbit_port'],

@@ -75,19 +75,19 @@ class MiniSwoole {
 		// Error log
 		error_reporting(E_ALL ^ E_NOTICE);
 		
-		$config = Config::getConfig();
+		$config = Config::get('common');
 		ini_set('log_errors', 'on');
 		ini_set('display_errors', 'off');
-        ini_set('error_log', $config['common']['log_file']);
+        ini_set('error_log', $config['log_file']);
         set_error_handler(['Logger', 'errorHandler'], E_ALL | E_STRICT);
 
         // APP_NAME
-		define('APP_NAME', $config['common']['app_name']);
+		define('APP_NAME', $config['app_name']);
 		
 		// TABLE_PREFIX and TB_SUFFIX_SF
-		define('TB_PREFIX', $config['common']['tb_prefix']);
-		if($config['common']['tb_suffix_sf']){
-			define('TB_SUFFIX_SF', $config['common']['tb_suffix_sf']);
+		define('TB_PREFIX', $config['tb_prefix']);
+		if($config['tb_suffix_sf']){
+			define('TB_SUFFIX_SF', $config['tb_suffix_sf']);
 		}
 
         // Autoload
@@ -111,7 +111,7 @@ class MiniSwoole {
 
 	// Let's go
 	public function run(){
-		$config = Config::getConfig();
+		$config = Config::get('common');
 
 		if($config['tcp']['enable']){
 			require CORE_PATH.'/TcpServer.php';

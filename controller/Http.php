@@ -19,7 +19,7 @@ class C_Http extends Controller {
             Logger::fatal('This is a fatal msg');
             Logger::log('This is a log msg');
 
-            $level = Config::getConfig('common', 'error_level');
+            $level = Config::get('common', 'error_level');
             $this->response->end('Current error_level => '.$level);
         }catch (Throwable $e){
 			$this->error($e);
@@ -50,13 +50,13 @@ class C_Http extends Controller {
     // get Config with key
     public function configAndKey(){
         try{
-            $redis_config = Config::getConfig('redis');
+            $redis_config = Config::get('redis');
             $this->response->write(JSON($redis_config).'<br />');
 
-            $redis_host = Config::getConfig('redis', 'host');
+            $redis_host = Config::get('redis', 'host');
             $this->response->write(JSON('Host is '.$redis_host).'<br />');
 
-            $redis_port = Config::getConfig('redis', 'port');
+            $redis_port = Config::get('redis', 'port');
             $this->response->write(JSON('Port is '.$redis_port));
             $this->response->end(JSON($redis_config));
         }catch (Throwable $e){
