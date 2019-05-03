@@ -20,7 +20,7 @@ class C_Http extends Controller {
             Logger::log('This is a log msg');
 
             $level = Config::get('common', 'error_level');
-            $this->response->end('Current error_level => '.$level);
+            $this->response->end('Current error_level is => '.$level);
         }catch (Throwable $e){
 			$this->error($e);
 		}

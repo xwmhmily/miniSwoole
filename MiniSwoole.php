@@ -111,7 +111,7 @@ class MiniSwoole {
 
 	// Let's go
 	public function run(){
-		$config = Config::get('common');
+		$config = Config::get();
 
 		if($config['tcp']['enable']){
 			require CORE_PATH.'/TcpServer.php';
