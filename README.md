@@ -45,7 +45,7 @@
 
 #### 配置
 - EVN 的定义在 Boostrap.php 的第一句, 请升级脚本(deploy.py)自行根据环境修改<br />
-- 配置文件是 conf/config_ENV.php。 ENV 区分为 DEV, UAT, PRODUCTION, 请自行根据运行环境调整 <br />
+- 配置文件是 conf/ENV.php。 ENV 区分为 DEV, UAT, PRODUCTION, 请自行根据运行环境调整 <br />
 - common 为公共配置部分, 影响整体 <br />
 - 七个 $section 分为: common, http, tcp, udp, websocket, mysql, redis 配置 <br />
 - 配置文件的 key 务必使用小写字母 <br />
@@ -71,7 +71,6 @@
 - 默认 Module 为index, 无须声明, 对应的控制器文件位是根目录的 controller<br />
 - 在配置文件的 module 中声明新模块，以英文逗号分隔，如 'Api, Admin, Mall, Shop', 对应的控制器文件是 /module/$moduleName/controller<br />
 - 来看看 Worker.php 一些有用的函数
-    > beforeRequest(): 在正式将请求转让前做一些全局的工作，比如验证token, 并发数，来源IP等<br />
     > beforeMessage(): 与 beforeRequest() 类似，只不过仅当服务为 websocket 时有效<br />
     > beforePacket() : 与 beforeRequest() 类似，只不过仅当服务为 udp 时有效<br />
     > beforeReceieve() : 与 beforeRequest() 类似，只不过仅当服务为 tcp 时有效<br />
