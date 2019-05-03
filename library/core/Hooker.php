@@ -95,6 +95,7 @@ class Hooker {
             $instance->response = $response;
 
             $instance->$action();
+            Worker::afterRequest($method, $request, $response);
         }else{
             $response->status('404');
 

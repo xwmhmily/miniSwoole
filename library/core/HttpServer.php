@@ -26,6 +26,8 @@ class HttpServer {
         $this->server->on('WorkerStart',  ['Hooker', 'onWorkerStart']);
         $this->server->on('ManagerStart', ['Hooker', 'onManagerStart']);
 
+        require_once LIB_PATH.'/middleware/HttpMiddleware.php';
+
         // 是否需要监听额外的端口
         if($config['http']['listen_ip']){
             $this->server->addlistener($config['http']['listen_ip'], $config['http']['listen_port'], SWOOLE_SOCK_TCP);
