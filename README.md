@@ -98,8 +98,8 @@ public function log(){
         Logger::fatal('This is a fatal msg');
         Logger::log('This is a log msg');
 
-        $config = Config::getConfig();
-        $this->response->end('Current error_level => '.$config['common']['error_level']);
+        $level = Config::getConfig('common', 'error_level');
+        $this->response->end('Current error_level => '.$level);
     }catch (Throwable $e){
         $this->error($e);
     }
