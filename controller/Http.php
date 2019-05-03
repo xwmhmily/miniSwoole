@@ -47,6 +47,23 @@ class C_Http extends Controller {
 		}
     }
 
+    // get Config with key
+    public function configAndKey(){
+        try{
+            $redis_config = Config::getConfig('redis');
+            $this->response->write(JSON($redis_config).'<br />');
+
+            $redis_host = Config::getConfig('redis', 'host');
+            $this->response->write(JSON('Host is '.$redis_host).'<br />');
+
+            $redis_port = Config::getConfig('redis', 'port');
+            $this->response->write(JSON('Port is '.$redis_port));
+            $this->response->end(JSON($redis_config));
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
+
     // Get all users
     public function users(){
         try{

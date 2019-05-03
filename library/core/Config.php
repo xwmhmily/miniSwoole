@@ -6,7 +6,7 @@
 
 abstract class Config {
 
-	public static function getConfig($section = '') {
+	public static function getConfig($section = '', $key = '') {
 		$config_file = CONF_PATH.'/config_'.ENV.'.php';
 		if(!file_exists($config_file)){
 			echo 'Error: config file '.$config_file.' NOT FOUND'.PHP_EOL; exit(0);
@@ -14,7 +14,11 @@ abstract class Config {
 
 		$config = include $config_file;
 		if($section){
-			return $config[strtolower($section)];
+			if($key){
+				return $config[strtolower($section)][$key];	
+			}else{
+				return $config[strtolower($section)];
+			}
 		}else{
 			return $config;
 		}
