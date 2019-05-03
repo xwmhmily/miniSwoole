@@ -74,7 +74,7 @@ class C_Http extends Controller {
 		}
     }
 
-    // Get all news with pagination
+    // Auto pagination
     public function news(){
         try{
             $news = $this->m_news->Limit()->Select();

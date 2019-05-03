@@ -240,7 +240,11 @@ abstract class Model {
 	 * Limit
 	 */
 	final public function Limit($size = 10){
-		$page = $_GET['page'];
+		$page = Server::$page;
+		if(!$page){
+			$page = 1;
+		}
+
 		$start = ($page - 1) * $size;
 		$this->options['limit'] .= ' LIMIT '.$start.', '.$size;
 
@@ -462,7 +466,7 @@ abstract class Model {
 		}
 
 		if(isset($this->options['limit'])){
-			$sql .= ' LIMIT '. $this->options['limit'];
+			$sql .= $this->options['limit'];
 		}
 
 		return $sql;
