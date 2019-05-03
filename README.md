@@ -300,11 +300,10 @@ http://127.0.0.1:9100/api/login/logout
 http://127.0.0.1:9100/api/user  
 ```
 - 暂时只支持 GET / POST 方法<br />
-- 可自行在library 目录的 Worker::beforeRequest() 中处理在 http request 前的业务
+- 可自行在 library/middleware/HttpMiddleware 的 beforeHandle(), handle(), afterHandle() 中处理在 http request 前的业务
 - 如果 Controller 不存在, 客户端收到: Controller $controller not found<br />
 - 如果 action 不存在, 客户端收到: Method $action not found<br />
-- 控制器的方法中调用 $this->response->write($rep) 将数据发送至客户端, 可以调用多次, 最后使用 $this->response->end() 来结束这个请求 <br />
-- 使用write分段发送数据后，end方法将不接受任何参数<br />
+- 控制器的方法中调用 $this->response->write($rep) 将数据发送至客户端, 可以调用多次 <br />
 - 控制器的示例为 controller下的 Index.php 与 Http.php 及 module/Api/controller 下的 Login.php 和 User.php <br />
 - 更多 http server 信息请参考 https://wiki.swoole.com/wiki/page/326.html
 
