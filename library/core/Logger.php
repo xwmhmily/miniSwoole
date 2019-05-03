@@ -40,12 +40,12 @@ abstract class Logger {
     }
 
     private static function appand($level, $msg){
-        $config = Config::get();
-        $log_level = $config['common']['error_level'];
+        $config = Config::get('common');
+        $log_level = $config['error_level'];
         if($level < $log_level){
             return;
         }else{
-            $error_file = $config['common']['error_file'];
+            $error_file = $config['error_file'];
         }
 
         switch($level){
@@ -75,9 +75,9 @@ abstract class Logger {
     }
 
 	public static function logMySQL($msg) {
-        $config = Config::get();
+        $mysql_log_file = Config::get('common', 'mysql_log_file');
         $error = date('Y-m-d H:i:s').' | '.self::getMicrotime().' | ERROR | '.$msg.PHP_EOL;
-        file_put_contents($config['common']['mysql_log_file'], $error, FILE_APPEND);        
+        file_put_contents($mysql_log_file, $error, FILE_APPEND);   
     }
     
     // Get current microtime
