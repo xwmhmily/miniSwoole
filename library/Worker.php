@@ -18,7 +18,7 @@ class Worker {
 		*/
 	}
 
-	// Do anything you want before http request
+	// Do something want before http request
 	public static function beforeRequest($method, swoole_http_request $request, swoole_http_response $response){
 		$response->header('Content-Type', 'text/html; charset=utf-8');
 		if(isset($request->get['page'])){
@@ -28,7 +28,7 @@ class Worker {
 		HttpMiddleware::beforeRequest($method, $request, $response);
 	}
 
-	// Do anything you want after http request
+	// Do something after http request
 	public static function afterRequest($method, swoole_http_request $request, swoole_http_response $response){
 		HttpMiddleware::afterRequest($method, $request, $response);
 		$response->end();

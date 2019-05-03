@@ -48,6 +48,8 @@ class Hooker {
             $response->end('Error: Only GET and POST supported now !'); return;
         }
 
+        Worker::beforeRequest($method, $request, $response);
+
         $config  = Config::get('common');
         $modules = explode(',', $config['module']);
 
@@ -85,8 +87,6 @@ class Hooker {
         if(!$action){
             $action = 'index';
         }
-
-        Worker::beforeRequest($method, $request, $response);
 
         $instance = Helper::import($module, $controller);
         if($instance !== FALSE){
