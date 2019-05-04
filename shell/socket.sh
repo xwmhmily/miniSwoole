@@ -78,7 +78,9 @@ reload() {
 status() {
     SWOOLE_MASTER_PID=`cat $PID_FILE`
     if [ $SWOOLE_MASTER_PID ]; then
-        TIP="Server with pid ${SWOOLE_MASTER_PID} is running"
+        MASTER_PROCESS_NAME=`ps -ef | grep ${SWOOLE_MASTER_PID} | grep -v "grep" | sed -n '1p' | awk -F ' ' '{print $9}'`
+
+        TIP=$MASTER_PROCESS_NAME"Server with pid ${SWOOLE_MASTER_PID} is running"
     	MSG=${GREEN_COLOR}${TIP}${RES}
     else
         TIP="Server is DOWN !!!"
