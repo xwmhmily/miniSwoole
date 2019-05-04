@@ -70,6 +70,7 @@
 - 采用 Module-Controll-Model 模式, 所有的请求均转至 Module-Controller下处理 <br />
 - 默认 Module 为index, 无须声明, 对应的控制器文件位是根目录的 controller<br />
 - 在配置文件的 module 中声明新模块，以英文逗号分隔，如 'Api, Admin, Mall, Shop', 对应的控制器文件是 /module/$moduleName/controller<br />
+- 中间件：很多时候，我们需要在请求前与后做一些前置与后置的统一业务，比如授权认证，日志与流量收集，中件间就派上用场了。
 
 <hr />
 
@@ -170,7 +171,6 @@ Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http
 <hr />
 
 #### TCP 服务之控制器
-- library 目录的 Worker::afterConnect(), Worker::afterClose() 负责处理 tcp 的 onConnect, onClose 事件<br />
 - 为了将控制权由 onReceive 转至控制器, 客户端发送的数据需要指定处理该请求的 module (默认是index, 可以忽略), controller 及 action, 比如要指定由 Tcp 控制器下的 login() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/tcp_client.php】
 ```
 $data = [];
@@ -310,15 +310,13 @@ http://127.0.0.1:9100/api/user
 - 更多 http server 信息请参考 https://wiki.swoole.com/wiki/page/326.html
 
 #### HTTP 服务之中间件
-- 很多时候，我们需要在 HTTP 请求前与后做一些前置与后置的统一业务，比如授权认证，日志与流量收集，中件间就派上用场了。
 - 文件: library/middeware/HttpMiddleware
-- beforeRequest(): 请求正式进入 controller 前触发，
-- afterRequest(): 离开 controller 后触发。
+- beforeRequest(): 请求进入 controller 前触发，
+- afterRequest():  请求离开 controller 后触发。
 
 <hr />
 
 #### Websocket 服务之控制器
-- library 目录的 Worker::afterOpen() 负责处理 websocket 的 onOpen 事件<br />
 - 为了将控制权由 onMessage 转至控制器, 客户端发送的数据需要指定处理该请求的module (默认是index, 可以忽略), controller 及 action, 比如要指定由 websocket 控制器下的 go() 来处理, 则发送的数据中应该是这样的 json 格式:【参见client/ws.html】
 
 ```
