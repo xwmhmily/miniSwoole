@@ -31,7 +31,7 @@ abstract class Pool {
 
 	public static function getSlaveInstance(){
 		$config = Config::get('mysql_slave');
-        return self::connectMySQL($config['host'], $config['port'], $config['user'], $config['pwd'], $config['db']);
+        return self::connectMySQL($config);
 	}
 
 	public static function pop($type){
@@ -50,25 +50,20 @@ abstract class Pool {
 		$config = Config::get($type);
 
 		if(strtoupper($type) == self::TYPE_MYSQL){
-			$db   = $config['db'];
-	        $host = $config['host'];
-	        $user = $config['user'];
-	        $port = $config['port'];
-	        $pwd  = $config['pwd'];
-
-	        return self::connectMySQL($host, $port, $user, $pwd, $db);
+	        return self::connectMySQL($config);
 		}else if(strtoupper($type) == self::TYPE_REDIS){
-			$host = $config['host'];
-			$port = $config['port'];
-			$pwd  = $config['pwd'];
-			$db   = $config['db'];
-
-	        return self::connectRedis($host, $port, $pwd, $db);
+	        return self::connectRedis($config);
 		}
 	}
 
 	// 可以单独调用该方法创建新的 MySQL 连接
-	public static function connectMySQL($host, $port, $user, $pwd, $db){
+	public static function connectMySQL($config){
+		$db   = $config['db'];
+		$host = $config['host'];
+		$user = $config['user'];
+		$port = $config['port'];
+		$pwd  = $config['pwd'];
+
 		$dsn = 'mysql:host='.$host.';port='.$port.';dbname='.$db;
 
         try {
@@ -89,7 +84,12 @@ abstract class Pool {
 	}
 
 	// 可以单独调用该方法创建新的 Redis 连接
-	public static function connectRedis($host, $port, $pwd, $db){
+	public static function connectRedis($config){
+		$host = $config['host'];
+		$port = $config['port'];
+		$pwd  = $config['pwd'];
+		$db   = $config['db'];
+
 		$redis  = new \Redis();
         $retval = $redis->connect($host, $port);
         if(!$retval){
