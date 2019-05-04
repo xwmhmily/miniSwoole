@@ -6,7 +6,7 @@
 
 abstract class Pool {
 
-	public static $pool;
+	private static $pool;
 	const TYPE_MYSQL = 'MYSQL';
 	const TYPE_REDIS = 'REDIS';
 

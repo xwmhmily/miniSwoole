@@ -232,14 +232,6 @@ class C_Http extends Controller {
 		}
     }
 
-    public function pool(){
-        try{
-            $this->response->write(JSON(Pool::$pool[Pool::TYPE_MYSQL]));
-        }catch (Throwable $e){
-			$this->error($e);
-		}
-    }
-
     // MySQL slave
     public function slave(){
         try{
