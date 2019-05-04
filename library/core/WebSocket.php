@@ -18,15 +18,15 @@ class WebSocket {
         }
         
         $this->server->set($c);
-        $this->server->on('task',          ['Task',   'onTask']);
-        $this->server->on('finish',        ['Task',   'onFinish']);
-        $this->server->on('open',          ['Hooker', 'onOpen']);
-        $this->server->on('close',         ['Hooker', 'onClose']);
-        $this->server->on('message',       ['Hooker', 'onMessage']);
-        $this->server->on('WorkerStop',    ['Hooker', 'onWorkerStop']);
-        $this->server->on('WorkerError',   ['Hooker', 'onWorkerError']);
-        $this->server->on('WorkerStart',   ['Hooker', 'onWorkerStart']);
-        $this->server->on('ManagerStart',  ['Hooker', 'onManagerStart']);
+        $this->server->on('task',         ['Task',   'onTask']);
+        $this->server->on('finish',       ['Task',   'onFinish']);
+        $this->server->on('open',         ['Hooker', 'onOpen']);
+        $this->server->on('close',        ['Hooker', 'onClose']);
+        $this->server->on('message',      ['Hooker', 'onMessage']);
+        $this->server->on('WorkerStop',   ['Hooker', 'onWorkerStop']);
+        $this->server->on('WorkerError',  ['Hooker', 'onWorkerError']);
+        $this->server->on('WorkerStart',  ['Hooker', 'onWorkerStart']);
+        $this->server->on('ManagerStart', ['Hooker', 'onManagerStart']);
 
         require_once LIB_PATH.'/middleware/TcpMiddleware.php';
         require_once LIB_PATH.'/middleware/WebsocketMiddleware.php';
