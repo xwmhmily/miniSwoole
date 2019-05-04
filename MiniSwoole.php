@@ -51,6 +51,8 @@ class MiniSwoole {
 	}
 
 	public function config(){
+		date_default_timezone_set('Asia/Chongqing');
+		
 		define('TB_PK', 'id');
 		define('MINI_SWOOLE_VERSION', '1.0');
 		define('LIB_PATH',  APP_PATH.'/library');
