@@ -53,7 +53,6 @@ class MiniSwoole {
 	public function config(){
 		date_default_timezone_set('Asia/Chongqing');
 		
-		define('TB_PK', 'id');
 		define('MINI_SWOOLE_VERSION', '1.0');
 		define('LIB_PATH',  APP_PATH.'/library');
 		define('CORE_PATH', LIB_PATH.'/core');
@@ -87,7 +86,8 @@ class MiniSwoole {
         // APP_NAME
 		define('APP_NAME', $config['app_name']);
 		
-		// TABLE_PREFIX and TB_SUFFIX_SF
+		// PK and TABLE_PREFIX and TB_SUFFIX_SF
+		define('TB_PK', $config['tb_pk']);
 		define('TB_PREFIX', $config['tb_prefix']);
 		if($config['tb_suffix_sf']){
 			define('TB_SUFFIX_SF', $config['tb_suffix_sf']);

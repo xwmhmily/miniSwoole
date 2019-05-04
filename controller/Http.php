@@ -278,10 +278,10 @@ class C_Http extends Controller {
             }
 
             $users = $this->m_user->SelectAll();
-            $this->response->write(JSON($users).'<br />');
+            $this->response->write('Users => '.JSON($users).'<br />');
 
-            $user = $this->m_user->SelectByID('', 1);
-            $this->response->write(JSON($user).'<br />');
+            $user = $this->m_user->SelectByID('', 24);
+            $this->response->write('User => '.JSON($user).'<br />');
         }catch (Throwable $e){
 			$this->error($e);
 		}

@@ -290,7 +290,7 @@ abstract class Model {
 	 * Select one record
 	 */
 	final public function SelectOne(){
-		$this->options['limit'] = 1;
+		$this->options['limit'] = ' LIMIT 1';
 		$this->selectOne = TRUE;
 
 		return $this->Select();
@@ -618,7 +618,7 @@ abstract class Model {
 			}
 
 			if(isset($this->options['limit'])){
-				$this->sql .= ' LIMIT '.$this->options['limit'];
+				$this->sql .= $this->options['limit'];
 			}
 
 			return $this->Exec();
@@ -638,7 +638,7 @@ abstract class Model {
      *  Update one record
      */
 	public function UpdateOne($map, $self = FALSE){
-		$this->options['limit'] = 1;
+		$this->options['limit'] = ' LIMIT 1';
 		return $this->Update($map, $self);
 	}
 
@@ -670,7 +670,7 @@ abstract class Model {
 		}
 
 		if(isset($this->options['limit'])){
-			$this->sql .= ' LIMIT '.$this->options['limit'];
+			$this->sql .=  $this->options['limit'];
 		}
 
 		return $this->Exec();
@@ -682,7 +682,7 @@ abstract class Model {
 	 * @return FALSE on failure or affected rows on success
 	 */
 	final public function DeleteOne() {
-		$this->options['limit'] = 1;
+		$this->options['limit'] = ' LIMIT 1';
 		return $this->Delete();
 	}
 

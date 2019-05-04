@@ -3,6 +3,7 @@
 $config = [
 	'common' => [
 		'app_name'                 => 'Mini_Swoole',
+		'tb_pk'                    => 'id',
 		'tb_prefix'                => 'sl_',
 		'tb_suffix_sf'             => '_',
 		'user'                     => 'www',
