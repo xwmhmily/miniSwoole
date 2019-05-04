@@ -119,7 +119,8 @@ class Hooker {
         Worker::beforeReceieve($server, $fd, $reactorID, $json);
 
         // 分包
-        $data_list = explode("\r\n", $json);
+        $eof = Config::get('common', 'package_eof');
+        $data_list = explode($eof, $json);
         if($data_list){
             foreach($data_list as $msg){
                 $data = json_decode($msg, TRUE);
