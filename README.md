@@ -70,15 +70,7 @@
 - 采用 Module-Controll-Model 模式, 所有的请求均转至 Module-Controller下处理 <br />
 - 默认 Module 为index, 无须声明, 对应的控制器文件位是根目录的 controller<br />
 - 在配置文件的 module 中声明新模块，以英文逗号分隔，如 'Api, Admin, Mall, Shop', 对应的控制器文件是 /module/$moduleName/controller<br />
-- 来看看 Worker.php 一些有用的函数
-    > beforeMessage(): 与 beforeRequest() 类似，只不过仅当服务为 websocket 时有效<br />
-    > beforePacket() : 与 beforeRequest() 类似，只不过仅当服务为 udp 时有效<br />
-    > beforeReceieve() : 与 beforeRequest() 类似，只不过仅当服务为 tcp 时有效<br />
-    > afterStart(): 在 worker 启动后做一些好玩的工作，比如设置定时器，创建其他服务的连接池等<br />
-    > afterOpen(): 在 websocket 客户端与服务器建立连接并完成握手后会回调此函数<br />
-    > afterClose() : 在 tcp / udp 连接关闭后做一些的工作<br />
-    > afterConnect(): 在 tcp 连接后做一些好玩的工作，写缓存或广播通知<br />
-    > afterStop(): 在 worker 关闭后做一些日志性或清理动作，如清理相关的 Redis 缓存或广播通知<br />
+
 <hr />
 
 #### 日志和错误处理
@@ -99,7 +91,7 @@ public function log(){
         Logger::log('This is a log msg');
 
         $level = Config::get('common', 'error_level');
-        $this->response->end('Current error_level => '.$level);
+        $this->response->write('Current error_level => '.$level);
     }catch (Throwable $e){
         $this->error($e);
     }
@@ -112,7 +104,7 @@ public function log(){
 public function onError(){
     try{
         $result = $this->m_player->SelectOne();
-        $this->response('Result is => '.$result);
+        $this->response->write('Result is => '.$result);
     }catch (Throwable $e){
         $this->error($e);
     }
@@ -216,6 +208,13 @@ public function login(){
 }
 ```
 
+#### TCP 服务之中间件
+- 文件：library/middleware/TcpMiddleware.php
+- afterConnect(): 建立 TCP 连接后触发
+- beforeReceieve(): 接收到客户端数据前触发
+- afterReceieve(): 处理完客户端数据后触发
+- afterClose(): 断开 TCP 连接后触发
+
 <hr />
 
 #### UDP 服务之控制器
@@ -267,6 +266,11 @@ public function udp(){
 }
 ```
 
+#### UDP 服务之中间件
+- 文件：library/middleware/UdpMiddleware.php
+- beforePacket(): 接收到客户端数据前触发
+- afterPacket():  处理完客户端数据后触发
+
 <hr />
 
 #### HTTP 服务之控制器
@@ -306,7 +310,10 @@ http://127.0.0.1:9100/api/user
 - 更多 http server 信息请参考 https://wiki.swoole.com/wiki/page/326.html
 
 #### HTTP 服务之中间件
-- 很多时候，我们需要在 HTTP 请求前与后做一些前置与后置的统一业务，比如授权认证，日志与流量收集，中件间就派上用场了。library/middeware/HttpMiddleware 的 beforeRequest() 允许我们在 http 请求正式进入 controller 之前做一些业务，afterRequest() 则是在离开 controller 之后。
+- 很多时候，我们需要在 HTTP 请求前与后做一些前置与后置的统一业务，比如授权认证，日志与流量收集，中件间就派上用场了。
+- 文件: library/middeware/HttpMiddleware
+- beforeRequest(): 请求正式进入 controller 前触发，
+- afterRequest(): 离开 controller 后触发。
 
 <hr />
 
@@ -342,6 +349,13 @@ public function users(){
     }
 }
 ```
+
+#### Websocket 服务之中间件
+- 文件：library/middleware/UdpMiddleware.php
+- afterOpen(): 连接建立后触发
+- beforeMessage(): 接收到客户端数据前触发
+- afterMessage():  处理完客户端数据后触发
+
 <hr />
 
 #### MySQL
@@ -566,7 +580,7 @@ public function task(){
         $args['callback'] = ['Importer', 'Run'];
         $args['param']    = ['Lakers', 'Swoole', 'Westlife'];
         $taskID = Task::add($args);
-        $this->response->end('Task has been set, id is => '.$taskID);
+        $this->response->write('Task has been set, id is => '.$taskID);
     }catch (Throwable $e){
         $this->error($e);
     }
