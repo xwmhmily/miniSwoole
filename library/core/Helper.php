@@ -76,8 +76,14 @@ abstract class Helper {
 	 */
 	public static function raiseError($trace, $error, $sql = '') {
 		$errorNO   = 9999; 
-		$errorFile = $trace[0]['file'];
-		$errorLine = $trace[0]['line'];
+
+		if(isset($trace[0]['file'])){
+			$errorFile = $trace[0]['file'];
+		}
+
+		if(isset($trace[0]['line'])){
+			$errorLine = $trace[0]['line'];
+		}
 
 		Logger::errorHandler($errorNO, $error, $errorFile, $errorLine, NULL, $sql);
 	}

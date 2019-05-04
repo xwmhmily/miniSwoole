@@ -27,8 +27,10 @@ class UdpServer {
         $this->server->on('WorkerStart',  ['Hooker', 'onWorkerStart']);
         $this->server->on('ManagerStart', ['Hooker', 'onManagerStart']);
 
+        require_once LIB_PATH.'/middleware/UdpMiddleware.php';
+
         // 是否需要监听额外的端口
-        if($config['udp']['listen_ip']){
+        if(isset($config['udp']['listen_ip'])){
             $this->server->addlistener($config['udp']['listen_ip'], $config['udp']['listen_port'], SWOOLE_SOCK_TCP);
         }
     }
@@ -37,9 +39,11 @@ class UdpServer {
         Server::$type = Server::TYPE_UDP;
         Server::$instance = $this->server;
 
-        swoole_set_process_name(APP_NAME.'_udp_master');
+        if(strtoupper(PHP_OS) == Server::OS_LINUX){
+            swoole_set_process_name(APP_NAME.'_udp_master');
+        }
+
         Logger::log('======= UDP master start =======');
-        
         $this->server->start();
     }
 }

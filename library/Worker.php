@@ -23,6 +23,7 @@ class Worker {
 	}
 
 	// Do something after http request
+	// TO-DO: 检测Connection是否Alive
 	public static function afterRequest($method, swoole_http_request $request, swoole_http_response $response){
 		HttpMiddleware::afterRequest($method, $request, $response);
 		$response->end();
@@ -30,47 +31,47 @@ class Worker {
 
 	// Do something before udp packet
 	public static function beforePacket(swoole_server $server, string $json, array $client){
-		Logger::log(__FUNCTION__);
+		UdpMiddleware::beforePacket($server, $json, $client);
 	}
 
 	// Do something after udp packet
 	public static function afterPacket(swoole_server $server, string $json, array $client){
-		Logger::log(__FUNCTION__);
-	}
-
-	// Do something before tcp receive
-	public static function beforeReceieve(swoole_server $server, int $fd, int $reactorID, string $json){
-		Logger::log(__FUNCTION__);
-	}
-
-	// Do something after tcp receive
-	public static function afterReceieve(swoole_server $server, int $fd, int $reactorID, string $json){
-		Logger::log(__FUNCTION__);
+		UdpMiddleware::afterPacket($server, $json, $client);
 	}
 
 	// Do something after tcp connect
 	public static function afterConnect(swoole_server $server, int $fd, int $reactorID){
-		Logger::log(__FUNCTION__);
+		TcpMiddleware::afterConnect($server, $fd, $reactorID);
+	}
+
+	// Do something before tcp receive
+	public static function beforeReceieve(swoole_server $server, int $fd, int $reactorID, string $json){
+		TcpMiddleware::beforeReceieve($server, $fd, $reactorID, $json);
+	}
+
+	// Do something after tcp receive
+	public static function afterReceieve(swoole_server $server, int $fd, int $reactorID, string $json){
+		TcpMiddleware::afterReceieve($server, $fd, $reactorID, $json);
 	}
 
 	// Do something after tcp close
     public static function afterClose(swoole_server $server, int $fd, int $reactorID){
-        Logger::log(__FUNCTION__);
+        TcpMiddleware::afterClose($server, $fd, $reactorID);
     }
 
 	// Do something after websocket open
     public static function afterOpen(swoole_websocket_server $server, swoole_http_request $request){
-        Logger::log(__FUNCTION__);
+        WebsocketMiddleware::afterOpen($server, $request);
 	}
 	
 	// Do something before websocket message
 	public static function beforeMessage(swoole_websocket_server $server, swoole_websocket_frame $frame){
-		Logger::log(__FUNCTION__);
+		WebsocketMiddleware::beforeMessage($server, $frame);
 	}
 
 	// Do something after websocket message
 	public static function afterMessage(swoole_websocket_server $server, swoole_websocket_frame $frame){
-		Logger::log(__FUNCTION__);
+		WebsocketMiddleware::afterMessage($server, $frame);
 	}
 	
 }

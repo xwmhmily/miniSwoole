@@ -29,7 +29,7 @@ class HttpServer {
         require_once LIB_PATH.'/middleware/HttpMiddleware.php';
 
         // 是否需要监听额外的端口
-        if($config['http']['listen_ip']){
+        if(isset($config['http']['listen_ip'])){
             $this->server->addlistener($config['http']['listen_ip'], $config['http']['listen_port'], SWOOLE_SOCK_TCP);
         }
     }
@@ -38,9 +38,11 @@ class HttpServer {
         Server::$type = Server::TYPE_HTTP;
         Server::$instance = $this->server;
 
-        swoole_set_process_name(APP_NAME.'_http_master');
+        if(strtoupper(PHP_OS) == Server::OS_LINUX){
+            swoole_set_process_name(APP_NAME.'_http_master');
+        }
+
         Logger::log('======= HTTP master start =======');
-        
         $this->server->start();
     }
 }

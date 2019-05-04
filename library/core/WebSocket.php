@@ -28,8 +28,11 @@ class WebSocket {
         $this->server->on('WorkerStart',   ['Hooker', 'onWorkerStart']);
         $this->server->on('ManagerStart',  ['Hooker', 'onManagerStart']);
 
+        require_once LIB_PATH.'/middleware/TcpMiddleware.php';
+        require_once LIB_PATH.'/middleware/WebsocketMiddleware.php';
+
         // 是否需要监听额外的端口
-        if($config['websocket']['listen_ip']){
+        if(isset($config['websocket']['listen_ip'])){
             $this->server->addlistener($config['websocket']['listen_ip'], $config['websocket']['listen_port'], SWOOLE_SOCK_TCP);
         }
     }
@@ -38,9 +41,11 @@ class WebSocket {
         Server::$instance = $this->server;
         Server::$type = Server::TYPE_WEB_SOCKET;
 
-        swoole_set_process_name(APP_NAME.'_websocket_master');
+        if(strtoupper(PHP_OS) == Server::OS_LINUX){
+            swoole_set_process_name(APP_NAME.'_websocket_master');
+        }
+
         Logger::log('======= Websocket master start =======');
-        
         $this->server->start();
     }
 }

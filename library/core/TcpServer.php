@@ -30,6 +30,8 @@ class TcpServer {
         $this->server->on('WorkerStart',  ['Hooker', 'onWorkerStart']);
         $this->server->on('ManagerStart', ['Hooker', 'onManagerStart']);
 
+        require_once LIB_PATH.'/middleware/TcpMiddleware.php';
+
         // 是否需要监听额外的端口
         if(isset($config['tcp']['listen_ip'])){
             $this->server->addlistener($config['tcp']['listen_ip'], $config['tcp']['listen_port'], SWOOLE_SOCK_TCP);
@@ -40,9 +42,11 @@ class TcpServer {
         Server::$type = Server::TYPE_TCP;
         Server::$instance = $this->server;
 
-        swoole_set_process_name(APP_NAME.'_tcp_master');
-        Logger::log('======= TCP master start =======');
+        if(strtoupper(PHP_OS) == Server::OS_LINUX){
+            swoole_set_process_name(APP_NAME.'_tcp_master');
+        }
         
+        Logger::log('======= TCP master start =======');
         $this->server->start();
     }
 }

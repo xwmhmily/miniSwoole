@@ -30,7 +30,7 @@ Hello Swoole!!!
 
     var ws;
     var lockReconnect = false;
-    var wsUrl = 'ws://192.168.1.31:9509?token=THIS_IS_TOKEN';
+    var wsUrl = 'ws://127.0.0.1:9509?token=THIS_IS_TOKEN';
 
     function createWebSocket(url) {
         try {
@@ -58,7 +58,7 @@ Hello Swoole!!!
             heartCheck.reset().start();
             var arr = {};
             arr.controller = 'websocket';
-            arr.action     = 'user';
+            arr.action     = 'users';
             arr.token      = 'THIS_IS_TOKEN';
             ws.send(JSON.stringify(arr));
         };

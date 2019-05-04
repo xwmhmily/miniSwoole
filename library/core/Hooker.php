@@ -8,7 +8,9 @@ class Hooker {
 
     // Manager start
     public static function onManagerStart(swoole_server $server){
-        swoole_set_process_name(APP_NAME.'_manager');
+        if(strtoupper(PHP_OS) == Server::OS_LINUX){
+            swoole_set_process_name(APP_NAME.'_manager');
+        }
     }
 
     // Worker start
@@ -23,7 +25,9 @@ class Hooker {
             $process_name = APP_NAME.'_worker';
         }
 
-        swoole_set_process_name($process_name);
+        if(strtoupper(PHP_OS) == Server::OS_LINUX){
+            swoole_set_process_name($process_name);
+        }
 
         for($i = 1; $i <= $max; $i++){
             $retval = Pool::getInstance(Pool::TYPE_MYSQL);
@@ -108,7 +112,6 @@ class Hooker {
     // TCP onConnect
     public static function onConnect(swoole_server $server, int $fd, int $reactorID){
         Worker::afterConnect($server, $fd, $reactorID);
-        Logger::log('Client '.$fd.' connected');
     }
 
     // TCP onReceive
@@ -121,8 +124,9 @@ class Hooker {
             foreach($data_list as $msg){
                 $data = json_decode($msg, TRUE);
                 if($data){
-                    $module = trim($data['module']);
-                    if(!$module){
+                    if(isset($data['module'])){
+                        $module = trim($data['module']);
+                    }else{
                         $module = 'index';
                     }
 
@@ -138,6 +142,7 @@ class Hooker {
                             $action = trim($data['action']);
                             !$action && $action = 'index';
                             $instance->$action();
+                            Worker::afterReceieve($server, $fd, $reactorID, $json);
                         }else{
                             $rep['code']  = 0;
                             $rep['error'] = 'Controller '.$controller.' not found';
@@ -158,8 +163,9 @@ class Hooker {
             $rep['error'] = 'Not valid JSON';
             $server->sendto($client['address'], $client['port'], JSON($rep));
         }else{
-            $module = trim($data['module']);
-            if(!$module){
+            if(isset($data['module'])){
+                $module = trim($data['module']);
+            }else{
                 $module = 'index';
             }
 
@@ -175,6 +181,7 @@ class Hooker {
                     $action = trim($data['action']);
                     !$action && $action = 'index';
                     $instance->$action();
+                    Worker::afterPacket($server, $json, $client);
                 }else{
                     $rep['code']  = 0;
                     $rep['error'] = 'Controller '.$controller.' not found';
@@ -187,7 +194,6 @@ class Hooker {
     // Websocket onOpen
     public static function onOpen(swoole_websocket_server $server, swoole_http_request $request){
         Worker::afterOpen($server, $request);
-        Logger::log('Client '.$request->fd.' connected');
     }
 
     // Websocket onMessage
@@ -199,8 +205,9 @@ class Hooker {
             $rep['error'] = 'Not valid JSON';
             $server->push($frame->fd, JSON($rep));
         }else{
-            $module = trim($data['module']);
-            if(!$module){
+            if(isset($data['module'])){
+                $module = trim($data['module']);
+            }else{
                 $module = 'index';
             }
 
@@ -216,6 +223,7 @@ class Hooker {
                     $action = trim($data['action']);
                     !$action && $action = 'index';
                     $instance->$action();
+                    Worker::afterMessage($server, $frame);
                 }else{
                     $rep['code']  = 0;
                     $rep['error'] = 'Controller '.$controller.' not found';
@@ -228,7 +236,6 @@ class Hooker {
     // onClose
     public static function onClose(swoole_server $server, int $fd, int $reactorID){
         Worker::afterClose($server, $fd, $reactorID);
-        Logger::log('Client '.$fd.' closed');
     }
 
     // Worker error
