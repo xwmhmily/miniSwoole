@@ -19,19 +19,27 @@ abstract class Controller {
 	protected function getParam($key, $filter = TRUE){
 		if(Server::$type == Server::TYPE_HTTP){
 			$method = strtolower($this->method);
-			if(!$filter){
-				return $this->request->$method[$key];
+			if(isset($this->request->$method[$key])){
+				$value = $this->request->$method[$key];
+				if($filter){
+					$value = Security::filter($value);
+				}
 			}else{
-				return Security::filter($this->request->$method[$key]);
+				$value = NULL;
 			}
 		}else{
 			// TCP, UDP, Websocket
-			if(!$filter){
-				return $this->data[$key];
+			if(isset($this->data[$key])){
+				$value = $this->data[$key];
+				if($filter){
+					$value = Security::filter($value);
+				}
 			}else{
-				return Security::filter($this->data[$key]);
+				$value = NULL;
 			}
 		}
+
+		return $value;
 	}
 
 	// Output error
