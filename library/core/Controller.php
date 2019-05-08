@@ -21,9 +21,6 @@ abstract class Controller {
 			$method = strtolower($this->method);
 			if(isset($this->request->$method[$key])){
 				$value = $this->request->$method[$key];
-				if($filter){
-					$value = Security::filter($value);
-				}
 			}else{
 				$value = NULL;
 			}
@@ -31,12 +28,13 @@ abstract class Controller {
 			// TCP, UDP, Websocket
 			if(isset($this->data[$key])){
 				$value = $this->data[$key];
-				if($filter){
-					$value = Security::filter($value);
-				}
 			}else{
 				$value = NULL;
 			}
+		}
+
+		if($filter){
+			$value = Security::filter($value);
 		}
 
 		return $value;
