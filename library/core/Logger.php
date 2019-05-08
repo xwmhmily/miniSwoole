@@ -15,31 +15,31 @@ abstract class Logger {
     public static $last_error;
 
     public static function debug($msg){
-        self::appand(self::LEVEL_DEBUG, $msg);
+        self::append(self::LEVEL_DEBUG, $msg);
     }
 
     public static function info($msg){
-        self::appand(self::LEVEL_INFO, $msg);
+        self::append(self::LEVEL_INFO, $msg);
     }
 
     // Alias of info
     public static function log($msg){
-        self::appand(self::LEVEL_INFO, $msg);
+        self::append(self::LEVEL_INFO, $msg);
     }
 
     public static function warn($msg){
-        self::appand(self::LEVEL_WARN, $msg);
+        self::append(self::LEVEL_WARN, $msg);
     }
 
     public static function error($msg) {
-        self::appand(self::LEVEL_ERROR, $msg);
+        self::append(self::LEVEL_ERROR, $msg);
     }
 
     public static function fatal($msg){
-        self::appand(self::LEVEL_FATAL, $msg);
+        self::append(self::LEVEL_FATAL, $msg);
     }
 
-    private static function appand($level, $msg){
+    private static function append($level, $msg){
         $config = Config::get('common');
         $log_level = $config['error_level'];
         if($level < $log_level){
