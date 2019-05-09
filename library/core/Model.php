@@ -23,6 +23,9 @@ abstract class Model {
 	// success code of PDO
 	private $successCode = '00000';
 
+	const ERROR_MYSQL_HAS_GONE_AWAY   = 'MySQL server has gone away';
+	const ERROR_MYSQL_LOST_CONNECTION = 'Lost connection to MySQL server during query';
+
 	// The result of last operation: failure OR success
 	private $success = FALSE;
 
@@ -701,18 +704,12 @@ abstract class Model {
 	 * @return NULL
 	 */
 	final private function checkResult(){
-		$retry = FALSE;
 		if($this->db == 'MASTER'){
 			if (self::$conn->errorCode() == $this->successCode) {
 				$this->success = TRUE;
 			}else{
 				$this->success = FALSE;
 				$error = self::$conn->errorInfo();
-				Helper::raiseError(debug_backtrace(), $error[2], $this->sql);
-				if(strpos($error[2], 'MySQL server has gone away') !== FALSE){
-					$retry = TRUE;
-					$this->reconnect();
-				}
 			}
 		}else{
 			if (self::$slave->errorCode() == $this->successCode) {
@@ -720,11 +717,22 @@ abstract class Model {
 			}else{
 				$this->success = FALSE;
 				$error = self::$slave->errorInfo();
-				Helper::raiseError(debug_backtrace(), $error[2], $this->sql);
-				if(strpos($error[2], 'MySQL server has gone away') !== FALSE){
-					$retry = TRUE;
-					$this->reconnect();
-				}
+			}
+		}
+		
+		$retry = FALSE;
+		if($this->success === FALSE){
+			Helper::raiseError(debug_backtrace(), $error[2], $this->sql);
+			if(strpos($error[2], self::ERROR_MYSQL_HAS_GONE_AWAY) !== FALSE){
+				$retry = TRUE;
+			}
+
+			if(strpos($error[2], self::ERROR_MYSQL_LOST_CONNECTION) !== FALSE){
+				$retry = TRUE;
+			}
+
+			if($retry === TRUE){
+				$this->reconnect();
 			}
 		}
 
