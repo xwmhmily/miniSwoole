@@ -341,7 +341,7 @@ abstract class Model {
 	public function MultiInsert($data, $ignore = FALSE){
 		$sql = "INSERT ";
 		if($ignore){
-			$this->sql .= ' IGNORE ';
+			$sql .= ' IGNORE ';
 		}
 		$sql .= " INTO ". $this->table;
 
