@@ -185,7 +185,7 @@ abstract class Model {
 
 		// 无限 WHERE
 		if(isset($this->options['where'])){
-			if($this->options['or']){
+			if(isset($this->options['or'])){
 				$connector = ' OR ';
 				$this->options['or'] = FALSE;
 			}else{
