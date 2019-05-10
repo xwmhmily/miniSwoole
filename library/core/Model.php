@@ -8,26 +8,23 @@
 
 abstract class Model {
 
-	protected $table;
 	private $insert;
+	private $options;
+	protected $table;
 	public $originalTable;
 	public $db = 'MASTER';
-	private static $conn;        // master connection
-	private static $slave;       // slave connection
-	private $result = NULL;	
-	private $retryMax = 3;
-	private static $retries = 0; // 重试次数					
-	private $options;            // SQL 中的 field, where, orderby, limit`
-	private $selectOne = FALSE;  // 是否是 SelectOne, 不需要 updateOne, deleteOne
+	private static $conn;    
+	private static $slave;      
 
-	// success code of PDO
-	private $successCode = '00000';
+	private static $retries = 0;
+	private $result         = NULL;		
+	private $success        = FALSE;	
+	private $selectOne      = FALSE;		   
 
+	const MAX_RETRY    = 3;
+	const CODE_SUCCESS = '00000';
 	const ERROR_MYSQL_HAS_GONE_AWAY   = 'MySQL server has gone away';
 	const ERROR_MYSQL_LOST_CONNECTION = 'Lost connection to MySQL server during query';
-
-	// The result of last operation: failure OR success
-	private $success = FALSE;
 
 	function __construct() {
 		
@@ -522,7 +519,7 @@ abstract class Model {
 	 * @return result of execution
 	 */
 	final private function Execute() {
-		while(self::$retries < $this->retryMax){
+		while(self::$retries < self::MAX_RETRY){
 			if($this->db == 'MASTER'){
 				$this->connect();
 				$this->result = self::$conn->query($this->sql);
@@ -549,7 +546,7 @@ abstract class Model {
 	 * @return result of execution
 	 */
 	final private function Exec() {
-		while(self::$retries < $this->retryMax){
+		while(self::$retries < self::MAX_RETRY){
 			$this->connect();
 			$rows = self::$conn->exec($this->sql);
 			$retval = $this->checkResult();
@@ -705,14 +702,14 @@ abstract class Model {
 	 */
 	final private function checkResult(){
 		if($this->db == 'MASTER'){
-			if (self::$conn->errorCode() == $this->successCode) {
+			if (self::$conn->errorCode() == self::CODE_SUCCESS) {
 				$this->success = TRUE;
 			}else{
 				$this->success = FALSE;
 				$error = self::$conn->errorInfo();
 			}
 		}else{
-			if (self::$slave->errorCode() == $this->successCode) {
+			if (self::$slave->errorCode() == self::CODE_SUCCESS) {
 				$this->success = TRUE;
 			}else{
 				$this->success = FALSE;
