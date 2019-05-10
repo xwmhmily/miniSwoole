@@ -23,6 +23,8 @@ abstract class Model {
 
 	const MAX_RETRY    = 3;
 	const CODE_SUCCESS = '00000';
+	const DB_MASTER    = 'MASTER';
+	const DB_SLAVE     = 'SLAVE';
 	const ERROR_MYSQL_HAS_GONE_AWAY   = 'MySQL server has gone away';
 	const ERROR_MYSQL_LOST_CONNECTION = 'Lost connection to MySQL server during query';
 
@@ -257,7 +259,7 @@ abstract class Model {
 		self::$retries = 0;
 		unset($this->options);
 
-		if(!$this->inTransaction() && !$this->insert && $this->db == 'MASTER'){
+		if(!$this->inTransaction() && !$this->insert && $this->db == self::DB_MASTER){
 			$this->unshift();
 		}
 	}
@@ -468,7 +470,7 @@ abstract class Model {
 	 */
 	public function getInsertID() {
 		$lastInsertID = self::$conn->lastInsertId();
-		if(!$this->inTransaction() && $this->db == 'MASTER'){
+		if(!$this->inTransaction() && $this->db == self::DB_MASTER){
 			$this->unshift();
 		}
 		$this->insert = FALSE;
@@ -508,7 +510,7 @@ abstract class Model {
 	 */
 	final private function Execute() {
 		while(self::$retries < self::MAX_RETRY){
-			if($this->db == 'MASTER'){
+			if($this->db == self::DB_MASTER){
 				$this->connect();
 				$this->result = self::$conn->query($this->sql);
 			}else{
@@ -686,7 +688,7 @@ abstract class Model {
 	 * Check result for the last execution
 	 */
 	final private function checkResult(){
-		if($this->db == 'MASTER'){
+		if($this->db == self::DB_MASTER){
 			if (self::$conn->errorCode() == self::CODE_SUCCESS) {
 				$this->success = TRUE;
 			}else{
@@ -733,7 +735,7 @@ abstract class Model {
     private function reconnect(){
 		Logger::log('reconnect to '.$this->db.' MySQL '.(self::$retries + 1).' time');
 
-		if($this->db == 'MASTER'){
+		if($this->db == self::DB_MASTER){
 			$this->Close();
 			Pool::getInstance(Pool::TYPE_MYSQL);
 		}else{
