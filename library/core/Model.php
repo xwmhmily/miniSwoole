@@ -13,7 +13,7 @@ abstract class Model {
 	protected $table;
 	public $originalTable;
 	public $db = 'MASTER';
-	private static $conn;    
+	private static $conn;
 	private static $slave;      
 
 	private static $retries = 0;
@@ -336,14 +336,14 @@ abstract class Model {
 	 * @return boolean
 	 */
 	public function MultiInsert($data, $ignore = FALSE){
-		$sql = "INSERT ";
+		$this->sql = "INSERT ";
 		if($ignore){
-			$sql .= ' IGNORE ';
+			$this->sql .= ' IGNORE ';
 		}
-		$sql .= " INTO ". $this->table;
+		$this->sql .= " INTO ". $this->table;
 
-		$field = $value = [];
 		$first = TRUE;
+		$field = $value = [];
 		foreach($data as $item){
 			if(!is_array($item)){
 				return FALSE;
@@ -351,7 +351,6 @@ abstract class Model {
 
 			if($first){
 				$field = array_keys($item);
-
 				$fieldString = implode('`,`', $field);
 				$first = FALSE;
 			}
@@ -362,9 +361,8 @@ abstract class Model {
 		}
 
 		$valueString = implode(',', $value);
-		$sql .= "(`$fieldString`) VALUES $valueString";
+		$this->sql .= "(`$fieldString`) VALUES $valueString";
 
-		$this->sql = $sql;
 		return $this->Exec();
 	}
 
@@ -696,9 +694,6 @@ abstract class Model {
 
 	/**
 	 * Check result for the last execution
-	 *
-	 * @param NULL
-	 * @return NULL
 	 */
 	final private function checkResult(){
 		if($this->db == 'MASTER'){
