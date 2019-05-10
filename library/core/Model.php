@@ -372,12 +372,7 @@ abstract class Model {
 	 * @param string  => SQL statement for execution
 	 */
 	final public function Query($sql) {
-		if($sql){
-			$this->sql = $sql;
-		}else{
-			return NULL;
-		}
-
+		$this->sql = $sql;
 		$this->Execute();
 
 		if($this->success){
@@ -388,12 +383,7 @@ abstract class Model {
 	}
 
 	final public function QueryOne($sql){
-        if($sql){
-            $this->sql = $sql;
-        }else{
-            return NULL;
-        }
-
+		$this->sql = $sql;
         $this->Execute();
 
         if($this->success){
