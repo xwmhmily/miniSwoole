@@ -41,6 +41,7 @@ abstract class Controller {
 	}
 
 	// Output error
+	// TO-DO: Give it a pretty templete
 	protected function error($error, $errorCode = 500){
 		if(ENV == 'DEV'){
 			$rep['Error']  = $error->getMessage();

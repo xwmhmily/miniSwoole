@@ -15,6 +15,7 @@ abstract class Cache {
             try{
                 return call_user_func_array([$redis, $method], $params);
             }catch(Exception $e){
+                Logger::error($e->getMessage());
                 Pool::destroy($key);
                 Pool::getInstance($key);
             }
