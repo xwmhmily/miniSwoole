@@ -8,26 +8,25 @@
 
 abstract class Model {
 
-	protected $table;
 	private $insert;
+	private $options;
+	protected $table;
 	public $originalTable;
 	public $db = 'MASTER';
-	private static $conn;        // master connection
-	private static $slave;       // slave connection
-	private $result = NULL;	
-	private $retryMax = 3;
-	private static $retries = 0; // 重试次数					
-	private $options;            // SQL 中的 field, where, orderby, limit`
-	private $selectOne = FALSE;  // 是否是 SelectOne, 不需要 updateOne, deleteOne
+	private static $conn;
+	private static $slave;      
 
-	// success code of PDO
-	private $successCode = '00000';
+	private static $retries = 0;
+	private $result         = NULL;		
+	private $success        = FALSE;	
+	private $selectOne      = FALSE;		   
 
+	const MAX_RETRY    = 3;
+	const CODE_SUCCESS = '00000';
+	const DB_MASTER    = 'MASTER';
+	const DB_SLAVE     = 'SLAVE';
 	const ERROR_MYSQL_HAS_GONE_AWAY   = 'MySQL server has gone away';
 	const ERROR_MYSQL_LOST_CONNECTION = 'Lost connection to MySQL server during query';
-
-	// The result of last operation: failure OR success
-	private $success = FALSE;
 
 	function __construct() {
 		
@@ -188,7 +187,7 @@ abstract class Model {
 
 		// 无限 WHERE
 		if(isset($this->options['where'])){
-			if($this->options['or']){
+			if(isset($this->options['or'])){
 				$connector = ' OR ';
 				$this->options['or'] = FALSE;
 			}else{
@@ -260,7 +259,7 @@ abstract class Model {
 		self::$retries = 0;
 		unset($this->options);
 
-		if(!$this->inTransaction() && !$this->insert && $this->db == 'MASTER'){
+		if(!$this->inTransaction() && !$this->insert && $this->db == self::DB_MASTER){
 			$this->unshift();
 		}
 	}
@@ -339,14 +338,14 @@ abstract class Model {
 	 * @return boolean
 	 */
 	public function MultiInsert($data, $ignore = FALSE){
-		$sql = "INSERT ";
+		$this->sql = "INSERT ";
 		if($ignore){
-			$sql .= ' IGNORE ';
+			$this->sql .= ' IGNORE ';
 		}
-		$sql .= " INTO ". $this->table;
+		$this->sql .= " INTO ". $this->table;
 
-		$field = $value = [];
 		$first = TRUE;
+		$field = $value = [];
 		foreach($data as $item){
 			if(!is_array($item)){
 				return FALSE;
@@ -354,7 +353,6 @@ abstract class Model {
 
 			if($first){
 				$field = array_keys($item);
-
 				$fieldString = implode('`,`', $field);
 				$first = FALSE;
 			}
@@ -365,9 +363,8 @@ abstract class Model {
 		}
 
 		$valueString = implode(',', $value);
-		$sql .= "(`$fieldString`) VALUES $valueString";
+		$this->sql .= "(`$fieldString`) VALUES $valueString";
 
-		$this->sql = $sql;
 		return $this->Exec();
 	}
 
@@ -377,12 +374,7 @@ abstract class Model {
 	 * @param string  => SQL statement for execution
 	 */
 	final public function Query($sql) {
-		if($sql){
-			$this->sql = $sql;
-		}else{
-			return NULL;
-		}
-
+		$this->sql = $sql;
 		$this->Execute();
 
 		if($this->success){
@@ -393,12 +385,7 @@ abstract class Model {
 	}
 
 	final public function QueryOne($sql){
-        if($sql){
-            $this->sql = $sql;
-        }else{
-            return NULL;
-        }
-
+		$this->sql = $sql;
         $this->Execute();
 
         if($this->success){
@@ -483,7 +470,7 @@ abstract class Model {
 	 */
 	public function getInsertID() {
 		$lastInsertID = self::$conn->lastInsertId();
-		if(!$this->inTransaction() && $this->db == 'MASTER'){
+		if(!$this->inTransaction() && $this->db == self::DB_MASTER){
 			$this->unshift();
 		}
 		$this->insert = FALSE;
@@ -522,8 +509,8 @@ abstract class Model {
 	 * @return result of execution
 	 */
 	final private function Execute() {
-		while(self::$retries < $this->retryMax){
-			if($this->db == 'MASTER'){
+		while(self::$retries < self::MAX_RETRY){
+			if($this->db == self::DB_MASTER){
 				$this->connect();
 				$this->result = self::$conn->query($this->sql);
 			}else{
@@ -549,7 +536,7 @@ abstract class Model {
 	 * @return result of execution
 	 */
 	final private function Exec() {
-		while(self::$retries < $this->retryMax){
+		while(self::$retries < self::MAX_RETRY){
 			$this->connect();
 			$rows = self::$conn->exec($this->sql);
 			$retval = $this->checkResult();
@@ -699,20 +686,17 @@ abstract class Model {
 
 	/**
 	 * Check result for the last execution
-	 *
-	 * @param NULL
-	 * @return NULL
 	 */
 	final private function checkResult(){
-		if($this->db == 'MASTER'){
-			if (self::$conn->errorCode() == $this->successCode) {
+		if($this->db == self::DB_MASTER){
+			if (self::$conn->errorCode() == self::CODE_SUCCESS) {
 				$this->success = TRUE;
 			}else{
 				$this->success = FALSE;
 				$error = self::$conn->errorInfo();
 			}
 		}else{
-			if (self::$slave->errorCode() == $this->successCode) {
+			if (self::$slave->errorCode() == self::CODE_SUCCESS) {
 				$this->success = TRUE;
 			}else{
 				$this->success = FALSE;
@@ -751,7 +735,7 @@ abstract class Model {
     private function reconnect(){
 		Logger::log('reconnect to '.$this->db.' MySQL '.(self::$retries + 1).' time');
 
-		if($this->db == 'MASTER'){
+		if($this->db == self::DB_MASTER){
 			$this->Close();
 			Pool::getInstance(Pool::TYPE_MYSQL);
 		}else{
