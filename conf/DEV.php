@@ -30,6 +30,7 @@ $config = [
 		'log_level'  => 3,
 		'log_file'   => '/var/log/app/mini_swoole_'.date('Y-m-d').'.log',
 		'error_level'    => 2,
+		'log_method'     => 'redis',
 		'error_file'     => '/var/log/app/mini_swoole_error_'.date('Y-m-d').'.log',
 		'mysql_log_file' => '/var/log/app/mini_swoole_mysql_'.date('Y-m-d').'.log',
 		'module' => 'api',
@@ -85,6 +86,14 @@ $config = [
 		'host' => '127.0.0.1',
 		'port' => 6379,
 		'pwd'  => '123456',
+	],
+
+	'redis_log' => [
+		'db'    => '0',
+		'host'  => '127.0.0.1',
+		'port'  => 6379,
+		'pwd'   => '123456',
+		'queue' => 'Queue_mini_log',
 	],
 ];
 

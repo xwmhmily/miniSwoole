@@ -6,13 +6,41 @@
 
 abstract class Logger {
 
-    const LEVEL_DEBUG = 1;
-    const LEVEL_INFO  = 2;
-    const LEVEL_WARN  = 3;
-    const LEVEL_ERROR = 4;
-    const LEVEL_FATAL = 5;
+    const LEVEL_DEBUG      = 1;
+    const LEVEL_INFO       = 2;
+    const LEVEL_WARN       = 3;
+    const LEVEL_ERROR      = 4;
+    const LEVEL_FATAL      = 5;
+    const LOG_METHOD_FILE  = 'FILE';
+    const LOG_METHOD_REDIS = 'REDIS';
 
-    public static $last_error;
+    public static  $last_error;
+
+    private static $log_file;
+
+    private static $error_file;
+    private static $error_level;
+
+    private static $mysql_log_file;
+
+    private static $log_method;
+    private static $log_redis;
+    private static $log_redis_queue;
+
+    public static function init(){
+        if(empty(self::$log_method)){
+            $config = Config::getConfig('common');
+            self::$log_file       = $config['log_file'];
+            self::$error_file     = $config['error_file'];
+            self::$error_level    = $config['error_level'];
+            self::$mysql_log_file = $config['mysql_log_file'];
+            self::$log_method = strtoupper($config['log_method']);
+
+            if(self::$log_method == self::LOG_METHOD_REDIS){
+                self::getRedisInstance();
+            }
+        }
+    }
 
     public static function debug($msg){
         self::append(self::LEVEL_DEBUG, $msg);
@@ -39,13 +67,9 @@ abstract class Logger {
         self::append(self::LEVEL_FATAL, $msg);
     }
 
-    private static function append($level, $msg){
-        $config = Config::get('common');
-        $log_level = $config['error_level'];
-        if($level < $log_level){
+    private static function append($level, $msg, $mysql_error = FALSE){
+        if($level < self::$error_level){
             return;
-        }else{
-            $error_file = $config['error_file'];
         }
 
         switch($level){
@@ -70,14 +94,89 @@ abstract class Logger {
             break;
         }
 
-        $error = date('Y-m-d H:i:s').' | '.self::getMicrotime().' | ' .$level_text.' | '.$msg.PHP_EOL;
-        file_put_contents($error_file, $error, FILE_APPEND);
+        $error = self::combine($level_text, $msg);
+
+        if($mysql_error){
+            $file = self::$mysql_log_file;
+        }else{
+            $file = self::$error_file;
+        }
+
+        self::save($file, $error);
     }
 
-	public static function logMySQL($msg) {
-        $mysql_log_file = Config::get('common', 'mysql_log_file');
-        $error = date('Y-m-d H:i:s').' | '.self::getMicrotime().' | ERROR | '.$msg.PHP_EOL;
-        file_put_contents($mysql_log_file, $error, FILE_APPEND);   
+    private static function combine($level_text, $msg){
+       return self::getDatetime().' | '.self::getMicrotime().' | '.$level_text.' | '.$msg;
+    }
+
+    private static function save($file, $error){
+        $error .= PHP_EOL;
+        if(self::$log_method == self::LOG_METHOD_FILE){
+            file_put_contents($file, $error, FILE_APPEND);
+        }else if(self::$log_method == self::LOG_METHOD_REDIS){
+            try{
+                self::$log_redis->lpush(self::$log_redis_queue, $error);
+            }catch (Throwable $e){
+                file_put_contents($file, $error, FILE_APPEND);
+                file_put_contents($file, 'ERROR '.$e->getMessage().PHP_EOL, FILE_APPEND);
+            }
+        }else{
+            // TO-DO: other methods to save log
+
+        }
+    }
+
+    private static function saveToSystemLog($msg){
+        file_put_contents(self::$log_file, $msg.PHP_EOL, FILE_APPEND);
+    }
+
+    public static function logMySQL($msg) {
+        self::append(self::LEVEL_ERROR, $msg, TRUE);
+    }
+
+    public static function destroy(){
+        self::$log_redis  = NULL;
+        self::$log_method = NULL;
+    }
+
+    private static function getRedisInstance(){
+        $redis_config = Config::getConfig('redis_log');
+        self::$log_redis_queue = $redis_config['queue'];
+        $retval = self::connectRedis($redis_config);
+
+        if($retval === FALSE){
+            self::$log_method = self::LOG_METHOD_FILE;
+            self::saveToSystemLog('Logger FAIL TO CONNECT LOG REDIS');
+        }else{
+            self::$log_redis = $retval;
+        }
+    }
+
+    private static function connectRedis($config){
+		$host = $config['host'];
+		$port = $config['port'];
+		$pwd  = $config['pwd'];
+		$db   = $config['db'];
+
+		$redis  = new \Redis();
+        $retval = $redis->connect($host, $port);
+        if(!$retval){
+            return FALSE;
+        }
+
+        if($pwd){
+        	$auth_retval = $redis->auth($pwd);
+        	if(!$auth_retval){
+        		return FALSE;
+        	}
+        }
+
+        $db && $redis->select($db);
+        return $redis;
+    }
+    
+    public static function getDatetime() {
+        return date('Y-m-d H:i:s');
     }
     
     // Get current microtime

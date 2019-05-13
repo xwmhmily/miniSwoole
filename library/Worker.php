@@ -4,6 +4,7 @@ class Worker {
 
 	// Do something after worker start
     public static function afterStart(swoole_server $server, int $workerID){
+		Logger::init();
 		WorkerMiddleware::afterStart($server, $workerID);
 	}
 
