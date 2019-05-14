@@ -89,7 +89,7 @@ class MiniSwoole {
 	public function config(){
 		date_default_timezone_set('Asia/Chongqing');
 		
-		define('MINI_SWOOLE_VERSION', '1.0');
+		define('MINI_SWOOLE_VERSION', '1.4');
 		define('LIB_PATH',  APP_PATH.'/library');
 		define('CORE_PATH', LIB_PATH.'/core');
 		define('CONF_PATH', APP_PATH.'/conf');
