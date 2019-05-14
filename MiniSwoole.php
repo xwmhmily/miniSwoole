@@ -13,6 +13,8 @@ class MiniSwoole {
 		$this->checkSapi();
 		$this->checkVersion();
 		$this->checkExtension();
+		$this->initLogger();
+		$this->initAutoload();
 		$this->config();
 		$this->init();
 
@@ -50,6 +52,40 @@ class MiniSwoole {
 		return TRUE;
 	}
 
+	private function initLogger(){
+		$config = Config::get('common');
+		define('APP_NAME', $config['app_name']);
+		
+		// PK and TABLE_PREFIX and TB_SUFFIX_SF
+		define('TB_PK', $config['tb_pk']);
+		define('TB_PREFIX', $config['tb_prefix']);
+		if($config['tb_suffix_sf']){
+			define('TB_SUFFIX_SF', $config['tb_suffix_sf']);
+		}
+
+		error_reporting(E_ALL ^ E_NOTICE);
+		
+		ini_set('log_errors', 'on');
+		ini_set('display_errors', 'off');
+        ini_set('error_log', $config['log_file']);
+		set_error_handler(['Logger', 'errorHandler'], E_ALL | E_STRICT);
+		
+		Logger::init();
+	}
+
+	// Autoload
+	private function initAutoload(){
+        spl_autoload_register(function($class){
+			$file = LIB_PATH.'/'.$class.'.php';
+			if(file_exists($file)){
+				require_once($file);
+			}else{
+				$error = 'Error in autoload: No such file => '.$file;
+				Helper::raiseError(debug_backtrace(), $error);
+			}
+		});
+	}
+
 	public function config(){
 		date_default_timezone_set('Asia/Chongqing');
 		
@@ -74,37 +110,6 @@ class MiniSwoole {
 		require_once CORE_PATH.'/Controller.php';
 		require_once LIB_PATH.'/middleware/WorkrerMiddleware.php';
 
-		// Error log
-		error_reporting(E_ALL ^ E_NOTICE);
-		
-		$config = Config::get('common');
-		ini_set('log_errors', 'on');
-		ini_set('display_errors', 'off');
-        ini_set('error_log', $config['log_file']);
-        set_error_handler(['Logger', 'errorHandler'], E_ALL | E_STRICT);
-
-        // APP_NAME
-		define('APP_NAME', $config['app_name']);
-		
-		// PK and TABLE_PREFIX and TB_SUFFIX_SF
-		define('TB_PK', $config['tb_pk']);
-		define('TB_PREFIX', $config['tb_prefix']);
-		if($config['tb_suffix_sf']){
-			define('TB_SUFFIX_SF', $config['tb_suffix_sf']);
-		}
-
-        // Autoload
-        spl_autoload_register(function($class){
-			$file = LIB_PATH.'/'.$class.'.php';
-			if(file_exists($file)){
-				require_once($file);
-			}else{
-				$error = 'Error in autoload: No such file => '.$file;
-				Helper::raiseError(debug_backtrace(), $error);
-			}
-		});
-
-		Logger::init();
 		return $this;
 	}
 
