@@ -8,7 +8,7 @@ abstract class Config {
 
 	private static $config;
 
-	public static function getConfig($section = '', $key = '') {
+	public static function get($section = '', $key = '') {
 		if(!self::$config){
 			$config_file = CONF_PATH.'/'.ENV.'.php';
 			if(!file_exists($config_file)){

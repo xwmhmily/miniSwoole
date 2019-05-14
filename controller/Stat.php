@@ -20,7 +20,7 @@ class C_Stat extends Controller{
         }
 
         $stat['ports']   = $ports_arr;
-        $stat['config']  = Config::getConfig();
+        $stat['config']  = Config::get();
         $stat['stats']   = Server::$instance->stats();
         $stat['setting'] = Server::$instance->setting;
         $this->response->write(JSON($stat));

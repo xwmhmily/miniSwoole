@@ -29,7 +29,7 @@ abstract class Logger {
 
     public static function init(){
         if(empty(self::$log_method)){
-            $config = Config::getConfig('common');
+            $config = Config::get('common');
             self::$log_file       = $config['log_file'];
             self::$error_file     = $config['error_file'];
             self::$error_level    = $config['error_level'];
@@ -140,7 +140,7 @@ abstract class Logger {
     }
 
     private static function getRedisInstance(){
-        $redis_config = Config::getConfig('redis_log');
+        $redis_config = Config::get('redis_log');
         self::$log_redis_queue = $redis_config['queue'];
         $retval = self::connectRedis($redis_config);
 
