@@ -104,6 +104,7 @@ class MiniSwoole {
 			}
 		});
 
+		Logger::init();
 		return $this;
 	}
 
