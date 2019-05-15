@@ -27,8 +27,6 @@ class MiniSwoole {
 		if (strtoupper($sapi_type) != 'CLI') {
 		    echo 'Error: Mini Swoole ONLY run in cli mode'; die;
 		}
-
-		return TRUE;
 	}
 
 	// PHP Version must be greater then 7.0
@@ -37,8 +35,6 @@ class MiniSwoole {
 		if(-1 == $retval){
 			echo 'Error: PHP version must be greater then 7.0'; die;
 		}
-
-		return TRUE;
 	}
 
 	// Must install necessary extensions
@@ -48,11 +44,9 @@ class MiniSwoole {
 				echo 'Error: Extension '.$extension.' is required '; die;
 			}
 		}
-
-		return TRUE;
 	}
 
-	public function init(){
+	private function init(){
 		date_default_timezone_set('Asia/Chongqing');
 		
 		define('MINI_SWOOLE_VERSION', '1.4');
@@ -76,10 +70,6 @@ class MiniSwoole {
 		require_once CORE_PATH.'/Controller.php';
 		require_once LIB_PATH.'/middleware/WorkrerMiddleware.php';
 
-		return $this;
-	}
-
-	private function initLogger(){
 		$config = Config::get('common');
 		define('APP_NAME', $config['app_name']);
 		
@@ -89,12 +79,14 @@ class MiniSwoole {
 		if($config['tb_suffix_sf']){
 			define('TB_SUFFIX_SF', $config['tb_suffix_sf']);
 		}
+	}
 
+	private function initLogger(){
 		error_reporting(E_ALL ^ E_NOTICE);
 		
 		ini_set('log_errors', 'on');
 		ini_set('display_errors', 'off');
-        ini_set('error_log', $config['log_file']);
+        ini_set('error_log', Config::get('common'. 'log_file'));
 		set_error_handler(['Logger', 'errorHandler'], E_ALL | E_STRICT);
 		Logger::init();
 	}
