@@ -26,4 +26,14 @@ class C_Stat extends Controller{
         $this->response->write(JSON($stat));
         $this->response->end();
     }
+
+    public function ping(){
+        $this->response->end('PONG');
+    }
+
+    public function process(){
+        $cmd = "ps -ef | grep Mini_Swoole | grep -v grep | awk -F ' ' '{print $2\"-\"$8}'";
+        exec($cmd, $retval, $execState);
+        $this->response->end(JSON($retval));
+    }
 }
