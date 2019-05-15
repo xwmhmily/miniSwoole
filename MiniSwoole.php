@@ -13,10 +13,10 @@ class MiniSwoole {
 		$this->checkSapi();
 		$this->checkVersion();
 		$this->checkExtension();
-		$this->config();
+		$this->init();
 		$this->initLogger();
 		$this->initAutoload();
-		$this->init();
+		$this->config();
 
 		return $this;
 	}
@@ -52,7 +52,7 @@ class MiniSwoole {
 		return TRUE;
 	}
 
-	public function config(){
+	public function init(){
 		date_default_timezone_set('Asia/Chongqing');
 		
 		define('MINI_SWOOLE_VERSION', '1.4');
@@ -112,9 +112,8 @@ class MiniSwoole {
 		});
 	}
 
-	public function Init(){
+	private function config(){
 		include APP_PATH.'/Init.php';
-		return $this;
 	}
 
 	// Let's go
