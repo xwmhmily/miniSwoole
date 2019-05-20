@@ -6,6 +6,7 @@
 
 class MiniSwoole {
 
+	const MODE_CLI = 'CLI';
 	private $min_version = '7.0';
 	private $extensions  = ['pdo', 'redis', 'swoole', 'pdo_mysql'];
 
@@ -24,7 +25,7 @@ class MiniSwoole {
 	// Only run in CLI
 	private function checkSapi(){
 		$sapi_type = php_sapi_name();
-		if (strtoupper($sapi_type) != 'CLI') {
+		if (strtoupper($sapi_type) != self::MODE_CLI) {
 		    echo 'Error: Mini Swoole ONLY run in cli mode'; die;
 		}
 	}
