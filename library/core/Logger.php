@@ -14,8 +14,7 @@ abstract class Logger {
     const LOG_METHOD_FILE  = 'FILE';
     const LOG_METHOD_REDIS = 'REDIS';
 
-    public static  $last_error;
-
+    private static $last_error;
     private static $log_file;
 
     private static $error_file;
@@ -205,5 +204,9 @@ abstract class Logger {
             self::logMySQL('SQL: '.$sql);
             self::logMySQL(str_repeat('=', 80));
         }
-	}
+    }
+    
+    public function getLastError(){
+        return self::$last_error;
+    }
 }

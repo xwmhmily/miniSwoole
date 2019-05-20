@@ -46,7 +46,7 @@ abstract class Controller {
 		if(ENV == 'DEV'){
 			$rep['Error']  = $error->getMessage();
 
-			$last_error    = Logger::$last_error;
+			$last_error    = Logger::getLastError();
 			$rep['Code']   = $last_error['errorNO'];
 			$rep['String'] = $last_error['errorStr'];
 			$rep['File']   = $last_error['errorFile'];
