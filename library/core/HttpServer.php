@@ -32,6 +32,13 @@ class HttpServer {
         if(isset($config['http']['listen_ip'])){
             $this->server->addlistener($config['http']['listen_ip'], $config['http']['listen_port'], SWOOLE_SOCK_TCP);
         }
+
+        if($config['http']['enable_static_handler']){
+            $this->server->set([
+                'enable_static_handler' => true,
+                'document_root' => $config['http']['document_root'],
+            ]);
+        }
     }
 
     public function start() {
