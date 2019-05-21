@@ -9,6 +9,9 @@ abstract class Server {
 	public static $type;
 	public static $page;
 	public static $instance;
+
+	const HTTP_METHOD_GET  = 'GET';
+	const HTTP_METHOD_POST = 'POST';
 	
 	const OS_LINUX        = 'LINUX';
 	const TYPE_TCP        = 'tcp';

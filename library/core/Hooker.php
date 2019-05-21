@@ -48,7 +48,7 @@ class Hooker {
     // Http onRequest, 将请求路由至控制器
     public static function onRequest(swoole_http_request $request, swoole_http_response $response){
         $method = strtoupper($request->server['request_method']);
-        if($method != 'GET' && $method != 'POST'){
+        if($method != Server::HTTP_METHOD_GET && $method != Server::HTTP_METHOD_POST){
             $response->end('Error: Only GET and POST supported now !'); return;
         }
 

@@ -129,6 +129,10 @@ abstract class Logger {
         file_put_contents(self::$log_file, $msg.PHP_EOL, FILE_APPEND);
     }
 
+    public static function getLastError(){
+        return self::$last_error;
+    }
+
     public static function logMySQL($msg) {
         self::append(self::LEVEL_ERROR, $msg, TRUE);
     }
@@ -203,10 +207,11 @@ abstract class Logger {
             self::logMySQL('Line: '.$errorLine);
             self::logMySQL('SQL: '.$sql);
             self::logMySQL(str_repeat('=', 80));
+
+            if(ENV == 'DEV'){
+                throw new Error();
+            }
         }
     }
-    
-    public static function getLastError(){
-        return self::$last_error;
-    }
+
 }
