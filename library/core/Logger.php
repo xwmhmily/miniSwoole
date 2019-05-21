@@ -193,6 +193,7 @@ abstract class Logger {
         self::$last_error['errorStr']  = $errorStr;
         self::$last_error['errorFile'] = $errorFile;
         self::$last_error['errorLine'] = $errorLine;
+        self::$last_error['errorSQL']  = $sql;
 
         if(!$sql){
             self::error('ErrorNO: '.$errorNO);
