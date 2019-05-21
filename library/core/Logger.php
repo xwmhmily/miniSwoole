@@ -206,7 +206,7 @@ abstract class Logger {
         }
     }
     
-    public function getLastError(){
+    public static function getLastError(){
         return self::$last_error;
     }
 }
