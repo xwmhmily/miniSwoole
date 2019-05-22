@@ -242,7 +242,7 @@ abstract class Model {
 	 * Limit
 	 */
 	final public function Limit($size = 10){
-		$page = Server::$page;
+		$page = Server::getPage();
 		if(!$page){
 			$page = 1;
 		}

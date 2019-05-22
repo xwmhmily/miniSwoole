@@ -6,9 +6,9 @@
 
 abstract class Server {
 
-	public static $type;
-	public static $page;
-	public static $instance;
+	private static $type;
+	private static $page;
+	private static $instance;
 
 	const HTTP_METHOD_GET  = 'GET';
 	const HTTP_METHOD_POST = 'POST';
@@ -18,6 +18,34 @@ abstract class Server {
 	const TYPE_UDP        = 'udp';
 	const TYPE_HTTP       = 'http';
 	const TYPE_WEB_SOCKET = 'websocket';
+
+	public static function getInstance(){
+		return self::$instance;
+	}
+
+	public static function setInstance($instance){
+		if(!self::$instance){
+			self::$instance = $instance;
+		}
+
+		return TRUE;
+	}
+
+	public static function getPage(){
+		return self::$page;
+	}
+
+	public static function setPage($page){
+		self::$page = $page;
+	}
+
+	public static function getType(){
+		return self::$type;
+	}
+
+	public static function setType($type){
+		self::$type = $type;
+	}
 
 	public static function stat(){
 		$stat = [];

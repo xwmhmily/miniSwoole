@@ -22,7 +22,7 @@ class Worker {
 	public static function beforeRequest($method, swoole_http_request $request, swoole_http_response $response){
 		$response->header('Content-Type', 'text/html; charset=utf-8');
 		if(isset($request->get['page'])){
-			Server::$page = intval($request->get['page']);
+			Server::setPage(intval($request->get['page']));
 		}
 
 		HttpMiddleware::beforeRequest($method, $request, $response);

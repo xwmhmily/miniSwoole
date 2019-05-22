@@ -36,8 +36,8 @@ class UdpServer {
     }
 
     public function start() {
-        Server::$type = Server::TYPE_UDP;
-        Server::$instance = $this->server;
+        Server::setType(Server::TYPE_UDP);
+        Server::setInstance($this->server);
 
         if(strtoupper(PHP_OS) == Server::OS_LINUX){
             swoole_set_process_name(APP_NAME.'_udp_master');

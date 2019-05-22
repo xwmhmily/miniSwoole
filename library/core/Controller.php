@@ -17,7 +17,7 @@ abstract class Controller {
 
 	// 获取参数
 	protected function getParam($key, $filter = TRUE){
-		if(Server::$type == Server::TYPE_HTTP){
+		if(Server::getType() == Server::TYPE_HTTP){
 			$method = strtolower($this->method);
 			if(isset($this->request->$method[$key])){
 				$value = $this->request->$method[$key];
@@ -45,7 +45,7 @@ abstract class Controller {
 		if(ENV == 'DEV'){
 			$trace = $error->getTrace();
 			$last_error = Logger::getLastError();
-			if(Server::$type == Server::TYPE_HTTP){
+			if(Server::getType() == Server::TYPE_HTTP){
 				$this->httpStatus($errorCode);
 				$error  = $this->importStatic();
 				$error .= $this->initStatic();
@@ -65,7 +65,7 @@ abstract class Controller {
 				$this->response(JSON($last_error));
 			}
 		}else{
-			if(Server::$type == Server::TYPE_HTTP){
+			if(Server::getType() == Server::TYPE_HTTP){
 				$html = '<html>
 					<head><title>500 Internal Server Error</title></head>
 					<body bgcolor="white">
@@ -266,7 +266,7 @@ abstract class Controller {
 
 	// TCP/UDP/Web Socket 输出数据给客户端
 	protected function response($data){
-		switch (Server::$type) {
+		switch (Server::getType()) {
 			case Server::TYPE_TCP:
 				return $this->server->send($this->fd, $data);
 			break;
@@ -286,7 +286,7 @@ abstract class Controller {
 		$rep['error'] = 'Method '.$name.' not found';
 		$rep = JSON($rep);
 
-		switch (Server::$type) {
+		switch (Server::getType()) {
 			case Server::TYPE_HTTP:
 				return $this->response->end($rep);
 			break;

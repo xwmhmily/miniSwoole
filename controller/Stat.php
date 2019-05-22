@@ -4,12 +4,13 @@ class C_Stat extends Controller{
 
     public function index(){
         try{
-            $stat = [];
+            $stat['app']    = APP_NAME;
+            $stat['server'] = Server::getType();
+            $stat['php_version']    = phpversion();
             $stat['swoole_version'] = swoole_version();
-            $stat['masterPID'] = Server::$instance->master_pid;
-            $stat['server']    = Server::$type;
+            $stat['masterPID'] = Server::getInstance()->master_pid;
 
-            $ports = array(Server::$instance->ports)[0];
+            $ports = array(Server::getInstance()->ports)[0];
             $ports_arr = [];
             foreach($ports as $port){
                 $port = array($port);
@@ -22,8 +23,8 @@ class C_Stat extends Controller{
 
             $stat['ports']   = $ports_arr;
             $stat['config']  = Config::get();
-            $stat['stats']   = Server::$instance->stats();
-            $stat['setting'] = Server::$instance->setting;
+            $stat['stats']   = Server::getInstance()->stats();
+            $stat['setting'] = Server::getInstance()->setting;
             $this->response->write(JSON($stat));
             $this->response->end();
         }catch (Throwable $e){

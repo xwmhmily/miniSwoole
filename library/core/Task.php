@@ -7,7 +7,7 @@
 abstract class Task {
 
 	public static function add($args){
-		return Server::$instance->task($args);
+		return Server::getInstance()->task($args);
 	}
 
 	public static function onTask(swoole_server $server, int $taskID, int $workerID, $args) {
