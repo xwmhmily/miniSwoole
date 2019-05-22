@@ -33,6 +33,7 @@ $config = [
 		'error_file'     => '/var/log/app/mini_swoole_error_'.date('Y-m-d').'.log',
 		'mysql_log_file' => '/var/log/app/mini_swoole_mysql_'.date('Y-m-d').'.log',
 		'module' => 'api',
+		'stat_file'      => '/var/log/app/mini_swoole_stat.log',
 	],
 
 	'tcp' => [

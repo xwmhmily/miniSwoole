@@ -76,18 +76,64 @@ reload() {
 }
 
 status() {
+    # yum install -y jq
     SWOOLE_MASTER_PID=`cat $PID_FILE`
     if [ $SWOOLE_MASTER_PID ]; then
-        MASTER_PROCESS_NAME=`ps -ef | grep ${SWOOLE_MASTER_PID} | grep -v "grep" | sed -n '1p' | awk -F ' ' '{print $9}'`
+        awk 'BEGIN{OFS="=";NF=58;print}'
+        STAT_FILE="/var/log/app/mini_swoole_stat.log"
+        
+        server=`cat $STAT_FILE | jq '.server' | sed 's/"//g'`
+        echo -e "\nServer: "$server
 
-        TIP=$MASTER_PROCESS_NAME"Server with pid ${SWOOLE_MASTER_PID} is running"
-    	MSG=${GREEN_COLOR}${TIP}${RES}
+        masterPID=`cat $STAT_FILE | jq '.masterPID' | sed 's/"//g'`
+        echo 'MasterPID: '$masterPID
+
+        swoole_verser=`cat $STAT_FILE | jq '.swoole_version' | sed 's/"//g'`
+        echo 'Swoole_version: '$swoole_verser
+        awk 'BEGIN{OFS="=";NF=24;print}'
+
+        echo -e "\nStats: "
+        awk 'BEGIN{OFS="=";NF=32;print}'
+
+        start_time=`cat $STAT_FILE | jq '.stats' | jq '.start_time' | sed 's/"//g'`
+        echo -e "start_time: "$start_time
+
+        worker_request_count=`cat $STAT_FILE | jq '.stats' | jq '.worker_request_count'`
+        echo -e "worker_request_count: "$worker_request_count
+
+        request_count=`cat $STAT_FILE | jq '.stats' | jq '.request_count'`
+        echo -e "request_count: "$request_count
+
+        tasking_num=`cat $STAT_FILE | jq '.stats' | jq '.tasking_num'`
+        echo -e "tasking_num: "$tasking_num
+
+        close_count=`cat $STAT_FILE | jq '.stats' | jq '.close_count'`
+        echo -e "close_count: "$close_count
+
+        accept_count=`cat $STAT_FILE | jq '.stats' | jq '.accept_count'`
+        echo -e "accept_count: "$accept_count
+
+        connection_num=`cat $STAT_FILE | jq '.stats' | jq '.connection_num'`
+        echo -e "connection_num: "$connection_num
+
+        awk 'BEGIN{OFS="=";NF=32;print}'
+
+        echo -e "\nPorts: "
+        awk 'BEGIN{OFS="=";NF=130;print}'
+
+        ports=`cat $STAT_FILE | jq -r '.ports' | sed 's/"//g'`
+        echo $ports
+        awk 'BEGIN{OFS="=";NF=130;print}'
+
+        echo -e "\nProcesses: "
+        awk 'BEGIN{OFS="=";NF=130;print}'
+        ps aux | grep Mini_Swoole | grep -v grep
+        awk 'BEGIN{OFS="=";NF=130;print}'
     else
         TIP="Server is DOWN !!!"
     	MSG=${RED_COLOR}${TIP}${RES}
-    fi
-
-    echo -e $MSG && echo $TIME "|" $TIP >> $LOG_FILE
+        echo -e $MSG
+    fi    
 }
 
 case "$1" in

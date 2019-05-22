@@ -5,6 +5,12 @@ class Worker {
 	// Do something after worker start
     public static function afterStart(swoole_server $server, int $workerID){
 		WorkerMiddleware::afterStart($server, $workerID);
+
+		if($workerID == 0){
+			$server->tick(1000, function(){
+				Server::stat();
+			});
+		}
 	}
 
 	// Do something after worker stop
