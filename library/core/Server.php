@@ -21,8 +21,10 @@ abstract class Server {
 
 	public static function stat(){
 		$stat = [];
+		$stat['app']    = APP_NAME;
+		$stat['server'] = self::$type;
+		$stat['php_version']    = phpversion();
 		$stat['swoole_version'] = swoole_version();
-		$stat['server']    = self::$type;
 		$stat['masterPID'] = self::$instance->master_pid;
 
 		$ports = array(self::$instance->ports)[0];

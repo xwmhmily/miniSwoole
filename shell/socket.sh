@@ -82,14 +82,20 @@ status() {
         awk 'BEGIN{OFS="=";NF=58;print}'
         STAT_FILE="/var/log/app/mini_swoole_stat.log"
         
+        app=`cat $STAT_FILE | jq '.app' | sed 's/"//g'`
+        echo -e "\nApp: "$app
+        
         server=`cat $STAT_FILE | jq '.server' | sed 's/"//g'`
-        echo -e "\nServer: "$server
+        echo -e "Server: "$server
 
         masterPID=`cat $STAT_FILE | jq '.masterPID' | sed 's/"//g'`
         echo 'MasterPID: '$masterPID
 
-        swoole_verser=`cat $STAT_FILE | jq '.swoole_version' | sed 's/"//g'`
-        echo 'Swoole_version: '$swoole_verser
+        php_version=`cat $STAT_FILE | jq '.php_version' | sed 's/"//g'`
+        echo 'PHP_version: '$php_version
+
+        swoole_version=`cat $STAT_FILE | jq '.swoole_version' | sed 's/"//g'`
+        echo 'Swoole_version: '$swoole_version
         awk 'BEGIN{OFS="=";NF=24;print}'
 
         echo -e "\nStats: "
