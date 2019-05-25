@@ -248,7 +248,7 @@ abstract class Model {
 		}
 
 		$start = ($page - 1) * $size;
-		$this->options['limit'] .= ' LIMIT '.$start.', '.$size;
+		$this->options['limit'] = ' LIMIT '.$start.', '.$size;
 
 		unset($page, $start);
 		return $this;
@@ -559,7 +559,7 @@ abstract class Model {
 	 * @return FALSE on failure or affected rows on success
 	 */
 	final public function Update($map, $self = FALSE) {
-		if(!$this->options['where'] && !$this->options['between']){
+		if(!isset($this->options['where']) && !isset($this->options['between'])){
 			return FALSE;
 		}
 
