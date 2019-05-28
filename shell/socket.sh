@@ -79,50 +79,40 @@ status() {
     # yum install -y jq
     SWOOLE_MASTER_PID=`cat $PID_FILE`
     if [ $SWOOLE_MASTER_PID ]; then
-        awk 'BEGIN{OFS="=";NF=58;print}'
         STAT_FILE="/var/log/app/mini_swoole_stat.log"
         
+        . ./table.sh
         app=`cat $STAT_FILE | jq '.app' | sed 's/"//g'`
-        echo -e "\nApp: "$app
-        
         server=`cat $STAT_FILE | jq '.server' | sed 's/"//g'`
-        echo -e "Server: "$server
-
         masterPID=`cat $STAT_FILE | jq '.masterPID' | sed 's/"//g'`
-        echo 'MasterPID: '$masterPID
-
         php_version=`cat $STAT_FILE | jq '.php_version' | sed 's/"//g'`
-        echo 'PHP_version: '$php_version
+        swoole_verion=`cat $STAT_FILE | jq '.swoole_version' | sed 's/"//g'`
 
-        swoole_version=`cat $STAT_FILE | jq '.swoole_version' | sed 's/"//g'`
-        echo 'Swoole_version: '$swoole_version
-        awk 'BEGIN{OFS="=";NF=24;print}'
+        echo -e "\nBasic: "
+        table=""
+        splitLine 5
+        setRow "App" "Server" "MasterPID" "PHP" "Swoole"
+        splitLine 5
+        setRow $app $server $masterPID $php_version $swoole_verion
+        splitLine 5
+        setTable ${table}
 
         echo -e "\nStats: "
-        awk 'BEGIN{OFS="=";NF=32;print}'
-
         start_time=`cat $STAT_FILE | jq '.stats' | jq '.start_time' | sed 's/"//g'`
-        echo -e "start_time: "$start_time
-
         worker_request_count=`cat $STAT_FILE | jq '.stats' | jq '.worker_request_count'`
-        echo -e "worker_request_count: "$worker_request_count
-
         request_count=`cat $STAT_FILE | jq '.stats' | jq '.request_count'`
-        echo -e "request_count: "$request_count
-
         tasking_num=`cat $STAT_FILE | jq '.stats' | jq '.tasking_num'`
-        echo -e "tasking_num: "$tasking_num
-
         close_count=`cat $STAT_FILE | jq '.stats' | jq '.close_count'`
-        echo -e "close_count: "$close_count
-
         accept_count=`cat $STAT_FILE | jq '.stats' | jq '.accept_count'`
-        echo -e "accept_count: "$accept_count
-
         connection_num=`cat $STAT_FILE | jq '.stats' | jq '.connection_num'`
-        echo -e "connection_num: "$connection_num
 
-        awk 'BEGIN{OFS="=";NF=32;print}'
+        table=""
+        splitLine 8
+        setRow "start_data" "start_time" "worker_request_count" "request_count" "tasking_num" "close_count" "accept_count" "connection_num"
+        splitLine 8
+        setRow $start_time $worker_request_count $request_count $tasking_num $close_count $accept_count $connection_num
+        splitLine 8
+        setTable ${table}
 
         echo -e "\nPorts: "
         awk 'BEGIN{OFS="=";NF=130;print}'
