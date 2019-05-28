@@ -122,7 +122,7 @@ status() {
 
         echo -e "\nProcesses: "
         awk 'BEGIN{OFS="=";NF=130;print}'
-        ps aux | grep Mini_Swoole | grep -v grep
+        ps aux | grep miniSwoole | grep -v grep
         awk 'BEGIN{OFS="=";NF=130;print}'
     else
         TIP="Server is DOWN !!!"

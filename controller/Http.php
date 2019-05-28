@@ -221,6 +221,7 @@ class C_Http extends Controller {
 
         $news = $this->m_news->Limit(20)->Select();
         $this->response->write('Limit 20 => '.sizeof($news));
+        $this->response->write('<br />============================<br />');
     }
     
     // 测试 MySQL 自动断线重连及压测

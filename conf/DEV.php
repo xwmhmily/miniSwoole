@@ -77,6 +77,7 @@ $config = [
 		'user' => 'root',
 		'pwd'  => '123455',
 		'max'  => 2,
+		'log_sql' => true,
 	],
 
 	'mysql_slave' => [

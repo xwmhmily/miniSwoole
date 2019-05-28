@@ -133,7 +133,11 @@ abstract class Logger {
         return self::$last_error;
     }
 
-    public static function logMySQL($msg) {
+    public static function logSQL($sql) {
+        self::append(self::LEVEL_INFO, $sql, TRUE);
+    }
+
+    public static function logErrorSQL($msg) {
         self::append(self::LEVEL_ERROR, $msg, TRUE);
     }
 
@@ -202,12 +206,12 @@ abstract class Logger {
             self::error('Line: '.$errorLine);
             self::error(str_repeat('=', 80));
         }else{
-            self::logMySQL('ErrorNO: '.$errorNO);
-            self::logMySQL('Error: '.$errorStr);
-            self::logMySQL('File: '.$errorFile);
-            self::logMySQL('Line: '.$errorLine);
-            self::logMySQL('SQL: '.$sql);
-            self::logMySQL(str_repeat('=', 80));
+            self::logErrorSQL('ErrorNO: '.$errorNO);
+            self::logErrorSQL('Error: '.$errorStr);
+            self::logErrorSQL('File: '.$errorFile);
+            self::logErrorSQL('Line: '.$errorLine);
+            self::logErrorSQL('SQL: '.$sql);
+            self::logErrorSQL(str_repeat('=', 80));
 
             if(ENV == 'DEV'){
                 throw new Error();

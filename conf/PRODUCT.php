@@ -76,6 +76,7 @@ $config = [
 		'user' => 'root',
 		'pwd'  => '123456789',
 		'max'  => 3,
+		'log_sql' => true,
 	],
 	
 	'redis' => [

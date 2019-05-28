@@ -14,7 +14,7 @@ abstract class Model {
 	public $originalTable;
 	public $db = 'MASTER';
 	private static $conn;
-	private static $slave;      
+	private static $slave;
 
 	private static $retries = 0;
 	private $result         = NULL;		
@@ -684,10 +684,19 @@ abstract class Model {
 		return $result;
 	}
 
+	private function logSQL(){
+		$log_sql = Config::get('mysql', 'log_sql');
+		if($log_sql){
+			Logger::logSQL($this->sql);
+		}
+	}
+
 	/**
 	 * Check result for the last execution
 	 */
 	final private function checkResult(){
+		$this->logSQL();
+
 		if($this->db == self::DB_MASTER){
 			if (self::$conn->errorCode() == self::CODE_SUCCESS) {
 				$this->success = TRUE;
@@ -749,7 +758,7 @@ abstract class Model {
     	try{
 		   	self::$conn->getAttribute(PDO::ATTR_SERVER_INFO);
 		} catch (PDOException $e) {
-		    if(strpos($e->getMessage(), 'MySQL server has gone away') !== FALSE){
+		    if(strpos($e->getMessage(), self::ERROR_MYSQL_HAS_GONE_AWAY) !== FALSE){
 		      	return FALSE;
 		    }
 		}
