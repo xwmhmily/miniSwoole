@@ -1,6 +1,6 @@
 #!/bin/bash
 # start, stop, status, restart, reload server
-# Usage: sh socket.sh {start|stop|restart|status|reload}
+# Usage: sh socket.sh {start|stop|restart|status|reload|config}
 
 PHP="/usr/bin/php"
 CUR_DATE=`date +%F`
@@ -10,6 +10,7 @@ PHP_FILE="/Boostrap.php"
 PID_FILE=../pid/swoole.pid
 SOCKET_FILE="$PARENT_PATH$PHP_FILE"
 LOG_FILE=/var/log/app/ts_swoole_$CUR_DATE.log
+STAT_FILE="/var/log/app/mini_swoole_stat.log"
 
 #定义颜色的变量
 RED_COLOR='\E[1;31m'   #红
@@ -79,8 +80,6 @@ status() {
     # yum install -y jq
     SWOOLE_MASTER_PID=`cat $PID_FILE`
     if [ $SWOOLE_MASTER_PID ]; then
-        STAT_FILE="/var/log/app/mini_swoole_stat.log"
-        
         . ./table.sh
         app=`cat $STAT_FILE | jq '.app' | sed 's/"//g'`
         server=`cat $STAT_FILE | jq '.server' | sed 's/"//g'`
@@ -132,6 +131,15 @@ status() {
     fi    
 }
 
+config() {
+    config=`cat $STAT_FILE | jq '.config' | sed 's/"//g'`
+
+    echo -e "\nConfig: "
+    awk 'BEGIN{OFS="=";NF=172;print}'
+    echo $config
+    awk 'BEGIN{OFS="=";NF=172;print}'
+}
+
 case "$1" in
     start)
         start
@@ -148,8 +156,11 @@ case "$1" in
     reload)
         reload
         ;;
+    config)
+        config
+        ;;
     *)
-        echo "Usage: $0 {start|stop|restart|status|reload}"
+        echo "Usage: $0 {start|stop|restart|status|reload|config}"
         ;;
 esac
 exit 0
