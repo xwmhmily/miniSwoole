@@ -195,6 +195,33 @@ class C_Http extends Controller {
 			$this->error($e);
 		}
     }
+
+    public function selectOne(){
+        $news = $this->m_news->SelectOne();
+        $this->response->write(JSON($news).'<br />');
+
+        $u = [];
+        $u['title'] = 'Curry 复出勇士胜小牛';
+        $retval = $this->m_news->UpdateByID($u, $news['id']);
+
+        $news = $this->m_news->SelectByID('', $news['id']);
+        $this->response->write(JSON($news).'<br />');
+
+        $news = $this->m_news->DeleteByID(2);
+    }
+
+    public function pagination(){
+        $news = $this->m_news->Select();
+        $this->response->write('ALL => '.sizeof($news));
+        $this->response->write('<br />============================<br />');
+
+        $news = $this->m_news->Limit()->Select();
+        $this->response->write('Limit 10 => '.sizeof($news));
+        $this->response->write('<br />============================<br />');
+
+        $news = $this->m_news->Limit(20)->Select();
+        $this->response->write('Limit 20 => '.sizeof($news));
+    }
     
     // 测试 MySQL 自动断线重连及压测
     public function reconnect(){
