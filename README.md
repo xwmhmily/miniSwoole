@@ -375,6 +375,7 @@ public function users(){
     'user' => 'root',
     'pwd'  => '123456',
     'max'  => 3,
+    'log_sql' => true,
 ],
 ```
 - 断线自动重连3次<br />
@@ -386,6 +387,7 @@ public function users(){
 - 执行复杂的 SQL: Query($sql), QueryOne($sql)<br />
 - BeginTransaction(), Commit(), Rollback() 操作事务<br />
 - 通用模型(Default)减少复用性方法很少的模型文件<br />
+- 将 log_sql 设置为 true 将在 $config['common']['mysql_log_file'] 中记录下每一条被执行的 SQL 语句, 级别为 INFO
 - 分页？ 在 HTTP 为 GET 的情况下，调用 ->Limit() 方法, 就自动分页了，默认是一页 10 条记录
 ```
     查询10条： Filed($field)->Where($where)->Order($order)->Limit();
@@ -602,7 +604,7 @@ class Importer {
     }
 }
 ```
-2：当任务完成后, onFinish回调函数就派上用场了。任务完成时，task进程会将结果发送给onFinish函数，在由onFinish函数返回给worker
+2：任务完成时，task进程会将结果发送给onFinish函数，再由onFinish函数返回给worker
 ```
 public static function onFinish(swoole_server $server, int $taskID, string $data){
     Logger::log('taskID => '.$taskID.' => finish');
