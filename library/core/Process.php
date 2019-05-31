@@ -16,7 +16,8 @@ class Process {
 	}
 
 	private static function fork($name, $config){
-		pcntl_signal(SIGCHLD, SIG_IGN);
+		swoole_process::signal(SIGCHLD, SIG_IGN);
+		
 		for($i = 1; $i <= $config['num']; $i++){
 			Logger::log('Forking '.$name.'......');
 			$process = new swoole_process(function (swoole_process $process) use($name, $config, $i) {
