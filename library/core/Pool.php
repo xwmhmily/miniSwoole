@@ -19,6 +19,10 @@ abstract class Pool {
         }
 	}
 
+	public static function createRedisConnectionPool(){
+        self::getInstance(self::TYPE_REDIS);
+	}
+
 	public static function getInstance($type) {
 		$obj = self::connect($type);
 		if($obj){

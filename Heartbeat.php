@@ -5,4 +5,4 @@ require APP_PATH.'/Env.php';
 require APP_PATH.'/TinySwoole.php';
 
 $tinySwoole = new TinySwoole();
-$tinySwoole->boostrap()->run();
+$tinySwoole->boostrap()->heartbeat();

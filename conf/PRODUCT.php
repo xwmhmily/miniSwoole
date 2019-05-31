@@ -93,6 +93,15 @@ $config = [
 		'pwd'   => '123456789',
 		'queue' => 'Queue_mini_log',
 	],
+
+	'process' => [
+		'Tiny_Swoole_importer'=> [
+			'num' => 1, 
+			'mysql' => true,
+			'redis' => true,
+			'callback' => ['Importer', 'run'],
+		],
+	],
 ];
 
 return $config;

@@ -1,12 +1,27 @@
 <?php
+/**
+ * Author: 大眼猫
+ * File: Importer.php
+ * Functionality: 测试 Process Manager 与 task
+ */
 
 class Importer {
 
 	public static function task(...$param){
-		Logger::log('Param in '.__METHOD__.' is => '.JSON($param));
+		$time = $param[0];
+		Logger::log('Time in '.__METHOD__.' is => '.$time);
 	}
 
 	public static function run(...$param){
-		Logger::log('Param in '.__METHOD__.' => '.JSON($param));
+		Logger::log('Importer process is ready !');
+
+		while (TRUE) {
+			$key = 'Key_current_time';
+			Cache::set($key, date('Y-m-d H:i:s'));
+			$val = Cache::get($key);
+			Logger::log('Time => '.$val);
+			sleep(3);
+		}
 	}
+
 }

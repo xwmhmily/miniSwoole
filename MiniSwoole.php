@@ -109,6 +109,10 @@ class MiniSwoole {
 		include APP_PATH.'/Init.php';
 	}
 
+	public function heartbeat(){
+		Process::heartbeat();
+	}
+
 	// Let's go
 	public function run(){
 		$config = Config::get();

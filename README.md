@@ -27,6 +27,7 @@
 - Hooker 与 Worker <br />
 - 多模块划分
 - 中间件
+- Process 管理
 <hr />
 
 #### 环境要求
@@ -610,6 +611,54 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
     Logger::log('taskID => '.$taskID.' => finish');
 }
 ```
+
+<hr />
+
+#### 进程管理器
+> 1：很多业务需要长驻内存不断的跑[while(true)]，worker 和 task 就不适合了，更好的方式是创建自己的进程来处理 <br />
+> 2：配置文件的 process 中配置自己想要创建的进程, 格式为<br />
+
+```
+    'process' => [
+		$进程名 => [
+			'num'   => 进程的数量, 数字 
+			'mysql' => 是否连接 MySQL, 布尔,
+			'redis' => 是否连接 Redis, 布尔,
+            'param' => 要带入的参数, 索引数组,
+			'callback' => 回调函数, 也就是进程创建后要执行的方法
+		],
+	],
+```
+```
+	'process' => [
+		'Tiny_Swoole_importer'=> [
+			'num' => 1, 
+			'mysql' => true,
+			'redis' => true,
+			'callback' => ['Importer', 'run'],
+		],
+	],
+```
+```
+    class Importer {
+
+        public static function run(...$param){
+            Logger::log('Importer process is ready !');
+
+            while (TRUE) {
+                $key = 'Key_current_time';
+                Cache::set($key, date('Y-m-d H:i:s'));
+                $val = Cache::get($key);
+                Logger::log('Time => '.$val);
+                sleep(3);
+            }
+        }
+    }
+```
+
+> 3: 定时调用 shell/heartbeat_process.sh 对进程作心跳检测 <br />
+> 4: 调用 shell/restart_process.sh 重启所有的进程 <br />
+> 5: 要单独停止一个 process 则需要编写单独的 shell 脚本, 参考 importer.sh <br />
 
 <hr />
 
