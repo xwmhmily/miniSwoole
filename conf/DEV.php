@@ -103,7 +103,7 @@ $config = [
 	],
 
 	'process' => [
-		'Tiny_Swoole_importer'=> [
+		'Mini_Swoole_importer'=> [
 			'num' => 1, 
 			'mysql' => true,
 			'redis' => true,

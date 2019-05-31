@@ -25,20 +25,20 @@ $config = [
 		'package_length_type'      => 'N',
 		'package_length_offset'    => 8,
   		'package_body_offset'      => 16,
-		'pid_file'   => __DIR__.'/../pid/swoole.pid',
-		'log_level'  => 4,
-		'log_file'   => '/var/log/app/mini_swoole_'.date('Y-m-d').'.log',
-		'error_level'    => 2,
-		'error_file'     => '/var/log/app/mini_swoole_error_'.date('Y-m-d').'.log',
-		'mysql_log_file' => '/var/log/app/mini_swoole_mysql_'.date('Y-m-d').'.log',
-		'module' => 'api',
+		'log_level'                => 4,
+		'error_level'              => 2,
+		'module'                   => 'api',
+		'log_method'               => 'redis',
+		'pid_file'                 => __DIR__.'/../pid/swoole.pid',
 		'stat_file'      => '/var/log/app/mini_swoole_stat.log',
+		'log_file'       => '/var/log/app/mini_swoole_error_'.date('Y-m-d').'.log',
+		'mysql_log_file' => '/var/log/app/mini_swoole_mysql_'.date('Y-m-d').'.log',
 	],
 
 	'tcp' => [
 		'enable' => FALSE,
 		'ip'     => '127.0.0.1',
-		'port'   => 9500,
+		'port'   => 9501,
 	],
 
 	'udp' => [
@@ -48,17 +48,22 @@ $config = [
 	],
 
 	'http' => [
-		'enable' => FALSE,
+		'enable' => TRUE,
+
 		// 正常监听的端口
 		'ip'     => '127.0.0.1',
-		'port'   => 9502,
+		'port'   => 9100,
+
 		// 额外监听的端口
 		'listen_ip'   => '127.0.0.1',
 		'listen_port' => 9908,
+
+		'enable_static_handler' => true,
+		'document_root' => APP_PATH.'/public',
 	],
 
 	'websocket' => [
-		'enable' => true,
+		'enable' => FALSE,
 		'ip'     => '127.0.0.1',
 		'port'   => 9505,
 	],
@@ -68,15 +73,33 @@ $config = [
 		'host' => '127.0.0.1',
 		'port' => 3306,
 		'user' => 'root',
-		'pwd'  => '123456',
+		'pwd'  => '123456789',
 		'max'  => 3,
+		'log_sql' => true,
 	],
 	
 	'redis' => [
 		'db'   => '0',
 		'host' => '127.0.0.1',
 		'port' => 6379,
-		'pwd'  => '123456',
+		'pwd'  => '123456789',
+	],
+
+	'redis_log' => [
+		'db'    => '0',
+		'host'  => '127.0.0.1',
+		'port'  => 6379,
+		'pwd'   => '123456789',
+		'queue' => 'Queue_mini_log',
+	],
+
+	'process' => [
+		'Mini_Swoole_importer'=> [
+			'num' => 1, 
+			'mysql' => true,
+			'redis' => true,
+			'callback' => ['Importer', 'run'],
+		],
 	],
 ];
 

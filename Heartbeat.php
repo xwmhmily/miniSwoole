@@ -2,7 +2,7 @@
 
 define('APP_PATH', realpath(__DIR__));
 require APP_PATH.'/Env.php';
-require APP_PATH.'/TinySwoole.php';
+require APP_PATH.'/MiniSwoole.php';
 
-$tinySwoole = new TinySwoole();
-$tinySwoole->boostrap()->heartbeat();
+$miniSwoole = new MiniSwoole();
+$miniSwoole->boostrap()->heartbeat();
