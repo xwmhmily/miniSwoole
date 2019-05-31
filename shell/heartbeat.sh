@@ -8,9 +8,8 @@ PID_FILE=../pid/swoole.pid
 SWOOLE_MASTER_PID=`cat $PID_FILE`
 NEW_SWOOLE_MASTER_PID=`ps -ef | grep ${SWOOLE_MASTER_PID} | grep -v "grep" | sed -n '1p' | awk -F ' ' '{print $2}'`
 
-cd /usr/www/miniSwoole/shell
-
 if [ ! $NEW_SWOOLE_MASTER_PID ]; then
+	cd /Users/user/Downloads/miniSwoole/shell
 	sh socket.sh restart
 else
 	cat logo.txt
