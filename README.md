@@ -107,7 +107,7 @@ public function log(){
         'port'  => 6379,
         'pwd'   => '123456',
         'queue' => 'Queue_log',
-	],
+    ],
 ```
 - 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 控制器中使用 try...catch(Throwable) 来处理
 
