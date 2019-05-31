@@ -14,12 +14,9 @@ abstract class Logger {
     const LOG_METHOD_FILE  = 'FILE';
     const LOG_METHOD_REDIS = 'REDIS';
 
-    private static $last_error;
     private static $log_file;
-
-    private static $error_file;
+    private static $last_error;
     private static $error_level;
-
     private static $mysql_log_file;
 
     private static $log_method;
@@ -30,7 +27,6 @@ abstract class Logger {
         if(empty(self::$log_method)){
             $config = Config::get('common');
             self::$log_file       = $config['log_file'];
-            self::$error_file     = $config['error_file'];
             self::$error_level    = $config['error_level'];
             self::$mysql_log_file = $config['mysql_log_file'];
             self::$log_method = strtoupper($config['log_method']);
@@ -98,7 +94,7 @@ abstract class Logger {
         if($mysql_error){
             $file = self::$mysql_log_file;
         }else{
-            $file = self::$error_file;
+            $file = self::$log_file;
         }
 
         self::save($file, $error);
