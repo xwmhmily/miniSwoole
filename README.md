@@ -620,22 +620,22 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
 
 ```
     'process' => [
-		$进程名 => [
-			'num'   => 进程的数量, 数字 
-			'mysql' => 是否连接 MySQL, 布尔,
-			'redis' => 是否连接 Redis, 布尔,
+        $进程名 => [        
+            'num'   => 进程的数量, 数字 
+            'mysql' => 是否连接 MySQL, 布尔,
+            'redis' => 是否连接 Redis, 布尔,
             'param' => 要带入的参数, 索引数组,
-			'callback' => 回调函数, 也就是进程创建后要执行的方法
-		],
-	],
+            'callback' => 回调函数, 也就是进程创建后要执行的方法
+        ],
+    ],
 ```
 ```
-	'process' => [
-		'Tiny_Swoole_importer'=> [
-			'num' => 1, 
-			'mysql' => true,
-			'redis' => true,
-			'callback' => ['Importer', 'run'],
+    'process' => [
+        'Tiny_Swoole_importer'=> [
+            'num' => 1, 
+            'mysql' => true,
+            'redis' => true,
+            'callback' => ['Importer', 'run'],
 		],
 	],
 ```
