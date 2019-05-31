@@ -102,11 +102,11 @@ public function log(){
 - log_method 指定保存日志的方式，默认是 file, 可选 redis. 若选择 redis, 则配置多一个 redis_log, 好处是啥？直接对接至 ELK ！
 ```
     'redis_log' => [
-		'db'    => '0',
-		'host'  => '192.168.1.50',
-		'port'  => 6379,
-		'pwd'   => '123456',
-		'queue' => 'Queue_log',
+        'db'    => '0',
+        'host'  => '192.168.1.50',
+        'port'  => 6379,
+        'pwd'   => '123456',
+        'queue' => 'Queue_log',
 	],
 ```
 - 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题, 控制器中使用 try...catch(Throwable) 来处理
