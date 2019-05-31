@@ -391,8 +391,8 @@ public function users(){
 - 将 log_sql 设置为 true 将在 $config['common']['mysql_log_file'] 中记录下每一条被执行的 SQL 语句, 级别为 INFO
 - 分页？ 在 HTTP 为 GET 的情况下，调用 ->Limit() 方法, 就自动分页了，默认是一页 10 条记录
 ```
-    查询10条： Filed($field)->Where($where)->Order($order)->Limit();
-    一页20条： Filed($field)->Where($where)->Order($order)->Limit(20);
+    查询10条： Filed($field)->Where($where)->Order($order)->Limit()->Select();
+    一页20条： Filed($field)->Where($where)->Order($order)->Limit(20)->Select();
 ```
 - 示例为 model 下的 User.php 和 Default.php, 其中 Default 为默认通用模型文件<br />
 
