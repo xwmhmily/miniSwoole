@@ -12,6 +12,7 @@ abstract class Server {
 
 	private static $httpRequest;
 	private static $httpResponse;
+	private static $http_middleware_status;
 
 	const HTTP_METHOD_GET  = 'GET';
 	const HTTP_METHOD_POST = 'POST';
@@ -40,6 +41,14 @@ abstract class Server {
 
 	public static function setPage($page){
 		self::$page = $page;
+	}
+
+	public static function getHttpMiddlewareStatus(){
+		return self::$http_middleware_status;
+	}
+
+	public static function setHttpMiddlewareStatus($status){
+		self::$http_middleware_status = $status;
 	}
 
 	public static function getHttpRequest(){

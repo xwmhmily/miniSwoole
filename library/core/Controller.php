@@ -263,11 +263,11 @@ abstract class Controller {
 	protected function http_middleware($middleware){
 		try{
 			(new Pipeline)->send(Server::getHttpRequest())->through($middleware)->via('handle')->then(function(){
-				Logger::log('Middleware is finished !');
+				Server::setHttpMiddlewareStatus(TRUE);
 			});
 		}catch (Throwable $e){
-			Server::getHttpResponse()->end($e->getCode().' | '.$e->getMessage());
-			return;
+			Server::setHttpMiddlewareStatus(FALSE);
+			Server::getHttpResponse()->write($e->getCode().' | '.$e->getMessage());
 		}
 	}
 

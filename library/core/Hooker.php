@@ -93,6 +93,12 @@ class Hooker {
         }
 
         $instance = Helper::import($module, $controller);
+        $http_middleware_status = Server::getHttpMiddlewareStatus();
+        if($http_middleware_status === FALSE){
+            Server::setHttpMiddlewareStatus(TRUE);
+            $response->end(); return;
+        }
+        
         if($instance !== FALSE){
             $instance->method   = $method;
             $instance->request  = $request;
