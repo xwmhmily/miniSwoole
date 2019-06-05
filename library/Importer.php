@@ -7,6 +7,15 @@
 
 class Importer {
 
+	public static function handle(swoole_http_request $request, Closure $next){
+		if(!$request->get['file']){
+			throw new Error('Empty file !', 402);
+			return;
+		}else{
+			$next($request);
+		}
+	}
+
 	public static function task(...$param){
 		$time = $param[0];
 		Logger::log('Time in '.__METHOD__.' is => '.$time);

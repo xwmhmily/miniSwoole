@@ -259,6 +259,18 @@ abstract class Controller {
 		return $this->response->gzip($level);
 	}
 
+	// http 中间件
+	protected function http_middleware($middleware){
+		try{
+			(new Pipeline)->send(Server::getHttpRequest())->through($middleware)->via('handle')->then(function(){
+				Logger::log('Middleware is finished !');
+			});
+		}catch (Throwable $e){
+			Server::getHttpResponse()->end($e->getCode().' | '.$e->getMessage());
+			return;
+		}
+	}
+
 	// 加载模型
 	protected function load($model){
 		return Helper::load($model);

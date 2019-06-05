@@ -68,9 +68,10 @@ class MiniSwoole {
 		require_once CORE_PATH.'/Hooker.php';
 		require_once LIB_PATH.'/Function.php';
 		require_once CORE_PATH.'/Process.php';
+		require_once CORE_PATH.'/Pipeline.php';
 		require_once CORE_PATH.'/Security.php';
+		require_once CORE_PATH.'/Middleware.php';
 		require_once CORE_PATH.'/Controller.php';
-		require_once LIB_PATH.'/middleware/WorkrerMiddleware.php';
 
 		$config = Config::get('common');
 		define('APP_NAME', $config['app_name']);

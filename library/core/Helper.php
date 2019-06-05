@@ -8,29 +8,22 @@
 
 abstract class Helper {
 	
-	private static $controllers;
-
 	public static function import($module, $controller){
-		$hash = sha1($module.$controller);
-		if(!isset(self::$controllers[$hash])){
-			if($module == 'index'){
-				$file = APP_PATH .'/controller/'.ucfirst($controller).'.php';
-			}else{
-				$file = APP_PATH .'/module/'.ucfirst($module).'/controller/'.ucfirst($controller).'.php';
-			}
-
-			if(file_exists($file)){
-				require_once $file;
-				$class = 'C_'.$controller;
-				self::$controllers[$hash] = new $class();
-			}else{
-				$error = 'No such file or directory: '.$file;
-				self::raiseError(debug_backtrace(), $error);
-				return FALSE;
-			}
+		if($module == 'index'){
+			$file = APP_PATH .'/controller/'.ucfirst($controller).'.php';
+		}else{
+			$file = APP_PATH .'/module/'.ucfirst($module).'/controller/'.ucfirst($controller).'.php';
 		}
 
-		return self::$controllers[$hash];
+		if(file_exists($file)){
+			require_once $file;
+			$class = 'C_'.$controller;
+			return new $class();
+		}else{
+			$error = 'No such file or directory: '.$file;
+			self::raiseError(debug_backtrace(), $error);
+			return FALSE;
+		}
 	}
 
 	/**

@@ -12,6 +12,9 @@ abstract class Server {
 
 	const HTTP_METHOD_GET  = 'GET';
 	const HTTP_METHOD_POST = 'POST';
+
+	private static $httpRequest;
+	private static $httpResponse;
 	
 	const OS_LINUX        = 'LINUX';
 	const TYPE_TCP        = 'tcp';
@@ -37,6 +40,22 @@ abstract class Server {
 
 	public static function setPage($page){
 		self::$page = $page;
+	}
+
+	public static function getHttpRequest(){
+		return self::$httpRequest;
+	}
+
+	public static function setHttpRequest($request){
+		self::$httpRequest = $request;
+	}
+
+	public static function getHttpResponse(){
+		return self::$httpResponse;
+	}
+
+	public static function setHttpResponse($response){
+		self::$httpResponse = $response;
 	}
 
 	public static function getType(){
