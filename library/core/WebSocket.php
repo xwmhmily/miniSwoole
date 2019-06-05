@@ -28,9 +28,6 @@ class WebSocket {
         $this->server->on('WorkerStart',  ['Hooker', 'onWorkerStart']);
         $this->server->on('ManagerStart', ['Hooker', 'onManagerStart']);
 
-        require_once LIB_PATH.'/middleware/TcpMiddleware.php';
-        require_once LIB_PATH.'/middleware/WebsocketMiddleware.php';
-
         // 是否需要监听额外的端口
         if(isset($config['websocket']['listen_ip'])){
             $this->server->addlistener($config['websocket']['listen_ip'], $config['websocket']['listen_port'], SWOOLE_SOCK_TCP);

@@ -27,8 +27,6 @@ class UdpServer {
         $this->server->on('WorkerStart',  ['Hooker', 'onWorkerStart']);
         $this->server->on('ManagerStart', ['Hooker', 'onManagerStart']);
 
-        require_once LIB_PATH.'/middleware/UdpMiddleware.php';
-
         // 是否需要监听额外的端口
         if(isset($config['udp']['listen_ip'])){
             $this->server->addlistener($config['udp']['listen_ip'], $config['udp']['listen_port'], SWOOLE_SOCK_TCP);
