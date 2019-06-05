@@ -10,11 +10,11 @@ abstract class Server {
 	private static $page;
 	private static $instance;
 
-	const HTTP_METHOD_GET  = 'GET';
-	const HTTP_METHOD_POST = 'POST';
-
 	private static $httpRequest;
 	private static $httpResponse;
+
+	const HTTP_METHOD_GET  = 'GET';
+	const HTTP_METHOD_POST = 'POST';
 	
 	const OS_LINUX        = 'LINUX';
 	const TYPE_TCP        = 'tcp';
