@@ -7,12 +7,12 @@
 
 class Importer {
 
-	public static function handle(swoole_http_request $request, Closure $next){
-		if(!$request->get['file']){
+	public static function handle(Closure $next){
+		if(!Request::has('file') || empty(Request::get('file'))){
 			throw new Error('Empty file !', 402);
 			return;
 		}else{
-			$next($request);
+			$next();
 		}
 	}
 

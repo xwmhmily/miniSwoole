@@ -7,13 +7,13 @@
 
 class Auth implements Middleware {
 
-	public static function handle(swoole_http_request $request, Closure $next){
-		if(!$request->get['token']){
+	public static function handle(Closure $next){
+		if(!Request::has('token') || empty(Request::get('token'))){
 			throw new Error('Access denied !', 401);
 			return;
 		}else{
-			$request->get['token'] = 'ABCDEFG';
-			$next($request);
+			Request::set('token', 'ABCDEFG');
+			$next();
 		}
 	}
 

@@ -5,7 +5,7 @@ class C_Stat extends Controller{
     public function index(){
         try{
             $stat['app']    = APP_NAME;
-            $stat['server'] = Server::getType();
+            $stat['server'] = Server::getServerType();
             $stat['php_version']    = phpversion();
             $stat['swoole_version'] = swoole_version();
             $stat['masterPID'] = Server::getInstance()->master_pid;

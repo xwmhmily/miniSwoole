@@ -70,6 +70,8 @@ class MiniSwoole {
 		require_once CORE_PATH.'/Process.php';
 		require_once CORE_PATH.'/Pipeline.php';
 		require_once CORE_PATH.'/Security.php';
+		require_once CORE_PATH.'/Request.php';
+		require_once CORE_PATH.'/Response.php';
 		require_once CORE_PATH.'/Middleware.php';
 		require_once CORE_PATH.'/Controller.php';
 

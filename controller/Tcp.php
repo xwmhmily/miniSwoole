@@ -6,6 +6,7 @@ class C_Tcp extends Controller {
 	private $m_news;
     
     function __construct(){
+        $this->middleware(['Auth', 'Importer']);
     	$this->m_user = $this->load('User');
         $this->m_news = $this->load('News');
     }
@@ -34,6 +35,24 @@ class C_Tcp extends Controller {
     // Get all users
     public function users(){
         try{
+            $this->middleware(['Importer']);
+            Logger::log('Request is => '.JSON(Request::getClientData()));
+            $users = $this->m_user->SelectAll();
+            $this->response(JSON($users));
+        }catch (Throwable $e){
+			$this->error($e);
+		}
+    }
+
+    // Login
+    public function login(){
+        try{
+            $this->middleware(['Importer']);
+            Logger::log('Request is => '.JSON(Request::getClientData()));
+            Logger::log('Username is => '.Request::get('username'));
+            Logger::log('Password is => '.Request::get('password'));
+            Logger::log('Captcha is => '.Request::get('captcha'));
+            Logger::log('FD is => '.Request::getFd());
             $users = $this->m_user->SelectAll();
             $this->response(JSON($users));
         }catch (Throwable $e){

@@ -11,6 +11,8 @@ $client->on("connect", function(swoole_client $cli) {
 	$d['password']   = 'fooDELETE 123123</script>';
 	$d['captcha']    = 'go';
 	$d['key']        = 'foo';
+	$d['token']      = 'token';
+	$d['file']       = 'mvp';
 	$data = json_encode($d);
 
 	$cli->send($data);

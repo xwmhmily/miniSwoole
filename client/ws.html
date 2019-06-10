@@ -25,12 +25,14 @@ Hello Swoole!!!
         arr.controller = controller;
         arr.action     = action;
         arr.key        = key;
+        arr.token      = 'THIS_IS_TOKEN';
+        arr.file       = 'MVP';
         ws.send(JSON.stringify(arr));
     })
 
     var ws;
     var lockReconnect = false;
-    var wsUrl = 'ws://127.0.0.1:9509?token=THIS_IS_TOKEN';
+    var wsUrl = 'ws://127.0.0.1:9509?token=';
 
     function createWebSocket(url) {
         try {
@@ -60,6 +62,7 @@ Hello Swoole!!!
             arr.controller = 'websocket';
             arr.action     = 'users';
             arr.token      = 'THIS_IS_TOKEN';
+            arr.file       = 'MVP';
             ws.send(JSON.stringify(arr));
         };
 
@@ -99,6 +102,8 @@ Hello Swoole!!!
                 var arr = {};
                 arr.controller = 'websocket';
                 arr.action     = 'ping';
+                arr.token      = 'THIS_IS_TOKEN';
+                arr.file       = 'MVP';
                 ws.send(JSON.stringify(arr));
                 self.serverTimeoutObj = setTimeout(function(){//如果超过一定时间还没重置，说明后端主动断开了
                     //ws.close();//如果onclose会执行reconnect，我们执行ws.close()就行了.如果直接执行reconnect 会触发onclose导致重连两次

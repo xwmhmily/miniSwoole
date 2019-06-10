@@ -7,9 +7,11 @@ $client->on("connect", function($cli){
     $d = [];
     //$d['module']      = 'api';
     $d['controller']  = 'tcp';
-    $d['action']      = 'users';
+    $d['action']      = 'login';
     $d['key']         = 'foo';
     $d['captcha']     = 'foo';
+    $d['token']    = 'token';
+    $d['file']     = 'mvp';
     $d['username'] = 'DELETE FROM sl_table <script>dym</script>';
     $d['password'] = md5(123456);
 

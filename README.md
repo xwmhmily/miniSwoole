@@ -219,13 +219,6 @@ public function login(){
 }
 ```
 
-#### TCP 服务之中间件
-- 文件：library/middleware/TcpMiddleware.php
-- afterConnect(): 建立 TCP 连接后触发
-- beforeReceieve(): 接收到客户端数据前触发
-- afterReceieve(): 处理完客户端数据后触发
-- afterClose(): 断开 TCP 连接后触发
-
 <hr />
 
 #### UDP 服务之控制器
@@ -277,11 +270,6 @@ public function udp(){
 }
 ```
 
-#### UDP 服务之中间件
-- 文件：library/middleware/UdpMiddleware.php
-- beforePacket(): 接收到客户端数据前触发
-- afterPacket():  处理完客户端数据后触发
-
 <hr />
 
 #### HTTP 服务之控制器
@@ -320,11 +308,6 @@ http://127.0.0.1:9100/api/user
 - 控制器的示例为 controller下的 Index.php 与 Http.php 及 module/Api/controller 下的 Login.php 和 User.php <br />
 - 更多 http server 信息请参考 https://wiki.swoole.com/wiki/page/326.html
 
-#### HTTP 服务之中间件
-- 文件: library/middeware/HttpMiddleware
-- beforeRequest(): 请求进入 controller 前触发，
-- afterRequest():  请求离开 controller 后触发。
-
 <hr />
 
 #### Websocket 服务之控制器
@@ -358,12 +341,6 @@ public function users(){
     }
 }
 ```
-
-#### Websocket 服务之中间件
-- 文件：library/middleware/UdpMiddleware.php
-- afterOpen(): 连接建立后触发
-- beforeMessage(): 接收到客户端数据前触发
-- afterMessage():  处理完客户端数据后触发
 
 <hr />
 

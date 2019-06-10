@@ -6,6 +6,7 @@ class C_Udp extends Controller {
 	private $m_news;
     
     function __construct(){
+        $this->middleware(['Auth', 'Importer']);
     	$this->m_user = $this->load('User');
         $this->m_news = $this->load('News');
     }

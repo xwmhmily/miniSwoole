@@ -20,7 +20,7 @@ class C_Http extends Controller {
             Logger::log('This is a log msg');
 
             $level = Config::get('common', 'error_level');
-            $this->response->write('Current error_level is => '.$level);
+            $this->response->end('Current error_level is => '.$level);
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -32,7 +32,7 @@ class C_Http extends Controller {
 	public function onError(){
 		try{
 			$result = $this->m_player->SelectOne();
-			$this->response->write('Result is => '.$result);
+			$this->response->end('Result is => '.$result);
 		}catch (Throwable $e){
 			$this->error($e);
 		}
@@ -41,7 +41,7 @@ class C_Http extends Controller {
     // Ping and Pong
     public function ping(){
         try{
-            $this->response->write('PONG');
+            $this->response->end('PONG');
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -59,6 +59,7 @@ class C_Http extends Controller {
             $redis_port = Config::get('redis', 'port');
             $this->response->write(JSON('Port is '.$redis_port));
             $this->response->write(JSON($redis_config));
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -68,7 +69,7 @@ class C_Http extends Controller {
     public function users(){
         try{
             $users = $this->m_user->SelectAll();
-            $this->response->write(JSON($users));
+            $this->response->end(JSON($users));
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -78,7 +79,7 @@ class C_Http extends Controller {
     public function news(){
         try{
             $news = $this->m_news->Limit()->Select();
-            $this->response->write(JSON($news));
+            $this->response->end(JSON($news));
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -95,6 +96,7 @@ class C_Http extends Controller {
             $end_time = Logger::getMicrotime();
             $cost = $end_time - $start_time;
             $this->response->write('Time => '.$cost.', TPS => '.$max/$cost);
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -111,6 +113,7 @@ class C_Http extends Controller {
 
             $one_news = $this->m_news->SelectOne();
             $this->response->write(JSON($one_news));
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -142,6 +145,8 @@ class C_Http extends Controller {
                 $this->m_news->Rollback();
                 $this->response->write('ERRORRRRRRRRRRRRRR');
             }
+
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -172,6 +177,7 @@ class C_Http extends Controller {
             $order = ['id' => 'DESC'];
             $user = $this->m_user->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
             $this->response->write('Slave with suffix => '.JSON($user)."<br />");
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -180,7 +186,7 @@ class C_Http extends Controller {
     // Security
     public function security(){
         try{
-            $this->response->write(JSON($this->request));
+            $this->response->end(JSON($this->request));
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -190,7 +196,7 @@ class C_Http extends Controller {
     public function rabbit(){
         try{
             $rabbit = new RabbitMQ();
-            $this->response->write('A Rabbit is running happily now');
+            $this->response->end('A Rabbit is running happily now');
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -208,6 +214,7 @@ class C_Http extends Controller {
         $this->response->write(JSON($news).'<br />');
 
         $news = $this->m_news->DeleteByID(2);
+        $this->response->end();
     }
 
     public function pagination(){
@@ -222,6 +229,7 @@ class C_Http extends Controller {
         $news = $this->m_news->Limit(20)->Select();
         $this->response->write('Limit 20 => '.sizeof($news));
         $this->response->write('<br />============================<br />');
+        $this->response->end();
     }
     
     // 测试 MySQL 自动断线重连及压测
@@ -255,6 +263,7 @@ class C_Http extends Controller {
 
                 $i++; sleep(1);
             }
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -288,6 +297,7 @@ class C_Http extends Controller {
 
                 $i++; sleep(1);
             }
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -310,6 +320,7 @@ class C_Http extends Controller {
 
             $user = $this->m_user->SelectByID('', 24);
             $this->response->write('User => '.JSON($user).'<br />');
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -320,6 +331,7 @@ class C_Http extends Controller {
         try{
             $user = $this->load('User')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
             $this->response->write('Suffix user => '.JSON($user));
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -366,6 +378,7 @@ class C_Http extends Controller {
 
                 sleep(1);
             }
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -387,6 +400,7 @@ class C_Http extends Controller {
             }else{
                 $this->response->write('Key is required !');
             }
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -397,6 +411,7 @@ class C_Http extends Controller {
             $username = $this->getParam('username');
             $user = $this->m_user->getUserByUsername($username);
             $this->response->write(JSON($user));
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -423,6 +438,7 @@ class C_Http extends Controller {
 
             $retval = $this->m_user->multiInsert($users);
             $this->response->write($retval);
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -432,6 +448,7 @@ class C_Http extends Controller {
         try{
             $timerID = Timer::add(2000, [$this, 'tick'], ['xyz', 'abc', '123']);
             $this->response->write('Timer has been set, id is => '.$timerID);
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -441,6 +458,7 @@ class C_Http extends Controller {
         try{
             Logger::log('Args in '.__METHOD__.' => '.JSON($args));
             Timer::clear($timerID);
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}
@@ -453,6 +471,7 @@ class C_Http extends Controller {
             $args['param']    = ['Lakers', 'Swoole', 'Westlife'];
             $taskID = Task::add($args);
             $this->response->write('Task has been set, id is => '.$taskID);
+            $this->response->end();
         }catch (Throwable $e){
 			$this->error($e);
 		}

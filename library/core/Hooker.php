@@ -48,7 +48,7 @@ class Hooker {
     // Http onRequest, 将请求路由至控制器
     public static function onRequest(swoole_http_request $request, swoole_http_response $response){
         $method = strtoupper($request->server['request_method']);
-        if($method != Server::HTTP_METHOD_GET && $method != Server::HTTP_METHOD_POST){
+        if($method != Request::HTTP_METHOD_GET && $method != Request::HTTP_METHOD_POST){
             $response->end('Error: Only GET and POST supported now !'); return;
         }
 
@@ -93,25 +93,22 @@ class Hooker {
         }
 
         $instance = Helper::import($module, $controller);
-        $http_middleware_status = Server::getHttpMiddlewareStatus();
-        if($http_middleware_status === FALSE){
-            Server::setHttpMiddlewareStatus(TRUE);
-            $response->end(); return;
-        }
-        
-        if($instance !== FALSE){
-            $instance->method   = $method;
-            $instance->request  = $request;
-            $instance->response = $response;
+        $middleware_status = Response::getMiddlewareStatus();
+        if($middleware_status !== FALSE){
+            if($instance !== FALSE){
+                $instance->method   = $method;
+                $instance->request  = $request;
+                $instance->response = $response;
 
-            $instance->$action();
-            Worker::afterRequest($method, $request, $response);
-        }else{
-            $response->status('404');
+                $instance->$action();
+                Worker::afterRequest($method, $request, $response);
+            }else{
+                $response->status(404);
 
-            $rep['code']  = 0;
-            $rep['error'] = 'Controller '.$controller.' not found';
-            $response->end(JSON($rep));
+                $rep['code']  = 0;
+                $rep['error'] = 'Controller '.$controller.' not found';
+                $response->end(JSON($rep));
+            }
         }
     }
 
@@ -141,19 +138,22 @@ class Hooker {
                     if($controller){
                         $instance = Helper::import($module, $controller);
 
-                        if($instance !== FALSE){
-                            $instance->fd     = $fd;
-                            $instance->data   = $data;
-                            $instance->server = $server;
+                        $middleware_status = Response::getMiddlewareStatus();
+                        if($middleware_status !== FALSE){
+                            if($instance !== FALSE){
+                                $instance->fd     = $fd;
+                                $instance->data   = $data;
+                                $instance->server = $server;
 
-                            $action = trim($data['action']);
-                            !$action && $action = 'index';
-                            $instance->$action();
-                            Worker::afterReceieve($server, $fd, $reactorID, $json);
-                        }else{
-                            $rep['code']  = 0;
-                            $rep['error'] = 'Controller '.$controller.' not found';
-                            $server->send($fd, JSON($rep));
+                                $action = trim($data['action']);
+                                !$action && $action = 'index';
+                                $instance->$action();
+                                Worker::afterReceieve($server, $fd, $reactorID, $json);
+                            }else{
+                                $rep['code']  = 0;
+                                $rep['error'] = 'Controller '.$controller.' not found';
+                                $server->send($fd, JSON($rep));
+                            }
                         }
                     }
                 }
@@ -179,20 +179,22 @@ class Hooker {
             $controller = trim($data['controller']);
             if($controller){
                 $instance = Helper::import($module, $controller);
+                $middleware_status = Response::getMiddlewareStatus();
+                if($middleware_status !== FALSE){
+                    if($instance !== FALSE){
+                        $instance->data   = $data;
+                        $instance->server = $server;
+                        $instance->client = $client;
 
-                if($instance !== FALSE){
-                    $instance->data   = $data;
-                    $instance->server = $server;
-                    $instance->client = $client;
-
-                    $action = trim($data['action']);
-                    !$action && $action = 'index';
-                    $instance->$action();
-                    Worker::afterPacket($server, $json, $client);
-                }else{
-                    $rep['code']  = 0;
-                    $rep['error'] = 'Controller '.$controller.' not found';
-                    $server->sendto($client['address'], $client['port'], JSON($rep));
+                        $action = trim($data['action']);
+                        !$action && $action = 'index';
+                        $instance->$action();
+                        Worker::afterPacket($server, $json, $client);
+                    }else{
+                        $rep['code']  = 0;
+                        $rep['error'] = 'Controller '.$controller.' not found';
+                        $server->sendto($client['address'], $client['port'], JSON($rep));
+                    }
                 }
             }
         }
@@ -221,20 +223,22 @@ class Hooker {
             $controller = trim($data['controller']);
             if($controller){
                 $instance = Helper::import($module, $controller);
+                $middleware_status = Response::getMiddlewareStatus();
+                if($middleware_status !== FALSE){
+                    if($instance !== FALSE){
+                        $instance->data   = $data;
+                        $instance->server = $server;
+                        $instance->fd     = $frame->fd;
 
-                if($instance !== FALSE){
-                    $instance->data   = $data;
-                    $instance->server = $server;
-                    $instance->fd     = $frame->fd;
-
-                    $action = trim($data['action']);
-                    !$action && $action = 'index';
-                    $instance->$action();
-                    Worker::afterMessage($server, $frame);
-                }else{
-                    $rep['code']  = 0;
-                    $rep['error'] = 'Controller '.$controller.' not found';
-                    $server->push($frame->fd, JSON($rep));
+                        $action = trim($data['action']);
+                        !$action && $action = 'index';
+                        $instance->$action();
+                        Worker::afterMessage($server, $frame);
+                    }else{
+                        $rep['code']  = 0;
+                        $rep['error'] = 'Controller '.$controller.' not found';
+                        $server->push($frame->fd, JSON($rep));
+                    }
                 }
             }
         }

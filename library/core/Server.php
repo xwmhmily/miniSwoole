@@ -6,16 +6,8 @@
 
 abstract class Server {
 
-	private static $type;
-	private static $page;
 	private static $instance;
-
-	private static $httpRequest;
-	private static $httpResponse;
-	private static $http_middleware_status;
-
-	const HTTP_METHOD_GET  = 'GET';
-	const HTTP_METHOD_POST = 'POST';
+	private static $serverType;
 	
 	const OS_LINUX        = 'LINUX';
 	const TYPE_TCP        = 'tcp';
@@ -35,50 +27,18 @@ abstract class Server {
 		return TRUE;
 	}
 
-	public static function getPage(){
-		return self::$page;
+	public static function getServerType(){
+		return self::$serverType;
 	}
 
-	public static function setPage($page){
-		self::$page = $page;
-	}
-
-	public static function getHttpMiddlewareStatus(){
-		return self::$http_middleware_status;
-	}
-
-	public static function setHttpMiddlewareStatus($status){
-		self::$http_middleware_status = $status;
-	}
-
-	public static function getHttpRequest(){
-		return self::$httpRequest;
-	}
-
-	public static function setHttpRequest($request){
-		self::$httpRequest = $request;
-	}
-
-	public static function getHttpResponse(){
-		return self::$httpResponse;
-	}
-
-	public static function setHttpResponse($response){
-		self::$httpResponse = $response;
-	}
-
-	public static function getType(){
-		return self::$type;
-	}
-
-	public static function setType($type){
-		self::$type = $type;
+	public static function setServerType($serverType){
+		self::$serverType = $serverType;
 	}
 
 	public static function stat(){
 		$stat = [];
 		$stat['app']    = APP_NAME;
-		$stat['server'] = self::$type;
+		$stat['server'] = self::$serverType;
 		$stat['php_version']    = phpversion();
 		$stat['swoole_version'] = swoole_version();
 		$stat['masterPID'] = self::$instance->master_pid;

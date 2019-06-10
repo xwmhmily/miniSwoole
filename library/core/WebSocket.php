@@ -35,8 +35,8 @@ class WebSocket {
     }
 
     public function start() {
-        Server::setType(Server::TYPE_WEB_SOCKET);
         Server::setInstance($this->server);
+        Server::setServerType(Server::TYPE_WEB_SOCKET);
 
         if(strtoupper(PHP_OS) == Server::OS_LINUX){
             swoole_set_process_name(APP_NAME.'_websocket_master');

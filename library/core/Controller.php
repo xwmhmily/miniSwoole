@@ -17,7 +17,7 @@ abstract class Controller {
 
 	// 获取参数
 	protected function getParam($key, $filter = TRUE){
-		if(Server::getType() == Server::TYPE_HTTP){
+		if(Server::getServerType() == Server::TYPE_HTTP){
 			$method = strtolower($this->method);
 			if(isset($this->request->$method[$key])){
 				$value = $this->request->$method[$key];
@@ -45,7 +45,7 @@ abstract class Controller {
 		if(ENV == 'DEV'){
 			$trace = $error->getTrace();
 			$last_error = Logger::getLastError();
-			if(Server::getType() == Server::TYPE_HTTP){
+			if(Server::getServerType() == Server::TYPE_HTTP){
 				$this->httpStatus($errorCode);
 				$error  = $this->importStatic();
 				$error .= $this->initStatic();
@@ -65,7 +65,7 @@ abstract class Controller {
 				$this->response(JSON($last_error));
 			}
 		}else{
-			if(Server::getType() == Server::TYPE_HTTP){
+			if(Server::getServerType() == Server::TYPE_HTTP){
 				$html = '<html>
 					<head><title>500 Internal Server Error</title></head>
 					<body bgcolor="white">
@@ -170,7 +170,7 @@ abstract class Controller {
 
 	private function postError($error){
 		$postError = '<ul>';
-		if($this->method == Server::HTTP_METHOD_POST && isset($this->request->post)){
+		if($this->method == Request::HTTP_METHOD_POST && isset($this->request->post)){
 			foreach ($this->request->post as $key => $val) {
 				$postError .= '<li>' . $key . ' => ' . $val . '</li>';
 			}
@@ -181,7 +181,7 @@ abstract class Controller {
 
 	private function getError($error){
 		$getError = '<ul>';
-		if($this->method == Server::HTTP_METHOD_GET && isset($this->request->get)){
+		if($this->method == Request::HTTP_METHOD_GET && isset($this->request->get)){
 			foreach ($this->request->get as $key => $val) {
 				$getError .= '<li>' . $key . ' => ' . $val . '</li>';
 			}
@@ -259,15 +259,17 @@ abstract class Controller {
 		return $this->response->gzip($level);
 	}
 
-	// http 中间件
-	protected function http_middleware($middleware){
+	// 中间件
+	protected function middleware($middleware){
 		try{
-			(new Pipeline)->send(Server::getHttpRequest())->through($middleware)->via('handle')->then(function(){
-				Server::setHttpMiddlewareStatus(TRUE);
+			(new Pipeline)->send()->through($middleware)->via('handle')->then(function(){
+				Response::setMiddlewareStatus(TRUE);
 			});
 		}catch (Throwable $e){
-			Server::setHttpMiddlewareStatus(FALSE);
-			Server::getHttpResponse()->write($e->getCode().' | '.$e->getMessage());
+			Response::setMiddlewareStatus(FALSE);
+			Response::setMiddlewareError($e->getCode().' | '.$e->getMessage());
+			Response::endByMiddleware();
+            return;
 		}
 	}
 
@@ -278,7 +280,7 @@ abstract class Controller {
 
 	// TCP/UDP/Web Socket 输出数据给客户端
 	protected function response($data){
-		switch (Server::getType()) {
+		switch (Server::getServerType()) {
 			case Server::TYPE_TCP:
 				return $this->server->send($this->fd, $data);
 			break;
@@ -298,7 +300,7 @@ abstract class Controller {
 		$rep['error'] = 'Method '.$name.' not found';
 		$rep = JSON($rep);
 
-		switch (Server::getType()) {
+		switch (Server::getServerType()) {
 			case Server::TYPE_HTTP:
 				return $this->response->end($rep);
 			break;

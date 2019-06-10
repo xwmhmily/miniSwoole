@@ -40,8 +40,8 @@ class HttpServer {
     }
 
     public function start() {
-        Server::setType(Server::TYPE_HTTP);
         Server::setInstance($this->server);
+        Server::setServerType(Server::TYPE_HTTP);
 
         if(strtoupper(PHP_OS) == Server::OS_LINUX){
             swoole_set_process_name(APP_NAME.'_http_master');

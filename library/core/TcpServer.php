@@ -37,8 +37,8 @@ class TcpServer {
     }
 
     public function start() {
-        Server::setType(Server::TYPE_TCP);
         Server::setInstance($this->server);
+        Server::setServerType(Server::TYPE_TCP);
 
         if(strtoupper(PHP_OS) == Server::OS_LINUX){
             swoole_set_process_name(APP_NAME.'_tcp_master');
