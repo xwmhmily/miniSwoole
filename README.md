@@ -122,15 +122,8 @@ public function onError(){
     }
 }
 ```
-调用此方法，客户端将收到如下错误提示 (排版不好，但提示还是不错的，对吧)：
-```
-Error => Call to a member function SelectOne() on null
-Code => 8
-String => Undefined property: C_Http::$m_player
-File => /Users/user/Downloads/miniSwoole/controller/Http.php
-Line => 34
-Trace => #0 /Users/user/Downloads/miniSwoole/library/core/Hooker.php(97): C_Http->onError() #1 {main}
-```
+调用此方法，客户端将以 TAB 显示错误提示, 包括 General Eroor, Trace info, GET, POST, COOKIE, SERVER 的数据，如果是 SQL 报错，还将显示报错的 SQL 语句，给于 debug 最大的便利 
+
 <hr />
 
 #### TCP 服务
