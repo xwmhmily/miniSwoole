@@ -267,7 +267,11 @@ abstract class Controller {
 			});
 		}catch (Throwable $e){
 			Response::setMiddlewareStatus(FALSE);
-			Response::setMiddlewareError($e->getCode().' | '.$e->getMessage());
+
+			$error = [];
+			$error['code']  = $e->getCode();
+			$error['error'] = $e->getMessage();
+			Response::setMiddlewareError(JSON($error));
 			Response::endByMiddleware();
             return;
 		}

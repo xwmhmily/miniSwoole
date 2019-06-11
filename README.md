@@ -584,6 +584,63 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
 
 <hr />
 
+#### 中间件
+> 基于 Pipeline 模式实现 <br />
+> 实现该中间件的类必须实现 Middleware 中的 handle() 方法。 <br />
+> 若要中止流程, throw 一个 Error 即可, 最后别忘了调用 $next(); <br />
+> 请参考 Auth.php 与 Importer.php <br />
+```
+<?php
+    interface Middleware {
+        public static function handle(swoole_http_request $request, Closure $next);
+    }
+```
+```
+<?php
+    class Auth implements Middleware {
+        public static function handle(Closure $next){
+            if(!Request::has('token') || empty(Request::get('token'))){
+                throw new Error('Access denied !', 401);
+                return;
+            }else{
+                Request::set('token', 'ABCDEFG');
+                $next();
+            }
+        }
+    }
+```
+```
+<?php
+    class Importer {
+        public static function handle(Closure $next){
+            if(!Request::has('file') || empty(Request::get('file'))){
+                throw new Error('Empty file !', 402);
+                return;
+            }else{
+                $next();
+            }
+        }
+    }
+```
+> 调用方法: 控制器的构造函数中调用 $this->middleware([$pipe1, $pipe2, $pipeN]);
+```
+    // Auth中间件
+    function __construct(){
+        $this->http_middleware(['Auth']);
+        $this->response->end($this->getParam('token'));
+    }
+    // Importer中间件
+    function __construct(){
+        $this->http_middleware(['Importer']);
+        $this->response->end($this->getParam('token'));
+    }
+    // 多个中间件一起使用, 先执行 Auth::handle(), 再执行 Importer::handle();
+    function __construct(){
+        $this->http_middleware(['Auth', 'Importer']);
+        $this->response->end($this->getParam('token'));
+    }
+```
+
 #### 进程管理器
 > 1：很多业务需要长驻内存不断的跑[while(true)]，worker 和 task 就不适合了，更好的方式是创建自己的进程来处理 <br />
 > 2：配置文件的 process 中配置自己想要创建的进程, 格式为<br />

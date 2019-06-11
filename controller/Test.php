@@ -7,7 +7,7 @@ class C_Test extends Controller {
     
     function __construct(){
         // 测试 http 中间件
-        $this->http_middleware(['Auth', 'Importer']);
+        $this->middleware(['Auth', 'Importer']);
     	$this->m_user = $this->load('User');
         $this->m_news = $this->load('News');
     }
