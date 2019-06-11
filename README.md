@@ -592,7 +592,7 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
 ```
 <?php
     interface Middleware {
-        public static function handle(swoole_http_request $request, Closure $next);
+        public static function handle(Closure $next);
     }
 ```
 ```
