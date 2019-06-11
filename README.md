@@ -588,6 +588,7 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
 > 基于 Pipeline 模式实现 <br />
 > 实现该中间件的类必须实现 Middleware 中的 handle() 方法。 <br />
 > 若要中止流程, throw 一个 Error 即可, 最后别忘了调用 $next(); <br />
+> TCP, UDP, HTTP, WEBSOCKET 均可使用哦 <br />
 > 请参考 Auth.php 与 Importer.php <br />
 ```
 <?php
@@ -626,17 +627,17 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
 ```
     // Auth中间件
     function __construct(){
-        $this->http_middleware(['Auth']);
+        $this->middleware(['Auth']);
         $this->response->end($this->getParam('token'));
     }
     // Importer中间件
     function __construct(){
-        $this->http_middleware(['Importer']);
+        $this->middleware(['Importer']);
         $this->response->end($this->getParam('token'));
     }
     // 多个中间件一起使用, 先执行 Auth::handle(), 再执行 Importer::handle();
     function __construct(){
-        $this->http_middleware(['Auth', 'Importer']);
+        $this->middleware(['Auth', 'Importer']);
         $this->response->end($this->getParam('token'));
     }
 ```
