@@ -644,7 +644,7 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
 #### 插件
 - 将插件放在 plugin 目录下, 文件名与类名保持一致。如类名为 Permission, 则文件名为 Permission.php <br />
 - 插件均需要实现 interface Plugin 定义的 routerStartup() 与 routerShutdown() <br />
-- 插件在系统启动时自动加载，并存在 Registry
+- 插件在系统启动时自动加载，并存在 Registry <br />
 - 按如下示例取出插件并使用
 ```
     public function plugin(){
