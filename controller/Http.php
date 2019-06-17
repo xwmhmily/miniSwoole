@@ -10,6 +10,28 @@ class C_Http extends Controller {
         $this->m_news = $this->load('News');
     }
 
+    public function plugin(){
+        $token = $this->getParam('token', FALSE);
+        $retval = Registry::get('Permission')->checkPermission($token);
+        if(!$retval){
+            $this->response->end('Bad token !');
+            return;
+        }
+
+        $i18n = Registry::get('I18N');
+        $username_text = $i18n->translate('username');
+        $password_text = $i18n->translate('password');
+        $this->response->write('English username_text => '.$username_text.'<br />');
+        $this->response->write('English password_text => '.$password_text.'<br />');
+
+        $username_text = $i18n->translate('username', 2);
+        $password_text = $i18n->translate('password', 2);
+        $this->response->write('Chinese username_text => '.$username_text.'<br />');
+        $this->response->write('Chinese password_text => '.$password_text.'<br />');
+
+        $this->response->end('__DONE__');
+    }
+
     public function log(){
         try{
             Logger::debug('This is a debug msg');

@@ -12,7 +12,7 @@
 
 - 支持 TCP, UDP, HTTP, Websocket <br />
 - Master-Worker 模式<br />
-- Controller-Model 分层 <br />
+- Module-Controller-Model 分层 <br />
 - MySQL 断线自动重连 <br />
 - Timer, Task 简易封装 <br />
 - MySQL, Redis 连接池<br />
@@ -24,7 +24,6 @@
 - 日志收集<br />
 - 心跳检测<br />
 - 自动路由<br />
-- Hooker 与 Worker <br />
 - 多模块划分
 - 中间件
 - Process 管理

@@ -11,6 +11,28 @@ class C_Tcp extends Controller {
         $this->m_news = $this->load('News');
     }
 
+    public function plugin(){
+        $token = $this->getParam('token', FALSE);
+        $retval = Registry::get('Permission')->checkPermission($token);
+        if(!$retval){
+            $this->response('Bad token !');
+            return;
+        }
+
+        $i18n = Registry::get('I18N');
+        $username_text = $i18n->translate('username');
+        $password_text = $i18n->translate('password');
+        $this->response('English username_text => '.$username_text.'<br />');
+        $this->response('English password_text => '.$password_text.'<br />');
+
+        $username_text = $i18n->translate('username', 2);
+        $password_text = $i18n->translate('password', 2);
+        $this->response('Chinese username_text => '.$username_text.'<br />');
+        $this->response('Chinese password_text => '.$password_text.'<br />');
+
+        $this->response('__DONE__');
+    }
+
     // 测试onError事件
     // 为了避免由于exception, error 导致worker 退出后客户端一直收不回复的问题
     // 使用 try...catch(Throwable) 来处理

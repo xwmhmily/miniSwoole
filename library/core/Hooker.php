@@ -53,44 +53,12 @@ class Hooker {
         }
 
         Worker::beforeRequest($method, $request, $response);
-
-        $config  = Config::get('common');
-        $modules = explode(',', $config['module']);
-
-        $module = $controller = $action = '';
-        $request_uri = explode('/', $request->server['request_uri']);
-
-        if(in_array($request_uri[1], $modules)){
-            $module = trim($request_uri[1]);
-
-            if(isset($request_uri[2])){
-                $controller = trim($request_uri[2]);
-            }
-
-            if(isset($request_uri[3])){
-                $action = trim($request_uri[3]);
-            }
-        }else{
-            if(isset($request_uri[1])){
-                $controller = trim($request_uri[1]);
-            }
-
-            if(isset($request_uri[2])){
-                $action = trim($request_uri[2]);
-            }
-        }
-
-        if(!$module){
-            $module = 'index';
-        }
-
-        if(!$controller){
-            $controller = 'index';
-        }
-
-        if(!$action){
-            $action = 'index';
-        }
+        Router::routerStartup();
+        $retval = Router::parse($request->server['request_uri']);
+        $module = $retval['module'];
+        $controller = $retval['controller'];
+        $action = $retval['action'];
+        Router::routerShutdown();
 
         $instance = Helper::import($module, $controller);
         $middleware_status = Response::getMiddlewareStatus();
@@ -100,8 +68,8 @@ class Hooker {
                 $instance->request  = $request;
                 $instance->response = $response;
 
+                $response->header('Content-Type', 'text/html; charset=utf-8');
                 $instance->$action();
-                Worker::afterRequest($method, $request, $response);
             }else{
                 $response->status(404);
 
@@ -120,6 +88,7 @@ class Hooker {
     // TCP onReceive
     public static function onReceive(swoole_server $server, int $fd, int $reactorID, string $json){
         Worker::beforeReceieve($server, $fd, $reactorID, $json);
+        Router::routerStartup();
 
         // 分包
         $eof = Config::get('common', 'package_eof');
@@ -127,17 +96,16 @@ class Hooker {
         if($data_list){
             foreach($data_list as $msg){
                 $data = json_decode($msg, TRUE);
-                if($data){
-                    if(isset($data['module'])){
-                        $module = trim($data['module']);
-                    }else{
-                        $module = 'index';
-                    }
 
-                    $controller = trim($data['controller']);
+                if($data){
+                    $retval = Router::parse($data);
+                    $module = $retval['module'];
+                    $controller = $retval['controller'];
+                    $action = $retval['action'];
+                    Router::routerShutdown();
+
                     if($controller){
                         $instance = Helper::import($module, $controller);
-
                         $middleware_status = Response::getMiddlewareStatus();
                         if($middleware_status !== FALSE){
                             if($instance !== FALSE){
@@ -145,10 +113,7 @@ class Hooker {
                                 $instance->data   = $data;
                                 $instance->server = $server;
 
-                                $action = trim($data['action']);
-                                !$action && $action = 'index';
                                 $instance->$action();
-                                Worker::afterReceieve($server, $fd, $reactorID, $json);
                             }else{
                                 $rep['code']  = 0;
                                 $rep['error'] = 'Controller '.$controller.' not found';
@@ -164,19 +129,20 @@ class Hooker {
     // UDP onPacket
     public static function onPacket(swoole_server $server, string $json, array $client){
         Worker::beforePacket($server, $json, $client);
+        Router::routerStartup();
+
         $data = json_decode($json, TRUE);
         if(!$data){
             $rep['code']  = 0;
             $rep['error'] = 'Not valid JSON';
             $server->sendto($client['address'], $client['port'], JSON($rep));
         }else{
-            if(isset($data['module'])){
-                $module = trim($data['module']);
-            }else{
-                $module = 'index';
-            }
+            $retval = Router::parse($data);
+            $module = $retval['module'];
+            $controller = $retval['controller'];
+            $action = $retval['action'];
+            Router::routerShutdown();
 
-            $controller = trim($data['controller']);
             if($controller){
                 $instance = Helper::import($module, $controller);
                 $middleware_status = Response::getMiddlewareStatus();
@@ -186,10 +152,7 @@ class Hooker {
                         $instance->server = $server;
                         $instance->client = $client;
 
-                        $action = trim($data['action']);
-                        !$action && $action = 'index';
                         $instance->$action();
-                        Worker::afterPacket($server, $json, $client);
                     }else{
                         $rep['code']  = 0;
                         $rep['error'] = 'Controller '.$controller.' not found';
@@ -208,19 +171,20 @@ class Hooker {
     // Websocket onMessage
     public static function onMessage(swoole_websocket_server $server, swoole_websocket_frame $frame){
         Worker::beforeMessage($server, $frame);
+        Router::routerStartup();
+        
         $data = json_decode($frame->data, 1);
         if(!$data){
             $rep['code']  = 0;
             $rep['error'] = 'Not valid JSON';
             $server->push($frame->fd, JSON($rep));
         }else{
-            if(isset($data['module'])){
-                $module = trim($data['module']);
-            }else{
-                $module = 'index';
-            }
+            $retval = Router::parse($data);
+            $module = $retval['module'];
+            $controller = $retval['controller'];
+            $action = $retval['action'];
+            Router::routerShutdown();
 
-            $controller = trim($data['controller']);
             if($controller){
                 $instance = Helper::import($module, $controller);
                 $middleware_status = Response::getMiddlewareStatus();
@@ -230,10 +194,7 @@ class Hooker {
                         $instance->server = $server;
                         $instance->fd     = $frame->fd;
 
-                        $action = trim($data['action']);
-                        !$action && $action = 'index';
                         $instance->$action();
-                        Worker::afterMessage($server, $frame);
                     }else{
                         $rep['code']  = 0;
                         $rep['error'] = 'Controller '.$controller.' not found';
