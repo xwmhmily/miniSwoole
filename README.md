@@ -25,7 +25,7 @@
 - 心跳检测<br />
 - 自动路由<br />
 - 多模块划分
-- 中间件
+- 中间件与插件
 - Process 管理
 <hr />
 
@@ -584,11 +584,11 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
 <hr />
 
 #### 中间件
-> 基于 Pipeline 模式实现 <br />
-> 实现该中间件的类必须实现 Middleware 中的 handle() 方法。 <br />
-> 若要中止流程, throw 一个 Error 即可, 最后别忘了调用 $next(); <br />
-> TCP, UDP, HTTP, WEBSOCKET 均可使用哦 <br />
-> 请参考 Auth.php 与 Importer.php <br />
+- 基于 Pipeline 模式实现 <br />
+- 实现该中间件的类必须实现 Middleware 中的 handle() 方法。 <br />
+- 若要中止流程, throw 一个 Error 即可, 最后别忘了调用 $next(); <br />
+- TCP, UDP, HTTP, WEBSOCKET 均可使用哦 <br />
+- 请参考 Auth.php 与 Importer.php <br />
 ```
 <?php
     interface Middleware {
@@ -622,7 +622,7 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
         }
     }
 ```
-> 调用方法: 控制器的构造函数中调用 $this->middleware([$pipe1, $pipe2, $pipeN]);
+- 调用方法: 控制器的构造函数中调用 $this->middleware([$pipe1, $pipe2, $pipeN]);
 ```
     // Auth中间件
     function __construct(){
@@ -641,9 +641,36 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
     }
 ```
 
+#### 插件
+- 将插件放在 plugin 目录下, 文件名与类名保持一致。如类名为 Permission, 则文件名为 Permission.php <br />
+- 插件均需要实现 interface Plugin 定义的 routerStartup() 与 routerShutdown() <br />
+- 插件在系统启动时自动加载，并存在 Registry
+- 按如下示例取出插件并使用
+```
+    public function plugin(){
+        $token = $this->getParam('token', FALSE);
+        // Permission 插件
+        $retval = Registry::get('Permission')->checkPermission($token);
+        if(!$retval){
+            $this->response->end('Bad token !');
+            return;
+        }
+        // I18N 插件
+        $i18n = Registry::get('I18N');
+        $username_text = $i18n->translate('username');
+        $password_text = $i18n->translate('password');
+        $this->response->write('English username_text => '.$username_text.'<br />');
+        $this->response->write('English password_text => '.$password_text.'<br />');
+        $username_text = $i18n->translate('username', 2);
+        $password_text = $i18n->translate('password', 2);
+        $this->response->write('Chinese username_text => '.$username_text.'<br />');
+        $this->response->write('Chinese password_text => '.$password_text.'<br />');
+    }
+```
+
 #### 进程管理器
-> 1：很多业务需要长驻内存不断的跑[while(true)]，worker 和 task 就不适合了，更好的方式是创建自己的进程来处理 <br />
-> 2：配置文件的 process 中配置自己想要创建的进程, 格式为<br />
+- 很多业务需要长驻内存不断的跑[while(true)]，worker 和 task 就不适合了，更好的方式是创建自己的进程来处理 <br />
+- 配置文件的 process 中配置自己想要创建的进程, 格式为<br />
 
 ```
     'process' => [
@@ -683,9 +710,9 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
     }
 ```
 
-> 3: 定时调用 shell/heartbeat_process.sh 对进程作心跳检测 <br />
-> 4: 调用 shell/restart_process.sh 重启所有的进程 <br />
-> 5: 要单独停止一个 process 则需要编写单独的 shell 脚本, 参考 importer.sh <br />
+- 定时调用 shell/heartbeat_process.sh 对进程作心跳检测 <br />
+- 调用 shell/restart_process.sh 重启所有的进程 <br />
+- 要单独停止一个 process 则需要编写单独的 shell 脚本, 参考 importer.sh <br />
 
 <hr />
 
