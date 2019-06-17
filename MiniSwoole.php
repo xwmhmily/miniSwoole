@@ -24,8 +24,8 @@ class MiniSwoole {
 
 	// Only run in CLI
 	private function checkSapi(){
-		$sapi_type = php_sapi_name();
-		if (strtoupper($sapi_type) != self::MODE_CLI) {
+		$sapi = php_sapi_name();
+		if (strtoupper($sapi) != self::MODE_CLI) {
 		    echo 'Error: Mini Swoole ONLY run in cli mode'; die;
 		}
 	}
