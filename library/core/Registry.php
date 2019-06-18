@@ -12,6 +12,10 @@ class Registry {
 		return self::$obj[$key];
 	}
 
+	public static function del($key){
+		unset(self::$obj[$key]);
+	}
+
 	public static function getAll(){
 		return self::$obj;
 	}
