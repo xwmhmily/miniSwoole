@@ -107,7 +107,7 @@ status() {
 
         table=""
         splitLine 8
-        setRow "start_data" "start_time" "worker_request_count" "request_count" "tasking_num" "close_count" "accept_count" "connection_num"
+        setRow "start_date" "start_time" "worker_request_count" "request_count" "tasking_num" "close_count" "accept_count" "connection_num"
         splitLine 8
         setRow $start_time $worker_request_count $request_count $tasking_num $close_count $accept_count $connection_num
         splitLine 8
