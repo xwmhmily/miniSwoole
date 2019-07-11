@@ -687,7 +687,13 @@ abstract class Model {
 	private function logSQL(){
 		$log_sql = Config::get('mysql', 'log_sql');
 		if($log_sql){
-			Logger::logSQL($this->sql);
+			if($this->success){
+				$text = 'SUCCESS';
+			}else{
+				$text = 'FAILURE';
+			}
+
+			Logger::logSQL($this->sql.' | '.$text);
 		}
 	}
 
@@ -695,8 +701,6 @@ abstract class Model {
 	 * Check result for the last execution
 	 */
 	final private function checkResult(){
-		$this->logSQL();
-
 		if($this->db == self::DB_MASTER){
 			if (self::$conn->errorCode() == self::CODE_SUCCESS) {
 				$this->success = TRUE;
@@ -728,6 +732,8 @@ abstract class Model {
 				$this->reconnect();
 			}
 		}
+
+		$this->logSQL();
 
 		$retval = [];
 		$retval['retry']   = $retry;
