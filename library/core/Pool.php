@@ -15,12 +15,13 @@ abstract class Pool {
 		$config['max'] = $config['max'] ?? 1;
 			
 		for($i = 1; $i <= $config['max']; $i++){
-            self::getInstance(self::TYPE_MYSQL);
-        }
+            $retval = self::getInstance(self::TYPE_MYSQL);
+		}
+		return $retval;
 	}
 
 	public static function createRedisConnectionPool(){
-        self::getInstance(self::TYPE_REDIS);
+        return self::getInstance(self::TYPE_REDIS);
 	}
 
 	public static function getInstance($type) {

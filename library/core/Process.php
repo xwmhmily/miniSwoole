@@ -7,7 +7,7 @@
 class Process {
 
 	private static function getConfig($name = NULL){
-		$process = Config::get('process');
+		$process = Config::get('process', CALL_PLATFORM);
 		if($name){
 			return $process[$name];
 		}else{
@@ -16,24 +16,32 @@ class Process {
 	}
 
 	private static function fork($name, $config){
-		swoole_process::signal(SIGCHLD, SIG_IGN);
-		
+		pcntl_signal(SIGCHLD, SIG_IGN);
 		for($i = 1; $i <= $config['num']; $i++){
 			Logger::log('Forking '.$name.'......');
 			$process = new swoole_process(function (swoole_process $process) use($name, $config, $i) {
-				if(strtoupper(PHP_OS) == Server::OS_LINUX){
-					$process->name($name);
-				}
-				
-				$process->daemon(1);
+				$process->name($name) && $process->daemon(1);
 
 				Logger::init();
 				if($config['mysql']){
-					Pool::createMySQLConnectionPool();
+					$retval = Pool::createMySQLConnectionPool();
+					if(!$retval){
+						Logger::warn('Process '.$name.' fail to connect MySQL, exits');
+					}
 				}
 
 				if($config['redis']){
-					Pool::createRedisConnectionPool();
+					$retval = Pool::createRedisConnectionPool(Pool::TYPE_REDIS);
+					if(!$retval){
+						Logger::warn('Process '.$name.' fail to connect Redis, exits');
+					}
+				}
+
+				if($config['local_redis']){
+					$retval = Pool::createRedisConnectionPool(Pool::TYPE_LOCAL_REDIS);
+					if(!$retval){
+						Logger::warn('Process '.$name.' fail to connect local Redis, exits');
+					}
 				}
 
 				$param = [];
