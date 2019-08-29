@@ -7,7 +7,7 @@
 class Process {
 
 	private static function getConfig($name = NULL){
-		$process = Config::get('process', CALL_PLATFORM);
+		$process = Config::get('process');
 		if($name){
 			return $process[$name];
 		}else{
