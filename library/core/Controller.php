@@ -272,7 +272,6 @@ abstract class Controller {
 			$error['code']  = $e->getCode();
 			$error['error'] = $e->getMessage();
 			Response::setMiddlewareError(JSON($error));
-			return Response::endByMiddleware();
 		}
 	}
 

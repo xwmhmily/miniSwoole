@@ -35,6 +35,7 @@ class Response {
 	}
 
 	public static function endByMiddleware(){
+		Response::setMiddlewareStatus(TRUE);
 		$error = self::getMiddlewareError();
 		switch (Server::getServerType()) {
 			case Server::TYPE_HTTP:

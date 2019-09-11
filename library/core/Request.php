@@ -20,7 +20,11 @@ class Request {
 	}
 
 	public static function get($key){
-		return self::$clientData[$key];
+		if(isset(self::$clientData[$key])){
+			return self::$clientData[$key];
+		}else{
+			return NULL;
+		}
 	}
 
 	public static function set($key, $val){

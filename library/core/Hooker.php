@@ -62,13 +62,13 @@ class Hooker {
 
         $instance = Helper::import($module, $controller);
         $middleware_status = Response::getMiddlewareStatus();
+
         if($middleware_status !== FALSE){
             if($instance !== FALSE){
                 $instance->method   = $method;
                 $instance->request  = $request;
                 $instance->response = $response;
 
-                $response->header('Content-Type', 'text/html; charset=utf-8');
                 $instance->$action();
             }else{
                 $response->status(404);
@@ -77,6 +77,8 @@ class Hooker {
                 $rep['error'] = 'Controller '.$controller.' not found';
                 $response->end(JSON($rep));
             }
+        }else{
+            Response::endByMiddleware();
         }
     }
 
@@ -119,6 +121,8 @@ class Hooker {
                                 $rep['error'] = 'Controller '.$controller.' not found';
                                 $server->send($fd, JSON($rep));
                             }
+                        }else{
+                            Response::endByMiddleware();
                         }
                     }
                 }
@@ -158,6 +162,8 @@ class Hooker {
                         $rep['error'] = 'Controller '.$controller.' not found';
                         $server->sendto($client['address'], $client['port'], JSON($rep));
                     }
+                }else{
+                    Response::endByMiddleware();
                 }
             }
         }
@@ -200,6 +206,8 @@ class Hooker {
                         $rep['error'] = 'Controller '.$controller.' not found';
                         $server->push($frame->fd, JSON($rep));
                     }
+                }else{
+                    Response::endByMiddleware();
                 }
             }
         }
