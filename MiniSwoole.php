@@ -62,6 +62,7 @@ class MiniSwoole {
 		require_once CORE_PATH.'/Timer.php';
 		require_once CORE_PATH.'/Model.php';
 		require_once CORE_PATH.'/Logger.php';
+		require_once CORE_PATH.'/Router.php';
 		require_once CORE_PATH.'/Helper.php';
 		require_once CORE_PATH.'/Config.php';
 		require_once CORE_PATH.'/Server.php';
@@ -72,6 +73,7 @@ class MiniSwoole {
 		require_once CORE_PATH.'/Security.php';
 		require_once CORE_PATH.'/Request.php';
 		require_once CORE_PATH.'/Response.php';
+		require_once CORE_PATH.'/Registry.php';
 		require_once CORE_PATH.'/Middleware.php';
 		require_once CORE_PATH.'/Controller.php';
 
