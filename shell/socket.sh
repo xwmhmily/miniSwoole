@@ -2,7 +2,7 @@
 # start, stop, status, restart, reload server
 # Usage: sh socket.sh {start|stop|restart|status|reload|config}
 
-PHP="/usr/bin/php"
+PHP=`which php`
 CUR_DATE=`date +%F`
 TIME=`date "+%Y-%m-%d %H:%M:%S"`
 PARENT_PATH=$(dirname "$PWD")
