@@ -9,7 +9,6 @@ PARENT_PATH=$(dirname "$PWD")
 PHP_FILE="/Boostrap.php"
 PID_FILE=../pid/swoole.pid
 SOCKET_FILE="$PARENT_PATH$PHP_FILE"
-LOG_FILE=/var/log/app/ts_swoole_$CUR_DATE.log
 STAT_FILE="/var/log/app/mini_swoole_stat.log"
 
 #定义颜色的变量
@@ -28,7 +27,6 @@ start() {
         echo 'Server is running ......' && exit 0
     else
         echo 'Starting ......'
-        touch $LOG_FILE && chown www.www $LOG_FILE && chmod 777 $LOG_FILE
         $PHP $SOCKET_FILE &
         sleep 1
         NEW_SWOOLE_MASTER_PID=`cat $PID_FILE`
@@ -41,7 +39,7 @@ start() {
         fi
     fi
 
-    echo -e $MSG && echo $TIME "|" $TIP >> $LOG_FILE
+    echo -e $MSG
 }
 
 stop() {
@@ -60,7 +58,7 @@ stop() {
         > $PID_FILE
     fi
 
-    echo -e $MSG && echo $TIME "|" $TIP >> $LOG_FILE
+    echo -e $MSG
 }
 
 restart() {
@@ -131,6 +129,17 @@ status() {
     fi    
 }
 
+heartbeat() {
+    SWOOLE_MASTER_PID=`cat $PID_FILE`
+    NEW_SWOOLE_MASTER_PID=`ps -ef | grep ${SWOOLE_MASTER_PID} | grep -v "grep" | sed -n '1p' | awk -F ' ' '{print $2}'`
+
+    if [ ! $NEW_SWOOLE_MASTER_PID ]; then
+        sh socket.sh start
+    else
+        echo -e "${GREEN_COLOR}Server with PID ${SWOOLE_MASTER_PID} is running ${RES}"
+    fi
+}
+
 config() {
     config=`cat $STAT_FILE | jq '.config' | sed 's/"//g'`
 
@@ -156,11 +165,14 @@ case "$1" in
     reload)
         reload
         ;;
+    heartbeat)
+        heartbeat
+        ;;
     config)
         config
         ;;
     *)
-        echo "Usage: $0 {start|stop|restart|status|reload|config}"
+        echo "Usage: $0 {start|stop|restart|status|reload|heartbeat|config}"
         ;;
 esac
 exit 0
