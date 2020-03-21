@@ -17,6 +17,7 @@ class MiniSwoole {
 		$this->init();
 		$this->initLogger();
 		$this->initAutoload();
+		$this->config();
 
 		return $this;
 	}
@@ -110,7 +111,11 @@ class MiniSwoole {
 		});
 	}
 
-	public function process(){
+	private function config(){
+		include APP_PATH.'/Init.php';
+	}
+
+	public function heartbeat(){
 		Process::heartbeat();
 	}
 

@@ -710,8 +710,7 @@ public static function onFinish(swoole_server $server, int $taskID, string $data
     }
 ```
 
-- 定时调用 shell/heartbeat_process.sh 对进程作心跳检测 <br />
-- 调用 shell/restart_process.sh 重启所有的进程 <br />
+- 定时调用 shell/process.sh 对进程作心跳检测 <br />
 - 要单独停止一个 process 则需要编写单独的 shell 脚本, 参考 importer.sh <br />
 
 <hr />
