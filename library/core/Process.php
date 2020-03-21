@@ -37,13 +37,6 @@ class Process {
 					}
 				}
 
-				if($config['local_redis']){
-					$retval = Pool::createRedisConnectionPool(Pool::TYPE_LOCAL_REDIS);
-					if(!$retval){
-						Logger::warn('Process '.$name.' fail to connect local Redis, exits');
-					}
-				}
-
 				$param = [];
 				if(isset($config['param'])){
 					$param = $config['param'];

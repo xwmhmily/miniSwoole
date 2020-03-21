@@ -28,8 +28,8 @@ class Importer {
 			$key = 'Key_current_time';
 			Cache::set($key, date('Y-m-d H:i:s'));
 			$val = Cache::get($key);
-			Logger::log('Time => '.$val);
-			sleep(3);
+			Logger::log('Time in '.__METHOD__.' => '.$val);
+			sleep(1);
 		}
 	}
 

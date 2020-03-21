@@ -1,15 +1,14 @@
 #!/bin/bash
 # start, stop, status, restart, reload server
-# Usage: sh socket.sh {start|stop|restart|status|reload|config}
+# Usage: sh socket.sh {start|stop|restart|status|reload|heartbeat}
+
+PID_FILE=../log/swoole.pid
+STAT_FILE=../log/swoole.stat
 
 PHP=`which php`
-CUR_DATE=`date +%F`
-TIME=`date "+%Y-%m-%d %H:%M:%S"`
 PARENT_PATH=$(dirname "$PWD")
-PHP_FILE="/Boostrap.php"
-PID_FILE=../pid/swoole.pid
-SOCKET_FILE="$PARENT_PATH$PHP_FILE"
-STAT_FILE="/var/log/app/mini_swoole_stat.log"
+BOOSTRAP_FILE="/Boostrap.php"
+SOCKET_FILE="$PARENT_PATH$BOOSTRAP_FILE"
 
 #定义颜色的变量
 RED_COLOR='\E[1;31m'   #红
@@ -120,7 +119,7 @@ status() {
 
         echo -e "\nProcesses: "
         awk 'BEGIN{OFS="=";NF=130;print}'
-        ps aux | grep miniSwoole | grep -v grep
+        ps aux | grep Swoole | grep -v grep
         awk 'BEGIN{OFS="=";NF=130;print}'
     else
         TIP="Server is DOWN !!!"
@@ -138,15 +137,6 @@ heartbeat() {
     else
         echo -e "${GREEN_COLOR}Server with PID ${SWOOLE_MASTER_PID} is running ${RES}"
     fi
-}
-
-config() {
-    config=`cat $STAT_FILE | jq '.config' | sed 's/"//g'`
-
-    echo -e "\nConfig: "
-    awk 'BEGIN{OFS="=";NF=172;print}'
-    echo $config
-    awk 'BEGIN{OFS="=";NF=172;print}'
 }
 
 case "$1" in
@@ -172,7 +162,7 @@ case "$1" in
         config
         ;;
     *)
-        echo "Usage: $0 {start|stop|restart|status|reload|heartbeat|config}"
+        echo "Usage: $0 {start|stop|restart|status|reload|heartbeat}"
         ;;
 esac
 exit 0

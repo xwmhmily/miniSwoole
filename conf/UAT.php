@@ -30,10 +30,10 @@ $config = [
 		'error_level'              => 2,
 		'module'                   => 'api',
 		'log_method'               => 'redis',
-		'pid_file'                 => __DIR__.'/../pid/swoole.pid',
-		'stat_file'      => '/var/log/app/mini_swoole_stat.log',
-		'log_file'       => '/var/log/app/mini_swoole_error_'.date('Y-m-d').'.log',
-		'mysql_log_file' => '/var/log/app/mini_swoole_mysql_'.date('Y-m-d').'.log',
+		'pid_file'                 => __DIR__.'/../log/swoole.pid',
+		'stat_file'                => __DIR__.'/../log/swoole.stat',
+		'log_file'       => __DIR__.'/../log/swoole_error_'.date('Y-m-d').'.log',
+		'mysql_log_file' => __DIR__.'/../log/swoole_mysql_'.date('Y-m-d').'.log',
 	],
 
 	'tcp' => [
