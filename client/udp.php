@@ -6,7 +6,7 @@ $client->on("connect", function(swoole_client $cli) {
 	$d = [];
 	//$d['module']     = 'api';
 	$d['controller'] = 'udp';
-	$d['action']     = 'redis';
+	$d['action']     = 'news';
 	$d['username']   = 'fooDELETE FROM sl_table <script>dym</script>';
 	$d['password']   = 'fooDELETE 123123</script>';
 	$d['captcha']    = 'go';

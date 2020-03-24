@@ -59,10 +59,9 @@ abstract class Controller {
 				$error = $this->serverError($error);
 				$error = $this->sqlError($last_error, $error);
 
-				$this->response->write($error);
-				$this->response->end();
+				return $error;
 			}else{
-				$this->response(JSON($last_error));
+				return JSON($last_error);
 			}
 		}else{
 			if(Server::getServerType() == Server::TYPE_HTTP){
@@ -74,10 +73,9 @@ abstract class Controller {
 					</body>
 				</html>';
 				$this->response->status($errorCode);
-				$this->response->write($html);
-				$this->response->end();
+				return $html;
 			}else{
-				$this->response('Internal Server Error'.PHP_EOL);
+				return 'Internal Server Error'.PHP_EOL;
 			}
 		}
 	}

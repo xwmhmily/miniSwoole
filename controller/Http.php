@@ -42,9 +42,9 @@ class C_Http extends Controller {
             Logger::log('This is a log msg');
 
             $level = Config::get('common', 'error_level');
-            $this->response->end('Current error_level is => '.$level);
+            return 'Current error_level is => '.$level;
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -54,18 +54,18 @@ class C_Http extends Controller {
 	public function onError(){
 		try{
 			$result = $this->m_player->SelectOne();
-			$this->response->end('Result is => '.$result);
+			return 'Result is => '.$result;
 		}catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
 	}
 
     // Ping and Pong
     public function ping(){
         try{
-            $this->response->end('PONG');
+            return 'PONG';
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -73,17 +73,16 @@ class C_Http extends Controller {
     public function configAndKey(){
         try{
             $redis_config = Config::get('redis');
-            $this->response->write(JSON($redis_config).'<br />');
+            return JSON($redis_config).'<br />';
 
             $redis_host = Config::get('redis', 'host');
-            $this->response->write(JSON('Host is '.$redis_host).'<br />');
+            return JSON('Host is '.$redis_host).'<br />';
 
             $redis_port = Config::get('redis', 'port');
-            $this->response->write(JSON('Port is '.$redis_port));
-            $this->response->write(JSON($redis_config));
-            $this->response->end();
+            return JSON('Port is '.$redis_port);
+            return JSON($redis_config);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -91,9 +90,9 @@ class C_Http extends Controller {
     public function users(){
         try{
             $users = $this->m_user->SelectAll();
-            $this->response->end(JSON($users));
+            return JSON($users);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -101,9 +100,9 @@ class C_Http extends Controller {
     public function news(){
         try{
             $news = $this->m_news->Limit()->Select();
-            $this->response->end(JSON($news));
+            return JSON($news);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -117,10 +116,9 @@ class C_Http extends Controller {
             }
             $end_time = Logger::getMicrotime();
             $cost = $end_time - $start_time;
-            $this->response->write('Time => '.$cost.', TPS => '.$max/$cost);
-            $this->response->end();
+            return 'Time => '.$cost.', TPS => '.$max/$cost;
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -128,16 +126,15 @@ class C_Http extends Controller {
     public function all(){
         try{
             $users = $this->m_user->SelectAll();
-            $this->response->write(JSON($users));
+            return JSON($users);
 
             $news = $this->m_news->Select();
-            $this->response->write(JSON($news));
+            return JSON($news);
 
             $one_news = $this->m_news->SelectOne();
-            $this->response->write(JSON($one_news));
-            $this->response->end();
+            return JSON($one_news);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -170,7 +167,7 @@ class C_Http extends Controller {
 
             $this->response->end();
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -201,16 +198,16 @@ class C_Http extends Controller {
             $this->response->write('Slave with suffix => '.JSON($user)."<br />");
             $this->response->end();
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
     // Security
     public function security(){
         try{
-            $this->response->end(JSON($this->request));
+            return JSON($this->request);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -218,9 +215,9 @@ class C_Http extends Controller {
     public function rabbit(){
         try{
             $rabbit = new RabbitMQ();
-            $this->response->end('A Rabbit is running happily now');
+            return 'A Rabbit is running happily now';
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -287,7 +284,7 @@ class C_Http extends Controller {
             }
             $this->response->end();
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -321,7 +318,7 @@ class C_Http extends Controller {
             }
             $this->response->end();
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -344,7 +341,7 @@ class C_Http extends Controller {
             $this->response->write('User => '.JSON($user).'<br />');
             $this->response->end();
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -352,10 +349,9 @@ class C_Http extends Controller {
     public function suffix(){
         try{
             $user = $this->load('User')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
-            $this->response->write('Suffix user => '.JSON($user));
-            $this->response->end();
+            return 'Suffix user => '.JSON($user);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -402,7 +398,7 @@ class C_Http extends Controller {
             }
             $this->response->end();
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -424,7 +420,7 @@ class C_Http extends Controller {
             }
             $this->response->end();
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -432,10 +428,9 @@ class C_Http extends Controller {
         try{
             $username = $this->getParam('username');
             $user = $this->m_user->getUserByUsername($username);
-            $this->response->write(JSON($user));
-            $this->response->end();
+            return JSON($user);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -458,21 +453,18 @@ class C_Http extends Controller {
             $user['status']   = 1;
             $users[] = $user;
 
-            $retval = $this->m_user->multiInsert($users);
-            $this->response->write($retval);
-            $this->response->end();
+            return $this->m_user->multiInsert($users);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
     public function timer(){
         try{
             $timerID = Timer::add(2000, [$this, 'tick'], ['xyz', 'abc', '123']);
-            $this->response->write('Timer has been set, id is => '.$timerID);
-            $this->response->end();
+            return 'Timer has been set, id is => '.$timerID;
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -480,9 +472,9 @@ class C_Http extends Controller {
         try{
             Logger::log('Args in '.__METHOD__.' => '.JSON($args));
             Timer::clear($timerID);
-            $this->response->end();
+            return 'success';
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -492,10 +484,9 @@ class C_Http extends Controller {
             $args['callback'] = ['Importer', 'Run'];
             $args['param']    = ['Lakers', 'Swoole', 'Westlife'];
             $taskID = Task::add($args);
-            $this->response->write('Task has been set, id is => '.$taskID);
-            $this->response->end();
+            return 'Task has been set, id is => '.$taskID;
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 }

@@ -39,18 +39,18 @@ class C_Udp extends Controller {
 	public function onError(){
 		try{
 			$result = $this->m_player->SelectOne();
-			$this->response('Result is => '.$result);
+			return 'Result is => '.$result;
 		}catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
 	}
 
     // Ping and Pong
     public function ping(){
         try{
-            $this->response('PONG');
+            return 'PONG';
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -58,9 +58,9 @@ class C_Udp extends Controller {
     public function users(){
         try{
             $users = $this->m_user->SelectAll();
-            $this->response(JSON($users));
+            return JSON($users);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -68,9 +68,9 @@ class C_Udp extends Controller {
     public function news(){
         try{
             $news = $this->m_news->Select();
-            $this->response(JSON($news));
+            return JSON($news);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -84,9 +84,9 @@ class C_Udp extends Controller {
             }
             $end_time = Logger::getMicrotime();
             $cost = $end_time - $start_time;
-            $this->response('Time => '.$cost.', TPS => '.$max/$cost);
+            return 'Time => '.$cost.', TPS => '.$max/$cost;
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -102,7 +102,7 @@ class C_Udp extends Controller {
             $one_news = $this->m_news->SelectOne();
             $this->response(JSON($one_news));
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -133,7 +133,7 @@ class C_Udp extends Controller {
                 $this->response('ERRORRRRRRRRR');
             }
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -163,16 +163,16 @@ class C_Udp extends Controller {
             $user = $this->m_user->SetDB('SLAVE')->Suffix(38)->Field($field)->Where($where)->Order($order)->Limit(10)->Select();
             $this->response('Slave with suffix => '.JSON($user));
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
     // Security
     public function security(){
         try{
-            $this->response(JSON($this->data));
+            return JSON($this->data);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -180,9 +180,9 @@ class C_Udp extends Controller {
     public function rabbit(){
         try{
             $rabbit = new RabbitMQ();
-            $this->response('A Rabbit is running happily now');
+            return 'A Rabbit is running happily in '.__METHOD__.' now';
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
     
@@ -218,7 +218,7 @@ class C_Udp extends Controller {
                 $i++; sleep(1);
             }
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -251,7 +251,7 @@ class C_Udp extends Controller {
                 $i++; sleep(1);
             }
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -273,7 +273,7 @@ class C_Udp extends Controller {
             $user = $this->m_user->SelectByID('', 1);
             $this->response(JSON($user));
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -281,9 +281,9 @@ class C_Udp extends Controller {
     public function suffix(){
         try{
             $user = $this->load('User')->Suffix(38)->ClearSuffix()->Suffix(52)->SelectOne();
-            $this->response(' Suffix user => '.JSON($user));
+            return ' Suffix user => '.JSON($user);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -329,7 +329,7 @@ class C_Udp extends Controller {
                 sleep(1);
             }
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -351,7 +351,7 @@ class C_Udp extends Controller {
                 $this->response('Key is required !');
             }
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 }

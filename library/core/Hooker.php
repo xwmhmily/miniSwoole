@@ -69,7 +69,8 @@ class Hooker {
                 $instance->request  = $request;
                 $instance->response = $response;
 
-                $instance->$action();
+                $retval = $instance->$action();
+                $response->end($retval);
             }else{
                 $response->status(404);
 
@@ -115,7 +116,8 @@ class Hooker {
                                 $instance->data   = $data;
                                 $instance->server = $server;
 
-                                $instance->$action();
+                                $retval = $instance->$action();
+                                $server->send($fd, $retval);
                             }else{
                                 $rep['code']  = 0;
                                 $rep['error'] = 'Controller '.$controller.' not found';
@@ -156,7 +158,8 @@ class Hooker {
                         $instance->server = $server;
                         $instance->client = $client;
 
-                        $instance->$action();
+                        $retval = $instance->$action();
+                        $server->sendto($client['address'], $client['port'], $retval);
                     }else{
                         $rep['code']  = 0;
                         $rep['error'] = 'Controller '.$controller.' not found';
@@ -200,7 +203,8 @@ class Hooker {
                         $instance->server = $server;
                         $instance->fd     = $frame->fd;
 
-                        $instance->$action();
+                        $retval = $instance->$action();
+                        $server->push($frame->fd, $retval);
                     }else{
                         $rep['code']  = 0;
                         $rep['error'] = 'Controller '.$controller.' not found';
