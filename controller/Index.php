@@ -10,7 +10,7 @@ class C_Index extends Controller {
         try{
             return 'Welcome to '.APP_NAME.' http server';
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 }

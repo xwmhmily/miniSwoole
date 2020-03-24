@@ -25,18 +25,17 @@ class C_Stat extends Controller{
             $stat['config']  = Config::get();
             $stat['stats']   = Server::getInstance()->stats();
             $stat['setting'] = Server::getInstance()->setting;
-            $this->response->write(JSON($stat));
-            $this->response->end();
+            return JSON($stat);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
     public function ping(){
         try{
-            $this->response->end('PONG');
+            return 'PONG';
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 
@@ -44,9 +43,9 @@ class C_Stat extends Controller{
         try{
             $cmd = "ps -ef | grep Mini_Swoole | grep -v grep | awk -F ' ' '{print $2\"-\"$8}'";
             exec($cmd, $retval, $execState);
-            $this->response->end(JSON($retval));
+            return JSON($retval);
         }catch (Throwable $e){
-			$this->error($e);
+			return $this->error($e);
 		}
     }
 }
