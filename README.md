@@ -62,7 +62,7 @@
 <hr />
 
 #### 心跳检测
-- 利用Crond 定时运行 shell/heartbeat.sh 即可<br />
+- 利用Crond 定时运行 shell/socket.sh heartbeat 即可<br />
 <hr />
 
 #### 使用
