@@ -54,27 +54,12 @@ class MiniSwoole {
 		define('CORE_PATH', LIB_PATH.'/core');
 		define('CONF_PATH', APP_PATH.'/conf');
 
-		require_once CORE_PATH.'/Task.php';
-		require_once CORE_PATH.'/Pool.php';
-		require_once CORE_PATH.'/Worker.php';
-		require_once CORE_PATH.'/Cache.php';
-		require_once CORE_PATH.'/Timer.php';
-		require_once CORE_PATH.'/Model.php';
-		require_once CORE_PATH.'/Logger.php';
-		require_once CORE_PATH.'/Router.php';
-		require_once CORE_PATH.'/Helper.php';
-		require_once CORE_PATH.'/Config.php';
-		require_once CORE_PATH.'/Server.php';
-		require_once CORE_PATH.'/Hooker.php';
 		require_once LIB_PATH.'/Function.php';
-		require_once CORE_PATH.'/Process.php';
-		require_once CORE_PATH.'/Pipeline.php';
-		require_once CORE_PATH.'/Security.php';
-		require_once CORE_PATH.'/Request.php';
-		require_once CORE_PATH.'/Response.php';
-		require_once CORE_PATH.'/Registry.php';
-		require_once CORE_PATH.'/Middleware.php';
-		require_once CORE_PATH.'/Controller.php';
+
+		$core_files = glob(CORE_PATH.'/*.php');
+		foreach($core_files as $f){
+			require_once $f;
+		}
 
 		$config = Config::get('common');
 		define('APP_NAME', $config['app_name']);
