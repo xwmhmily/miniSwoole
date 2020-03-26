@@ -56,7 +56,7 @@ class MiniSwoole {
 
 		require_once CORE_PATH.'/Task.php';
 		require_once CORE_PATH.'/Pool.php';
-		require_once LIB_PATH.'/Worker.php';
+		require_once CORE_PATH.'/Worker.php';
 		require_once CORE_PATH.'/Cache.php';
 		require_once CORE_PATH.'/Timer.php';
 		require_once CORE_PATH.'/Model.php';
